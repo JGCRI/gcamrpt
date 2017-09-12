@@ -4,7 +4,8 @@
 \alias{module.test_fun}
 \title{Test function for runModule}
 \usage{
-module.test_fun(var, mode, allqueries, aggkeys, aggfn, strtyr, endyr, filters)
+module.test_fun(var, mode, allqueries, aggkeys, aggfn, strtyr, endyr, filters,
+  ounit)
 }
 \description{
 This function prints a diagnostic and returns an empty data frame.

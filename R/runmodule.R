@@ -26,9 +26,11 @@
 #' @param endyr End year.  All years after this will be dropped.
 #' @param filters Character string giving a list of additional filters to be
 #' applied, in s-exp format.
+#' @param ounit Desired output unit.  If omitted, results will be returned with
+#' no unit conversion.
 #' @export
 runModule <- function(var, mode, allqueries=NULL, aggkeys=NULL, aggfn=NULL,
-                      strtyr=NULL, endyr=NULL, filters=NULL)
+                      strtyr=NULL, endyr=NULL, filters=NULL, ounit=NULL)
 {
     fun <- tryCatch(
         ## Find the corresponding function, limited to the package environment
@@ -40,7 +42,7 @@ runModule <- function(var, mode, allqueries=NULL, aggkeys=NULL, aggfn=NULL,
         },
         finally = NULL
         )
-    fun(var, mode, allqueries, aggkeys, aggfn, strtyr, endyr, filters)
+    fun(var, mode, allqueries, aggkeys, aggfn, strtyr, endyr, filters, ounit)
 }
 
 
@@ -67,7 +69,7 @@ canonicalForm <- function(var)
 #'
 #' @keywords internal
 module.test_fun <- function(var, mode, allqueries, aggkeys, aggfn, strtyr, endyr,
-                    filters)
+                    filters, ounit)
 {
     if(mode == getq) {
         character()

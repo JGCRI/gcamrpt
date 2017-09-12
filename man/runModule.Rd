@@ -5,7 +5,7 @@
 \title{Run a data module}
 \usage{
 runModule(var, mode, allqueries = NULL, aggkeys = NULL, aggfn = NULL,
-  strtyr = NULL, endyr = NULL, filters = NULL)
+  strtyr = NULL, endyr = NULL, filters = NULL, ounit = NULL)
 }
 \arguments{
 \item{var}{Name of the variable to produce.  This must be one of the varibles
@@ -32,6 +32,9 @@ of the function.  If empty or NULL, no aggregation will be performed.}
 
 \item{filters}{Character string giving a list of additional filters to be
 applied, in s-exp format.}
+
+\item{ounit}{Desired output unit.  If omitted, results will be returned with
+no unit conversion.}
 }
 \description{
 Run the module associated with object \code{var}.  If mode is \code{\link{getq}},
