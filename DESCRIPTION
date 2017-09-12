@@ -15,7 +15,8 @@ License: GPL-2
 Encoding: UTF-8
 LazyData: true
 Imports:
-    rgcam
+    rgcam (>= 0.4.2),
+    magrittr (>= 1.5)
 Remotes:
     JGCRI/rgcam
 RoxygenNote: 6.0.1

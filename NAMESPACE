@@ -2,3 +2,4 @@
 
 export(listModules)
 export(runModule)
+importFrom(magrittr,"%>%")

@@ -50,11 +50,14 @@ runModule <- function(var, mode, allqueries=NULL, aggkeys=NULL, aggfn=NULL,
 #' "module." is prepended to the name.
 #'
 #' @param var Variable name to convert
+#' @importFrom magrittr %>%
 #' @keywords internal
 canonicalForm <- function(var)
 {
-    ## Should we do case-folding as well?
-    paste0('module.', gsub('[^a-zA-Z0-9]', '_', var) )
+    . <- NULL
+    tolower(var) %>%
+      gsub('[^a-z0-9]', '_', . ) %>%
+      paste0('module.',  . )
 }
 
 
@@ -80,11 +83,13 @@ module.test_fun <- function(var, mode, allqueries, aggkeys, aggfn, strtyr, endyr
 #' Returns a character vector listing the variables that currently have recipes
 #' in the system.
 #'
+#' @importFrom magrittr %>%
 #' @export
 listModules <- function()
 {
-    gsub('^module\\.', '',
-         ls(environment(listModules), pattern='^module\\.'))
+    . <- NULL                           # suppress package warnings
+    ls(environment(listModules), pattern='^module\\.') %>%
+      gsub('^module\\.', '', . )
 }
 
 
