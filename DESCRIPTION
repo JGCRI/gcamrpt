@@ -1,9 +1,9 @@
 Package: iamrpt
-Title: Convert GCAM results to the format required by various IAM experiment databases.
+Title: Convert GCAM results to the format required by various IAM experiment databases
 Version: 0.0.0.9000
 Authors@R: c(
     person("Robert", "Link", email = "robert.link@pnnl.gov", role = c("aut", "cre")),
-    person("Xavier", "Gutierrez", email = "xavier.gutierrez@pnnl.gov")
+    person("Xavier", "Gutierrez", email = "xavier.gutierrez@pnnl.gov", role = c("aut"))
     )
 Description: Provide functions for converting GCAM output into the format used by most 
     IAM experiments to enter results into their databases.  Users provide a table of
@@ -11,7 +11,7 @@ Description: Provide functions for converting GCAM output into the format used b
     package runs the necessary GCAM queries (no more than once per query) and passes
     the results to the functions that produce the output.
 Depends: R (>= 3.3.3)
-License: GPL-2
+License: GPL-2 | file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports:

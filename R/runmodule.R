@@ -21,7 +21,7 @@
 #' All of these columns must be present in the table computed by the main body
 #' of the function.  If empty or NULL, no aggregation will be performed.
 #' @param aggfn Function to use for aggregating.  If none specified,
-#' \code{\link{base::sum}} will be used.
+#' \code{\link[base]{sum}} will be used.
 #' @param strtyr Start year.  All years prior to this will be dropped.
 #' @param endyr End year.  All years after this will be dropped.
 #' @param filters Character string giving a list of additional filters to be

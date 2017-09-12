@@ -24,7 +24,7 @@ All of these columns must be present in the table computed by the main body
 of the function.  If empty or NULL, no aggregation will be performed.}
 
 \item{aggfn}{Function to use for aggregating.  If none specified,
-\code{\link{base::sum}} will be used.}
+\code{\link[base]{sum}} will be used.}
 
 \item{strtyr}{Start year.  All years prior to this will be dropped.}
 
