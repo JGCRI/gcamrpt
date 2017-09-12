@@ -10,7 +10,8 @@
 #' processed variable.
 #'
 #' @param var Name of the variable to produce.  This must be one of the varibles
-#' known to the system.
+#' known to the system.  The \code{\link{listModules}} function lists the known
+#' variables.
 #' @param mode Either \code{getq} or \code{run}.  The former returns
 #' the names of the GCAM queries needed for the calculation; the latter runs the
 #' calculation.  In \code{getq} mode all of the remaining arguments are
@@ -72,6 +73,18 @@ module.test_fun <- function(var, mode, allqueries, aggkeys, aggfn, strtyr, endyr
         print(paste('Function for processing variable', var))
         data.frame()
     }
+}
+
+#' List the variables that the system knows how to generate
+#'
+#' Returns a character vector listing the variables that currently have recipes
+#' in the system.
+#'
+#' @export
+listModules <- function()
+{
+    gsub('^module\\.', '',
+         ls(environment(listModules), pattern='^module\\.'))
 }
 
 

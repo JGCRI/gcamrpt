@@ -9,7 +9,8 @@ runModule(var, mode, allqueries = NULL, aggkeys = NULL, aggfn = NULL,
 }
 \arguments{
 \item{var}{Name of the variable to produce.  This must be one of the varibles
-known to the system.}
+known to the system.  The \code{\link{listModules}} function lists the known
+variables.}
 
 \item{mode}{Either \code{getq} or \code{run}.  The former returns
 the names of the GCAM queries needed for the calculation; the latter runs the
