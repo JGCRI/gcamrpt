@@ -21,7 +21,7 @@ Coming soon.
 \author{
 \strong{Maintainer}: Robert Link \email{robert.link@pnnl.gov}
 
-Other contributors:
+Authors:
 \itemize{
   \item Xavier Gutierrez \email{xavier.gutierrez@pnnl.gov}
 }
