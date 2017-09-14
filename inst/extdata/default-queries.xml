@@ -641,5 +641,14 @@
 	</query>
 	</aQuery>
       
+
+      <aQuery>
+          <supplyDemandQuery title="Electricity generation by technology (inc solar roofs)">
+         <axis1 name="technology">technology</axis1>
+         <axis2 name="Year">physical-output[@vintage]</axis2>
+         <xPath buildList="true" dataName="output" group="false" sumAll="false">*[@type = 'sector' (: collapse :) and (@name='electricity' or @name='elect_td_bld' or @name='industrial energy use')]//*[@type = 'technology' and not (@name='elect_td_bld' or @name='electricity')]/*[@type='output' (:collapse:) and (@name='electricity' or @name='elect_td_bld')]/physical-output/node()</xPath>
+         <comments/>
+        </supplyDemandQuery>
+	</aQuery>
 </queries>
    
