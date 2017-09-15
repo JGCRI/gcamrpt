@@ -1,4 +1,5 @@
 # iamrpt: Convert GCAM output to the format used by public IAM databases
+[![Travis-CI Build Status](https://travis-ci.org/JGCRI/iamrpt.svg?branch=master)](https://travis-ci.org/JGCRI/iamrpt)
 
 Provide functions for converting GCAM output into the format used by
 most IAM experiments to enter results into their databases.  Users

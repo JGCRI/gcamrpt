@@ -104,14 +104,16 @@
 #' as separate tables.
 #' @param tabs Flag: if true, put each table into a separate tab or file.
 #' Otherwise, put them all into a single long tab/file.
+#' @return NULL; the report will be written to output files as described in the
+#' Output section.
 #' @importFrom magrittr %>%
 #' @export
 generate <- function(scenctl,
                      varctl,
                      dbloc,
-                     fileformat = getOption(iamrpt.fileformat, 'CSV'),
-                     scenmerge = getOption(iamrpt.scenmerge, TRUE),
-                     tabs = getOption(iamrpt.tabs, TRUE))
+                     fileformat = getOption('iamrpt.fileformat', 'CSV'),
+                     scenmerge = getOption('iamrpt.scenmerge', TRUE),
+                     tabs = getOption('iamrpt.tabs', TRUE))
 {
     scenctl <- readr::read_csv(scenctl)
     varctl <- readr::read_csv(varctl)
@@ -192,4 +194,100 @@ process_scenario <- function(scen, dbloc, dbname, q2run, varctl)
     names(rslts) <- varctl[['output variable']]
 
     rslts
+}
+
+
+#' Merge tables for multiple scenarios into a single scenario
+#'
+#' For each variable collect the tables for each of the scenarios and fuse them
+#' into a single table.
+#'
+#' @param rawrslts Results by scenario and variable passed in from main control
+#' loop
+#' @return List of data frames, one for each variable, with all scenarios
+#' included.
+#' @keywords internal
+merge_scenarios <- function(rawrslts)
+{
+    ## set of variables should be the same for all scenarios, so we can just
+    ## grab the list from the first scenario.
+    vars <- names(rawrslts[[1]])
+    scenarios <- names(rawrslts)
+
+    lapply(vars,
+           function(var) {
+               ## pull the tables for all scenarios
+               vtbls <- lapply(scenarios,
+                               function(scen) {
+                                   tbl <- rawrslts[[scen]][[var]]
+                                   if(!('scenario' %in% names(tbl)))
+                                       tbl$scenario <- scen
+                                   tbl
+                               })
+               dplyr::bind_rows(vtbls)
+           })
+}
+
+
+#' Validate the structures read in from the control files
+#'
+#' Check for the following error conditions:
+#' \itemize{
+#'   \item{All expected columns are present.}
+#'   \item{No empty or missing values in columns where missing values are not
+#' permitted.}
+#' }
+#' Issue warnings for the following conditions:
+#' \itemize{
+#'   \item{Extraneous columns present}
+#' }
+#'
+#' @param scenctl Scenario control file structure
+#' @param varctl Variables control file structure
+#' @return NULL; Warnings or errors will be thrown as required.
+#' @keywords internal
+validatectl <- function(scenctl, varctl)
+{
+    scencols <- c('GCAM scenario', 'output scenario', 'scenario db')
+    scenrqd <- scencols
+
+    varcols <- c('GCAM variable', 'output variable', 'aggregation keys',
+                 'aggregation function', 'start year', 'end year', 'filters',
+                 'output units')
+    varrqd <- varcols[1:2]
+
+    validate1(scenctl, 'scenario control', scencols, scenrqd)
+    validate1(varctl, 'variable control', varcols, varrqd)
+    invisible(NULL)
+}
+
+#' Work function for validatectl
+#'
+#' @param ctl Control file structure
+#' @param ctlname Name of the control file we're testing (used in error messages)
+#' @param expectcols Expected columns for this control file
+#' @param rqdcols Columns for which data is required (no missing allowed)
+#' @keywords internal
+validate1 <- function(ctl, ctlname, expectcols, rqdcols) {
+    extraneous <- !(names(ctl) %in% expectcols)
+    if(any(extraneous)) {
+        extstr <- paste(names(ctl)[extraneous], collapse=', ')
+        warning('Unrecognized columns in ', ctlname, ' : ', extstr)
+    }
+
+    missingcols <- !(expectcols %in% names(ctl))
+    if(any(missingcols)) {
+        missingstr <- paste(expectcols[missingcols], collapse=', ')
+        stop('Columns missing in ', ctlname, ' :  ', missingstr)
+    }
+
+    missingdat <- sapply(rqdcols,
+                         function(coln) {
+                             col <- ctl[[coln]]
+                             any(is.na(col) | col == '')
+                         })
+    if(any(missingdat)) {
+        missingstr <- paste(rqdcols[missingdat], collapse=', ')
+        stop('Missing data prohibited in these ', ctlname, ' columns: ', missingstr)
+    }
 }
