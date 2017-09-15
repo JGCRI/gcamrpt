@@ -193,3 +193,35 @@ process_scenario <- function(scen, dbloc, dbname, q2run, varctl)
 
     rslts
 }
+
+
+#' Merge tables for multiple scenarios into a single scenario
+#'
+#' For each variable collect the tables for each of the scenarios and fuse them
+#' into a single table.
+#'
+#' @param rawrslts Results by scenario and variable passed in from main control
+#' loop
+#' @return List of data frames, one for each variable, with all scenarios
+#' included.
+#' @keywords internal
+merge_scenarios <- function(rawrslts)
+{
+    ## set of variables should be the same for all scenarios, so we can just
+    ## grab the list from the first scenario.
+    vars <- names(rawrslts[[1]])
+    scenarios <- names(rawrslts)
+
+    lapply(vars,
+           function(var) {
+               ## pull the tables for all scenarios
+               vtbls <- lapply(scenarios,
+                               function(scen) {
+                                   tbl <- rawrslts[[scen]][[var]]
+                                   if(!('scenario' %in% names(tbl)))
+                                       tbl$scenario <- scen
+                                   tbl
+                               })
+               dplyr::bind_rows(vtbl)
+           })
+}
