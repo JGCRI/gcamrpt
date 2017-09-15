@@ -8,6 +8,8 @@
 #'
 #' @section Usage:
 #'
-#' Coming soon.
+#' The main entry point into the report generator is the \code{\link{generate}}
+#' function.  Please see the documentation for that function for options
+#' settings and instructions on preparing the required control files.
 #'
 "_PACKAGE"
