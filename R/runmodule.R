@@ -117,9 +117,15 @@ module.population <- function(var, mode, allqueries, aggkeys, aggfn, strtyr, end
     }
     else {
         print(paste('Function for processing variable', var))
-        data.frame()
+        population <- allqueries$'Population'; print(paste('Subset queries to ', var))
+        population$value <- aggfn(population$value); print('Aggregated')
+        population <- subset(population, Year >= strtyr & Year < endyr); print('Apply start and end years')
+        population <- filterfn(population, filters); print('Apply filters')
+        population <- unitconv(population, ounit); print('Convert units')
+        population
     }
 }
+
 #' Table of allowable aggregation functions
 #'
 #' @keywords internal
@@ -152,6 +158,32 @@ getaggfn <- function(fname)
     }
 }
 
+#' Filtering function
+#'
+#' This function filters query output according to filters parameter
+#'
+#' @param filters Character string giving a list of additional filters to be
+#' applied, in s-exp format.
+#' @keywords internal
+filterfn <- function(module_data, filters)
+{
+    #Needs work
+    module_data
+}
+
+
+#' Unit conversion
+#'
+#' This function converts module data into output units.
+#'
+#' @param ounit Desired output unit.  If omitted, results will be returned with
+#' no unit conversion.
+#' @keywords internal
+unitconv <- function(module_data, ounit)
+{
+    #Needs work
+    module_data
+}
 
 #' Token indicating get-queries mode for \code{\link{runModule}} family of
 #' functions.
