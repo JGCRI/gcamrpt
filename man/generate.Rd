@@ -4,9 +4,9 @@
 \alias{generate}
 \title{Generate a report for a GCAM experiment}
 \usage{
-generate(scenctl, varctl, dbloc, fileformat = getOption(iamrpt.fileformat,
-  "CSV"), scenmerge = getOption(iamrpt.scenmerge, TRUE),
-  tabs = getOption(iamrpt.tabs, TRUE))
+generate(scenctl, varctl, dbloc, fileformat = getOption("iamrpt.fileformat",
+  "CSV"), scenmerge = getOption("iamrpt.scenmerge", TRUE),
+  tabs = getOption("iamrpt.tabs", TRUE))
 }
 \arguments{
 \item{scenctl}{Name of the scenario control file.}

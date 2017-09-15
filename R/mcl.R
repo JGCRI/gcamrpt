@@ -111,9 +111,9 @@
 generate <- function(scenctl,
                      varctl,
                      dbloc,
-                     fileformat = getOption(iamrpt.fileformat, 'CSV'),
-                     scenmerge = getOption(iamrpt.scenmerge, TRUE),
-                     tabs = getOption(iamrpt.tabs, TRUE))
+                     fileformat = getOption('iamrpt.fileformat', 'CSV'),
+                     scenmerge = getOption('iamrpt.scenmerge', TRUE),
+                     tabs = getOption('iamrpt.tabs', TRUE))
 {
     scenctl <- readr::read_csv(scenctl)
     varctl <- readr::read_csv(varctl)
@@ -224,7 +224,7 @@ merge_scenarios <- function(rawrslts)
                                        tbl$scenario <- scen
                                    tbl
                                })
-               dplyr::bind_rows(vtbl)
+               dplyr::bind_rows(vtbls)
            })
 }
 
@@ -287,7 +287,7 @@ validate1 <- function(ctl, ctlname, expectcols, rqdcols) {
                              any(is.na(col) | col == '')
                          })
     if(any(missingdat)) {
-        missingstr <- paste(scenrqd[missingdat], collapse=', ')
+        missingstr <- paste(rqdcols[missingdat], collapse=', ')
         stop('Missing data prohibited in these ', ctlname, ' columns: ', missingstr)
     }
 }

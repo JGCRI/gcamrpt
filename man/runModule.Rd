@@ -39,6 +39,6 @@ no unit conversion.}
 \description{
 Run the module associated with object \code{var}.  If mode is \code{\link{GETQ}},
 return a character vector of the names of all GCAM queries needed as input by
-the module.  If mode is \code{\link{run}}, return a data frame containing the
+the module.  If mode is \code{\link{RUN}}, return a data frame containing the
 processed variable.
 }
