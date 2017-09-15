@@ -53,6 +53,10 @@ output.}
     \item{aggregation keys}{A comma-separated list of columns to group by
 when aggregating the raw GCAM output.  This column can be left blank if no
 aggregation is desired for this variable.}
+    \item{aggregation function}{The function to use in the
+aggregation. Supported functions are \code{sum}, \code{mean}, \code{max},
+\code{min}, and \code{median}.  If none is specified, \code{sum} will be
+used.}
     \item{start year}{First year to include in the report (inclusive).}
     \item{end year}{Last year to include in the report (inclusive).}
     \item{filters}{Arbitrary filters to apply to the table, \emph{before}

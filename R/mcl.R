@@ -31,6 +31,10 @@
 #'     \item{aggregation keys}{A comma-separated list of columns to group by
 #' when aggregating the raw GCAM output.  This column can be left blank if no
 #' aggregation is desired for this variable.}
+#'     \item{aggregation function}{The function to use in the
+#' aggregation. Supported functions are \code{sum}, \code{mean}, \code{max},
+#' \code{min}, and \code{median}.  If none is specified, \code{sum} will be
+#' used.}
 #'     \item{start year}{First year to include in the report (inclusive).}
 #'     \item{end year}{Last year to include in the report (inclusive).}
 #'     \item{filters}{Arbitrary filters to apply to the table, \emph{before}
@@ -118,12 +122,12 @@ generate <- function(scenctl,
 
     ## Collect the queries that we will need to run.
     q2run <-
-        sapply(gcvars, function(v) {runModule(v, getq)}) %>%
+        sapply(gcvars, function(v) {runModule(v, GETQ)}) %>%
           unique
 
     ## process the scenarios, one by one
     rslts <- Map(function(scen, dbname) {
-                     process_scenario(scen, dbloc, dbname, varctl)
+                     process_scenario(scen, dbloc, dbname, q2run, varctl)
                  },
                  scenctl[['GCAM scenario']],
                  scenctl[['scenario db']])
@@ -149,4 +153,43 @@ generate <- function(scenctl,
 
     message('FIN.')
     invisible(NULL)
+}
+
+
+#' Run queries and process results for a single scenario
+#'
+#' This is the main work function for \code{\link{generate}} and should only be
+#' called from there.
+#'
+#' @param scen Scenario name
+#' @param dbloc Directory containing the database
+#' @param dbname Name of the database
+#' @param q2run Character vector of titles of queries to run.
+#' @param varctl Table read in from the variable control file.
+#' @keywords internal
+process_scenario <- function(scen, dbloc, dbname, q2run, varctl)
+{
+    message('Processing scenario: ', scen)
+
+    ## Run the required queries
+    queries <- runQueries(q2run, dbloc, dbname, scen)
+
+    ## Process each requested variable
+    rslts <-
+        Map(function(var, aggkeys, aggfn, strtyr, endyr, filters, ounit) {
+                runModule(var, RUN, queries, aggkeys, aggfn, strtyr, endyr,
+                          filters, ounit)
+            },
+            varctl[['GCAM variable']],
+            varctl[['aggregation keys']],
+            varctl[['aggregation function']],
+            varctl[['start year']],
+            varctl[['end year']],
+            varctl[['filters']],
+            varctl[['output units']])
+
+    ## Rename variables to their output values
+    names(rslts) <- varctl[['output variable']]
+
+    rslts
 }
