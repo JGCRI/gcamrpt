@@ -4,7 +4,7 @@
 
 #' Run a data module
 #'
-#' Run the module associated with object \code{var}.  If mode is \code{\link{getq}},
+#' Run the module associated with object \code{var}.  If mode is \code{\link{GETQ}},
 #' return a character vector of the names of all GCAM queries needed as input by
 #' the module.  If mode is \code{\link{run}}, return a data frame containing the
 #' processed variable.
@@ -12,9 +12,9 @@
 #' @param var Name of the variable to produce.  This must be one of the varibles
 #' known to the system.  The \code{\link{listModules}} function lists the known
 #' variables.
-#' @param mode Either \code{getq} or \code{run}.  The former returns
+#' @param mode Either \code{GETQ} or \code{RUN}.  The former returns
 #' the names of the GCAM queries needed for the calculation; the latter runs the
-#' calculation.  In \code{getq} mode all of the remaining arguments are
+#' calculation.  In \code{GETQ} mode all of the remaining arguments are
 #' ignored.
 #' @param allqueries List of all the queries pulled by the system.
 #' @param aggkeys Character string listing the aggregation columns desired.
@@ -32,6 +32,13 @@
 runModule <- function(var, mode, allqueries=NULL, aggkeys=NULL, aggfn=NULL,
                       strtyr=NULL, endyr=NULL, filters=NULL, ounit=NULL)
 {
+    if(is.null(aggfn) || is.na(aggfn)) {
+        aggfn <- base::sum
+    }
+    else {
+        getaggfn(aggfn)
+    }
+
     fun <- tryCatch(
         ## Find the corresponding function, limited to the package environment
         get(canonicalForm(var), envir=environment(runModule), mode='function',
@@ -71,7 +78,7 @@ canonicalForm <- function(var)
 module.test_fun <- function(var, mode, allqueries, aggkeys, aggfn, strtyr, endyr,
                     filters, ounit)
 {
-    if(mode == getq) {
+    if(mode == GETQ) {
         character()
     }
     else {
@@ -94,12 +101,44 @@ listModules <- function()
       gsub('^module\\.', '', . )
 }
 
+#' Table of allowable aggregation functions
+#'
+#' @keywords internal
+AGGFNTBL <- list(
+    sum = base::sum,
+    mean = base::mean,
+    max = base::max,
+    min = base::min,
+    median = stats::median
+    )
+
+
+#' Look up an aggregation function by name.
+#'
+#' Look up an aggregation function by name, restricting it to a whitelisted set
+#' of known functions.
+#'
+#' @param fname Name of the requested function.
+#' @keywords internal
+getaggfn <- function(fname)
+{
+    if(fname %in% names(AGGFNTBL)) {
+        AGGFNTBL[[fname]]
+    }
+    else {
+        warning('Function ', fname,
+                ' not found in allowed aggregation function table.\n',
+                'No aggregation will be performed.')
+        NULL
+    }
+}
+
 
 #' Token indicating get-queries mode for \code{\link{runModule}} family of
 #' functions.
 #' @keywords internal
-getq <- 'GETQUERIES'
+GETQ <- 'GETQUERIES'
 
 #' Token indicating run mode for \code{\link{runModule}} family of functions.
 #' @keywords internal
-run <- 'RUN'
+RUN <- 'RUN'

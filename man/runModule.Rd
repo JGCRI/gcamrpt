@@ -12,9 +12,9 @@ runModule(var, mode, allqueries = NULL, aggkeys = NULL, aggfn = NULL,
 known to the system.  The \code{\link{listModules}} function lists the known
 variables.}
 
-\item{mode}{Either \code{getq} or \code{run}.  The former returns
+\item{mode}{Either \code{GETQ} or \code{RUN}.  The former returns
 the names of the GCAM queries needed for the calculation; the latter runs the
-calculation.  In \code{getq} mode all of the remaining arguments are
+calculation.  In \code{GETQ} mode all of the remaining arguments are
 ignored.}
 
 \item{allqueries}{List of all the queries pulled by the system.}
@@ -37,7 +37,7 @@ applied, in s-exp format.}
 no unit conversion.}
 }
 \description{
-Run the module associated with object \code{var}.  If mode is \code{\link{getq}},
+Run the module associated with object \code{var}.  If mode is \code{\link{GETQ}},
 return a character vector of the names of all GCAM queries needed as input by
 the module.  If mode is \code{\link{run}}, return a data frame containing the
 processed variable.
