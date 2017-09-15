@@ -101,6 +101,25 @@ listModules <- function()
       gsub('^module\\.', '', . )
 }
 
+#' Population Data Module
+#'
+#' In mode = GETQ, returns query title. In mode = RUN, returns requested data.
+#'
+#' @keywords internal
+
+module.population <- function(var, mode, allqueries, aggkeys, aggfn, strtyr, endyr,
+                            filters, ounit)
+{
+    if(mode == GETQ) {
+        # As a procedure, should return title from query file or manual return?
+        # For more complex variables, will return multiple query titles.
+        'Population'
+    }
+    else {
+        print(paste('Function for processing variable', var))
+        data.frame()
+    }
+}
 #' Table of allowable aggregation functions
 #'
 #' @keywords internal
