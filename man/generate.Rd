@@ -4,14 +4,16 @@
 \alias{generate}
 \title{Generate a report for a GCAM experiment}
 \usage{
-generate(scenctl, varctl, fileformat = getOption(iamrpt.fileformat, "CSV"),
-  scenmerge = getOption(iamrpt.scenmerge, TRUE),
+generate(scenctl, varctl, dbloc, fileformat = getOption(iamrpt.fileformat,
+  "CSV"), scenmerge = getOption(iamrpt.scenmerge, TRUE),
   tabs = getOption(iamrpt.tabs, TRUE))
 }
 \arguments{
 \item{scenctl}{Name of the scenario control file.}
 
 \item{varctl}{Name of the variable control file.}
+
+\item{dbloc}{Directory holding the GCAM databases}
 
 \item{fileformat}{Desired format for output files.}
 
@@ -63,7 +65,7 @@ can be left blank.}
 }
 }
 
-\section{Output format options}{
+\section{Output}{
 
 
 The system has several options for formatting output.  These can be passed as
@@ -83,6 +85,19 @@ scenario (if applicable).  In the latter case all of the tables will be
 written into a single tab or file, with the name of the scenario and variable
 before each table.}
 }
+
+Output filenames will be chosen automatically.  For an XLSX file the filename
+will be 'iamrpt.xlsx'.  For CSV output with \code{tabs == FALSE} the result
+will be 'iamrpt.csv'.  For CSV output with \code{tabs == TRUE} the output
+files will be named with the scenario (if scenario tables are not merged) and
+variable output names, for example 'Reference-GDP.csv'.  In any of these
+cases, if a file already exists with the automatically chosen filename, the
+first unused number will be appended, e.g., iamrpt001.xlsx, iamrpt002.xlsx,
+etc.
+
+The system produces a variety of diagnostic messages as it runs.  These can
+be suppressed with \code{\link[base]{suppressMessages}}.  More serious
+problems will be indicated with warnings.
 }
 
 \section{Filters}{
