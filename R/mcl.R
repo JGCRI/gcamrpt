@@ -104,6 +104,8 @@
 #' as separate tables.
 #' @param tabs Flag: if true, put each table into a separate tab or file.
 #' Otherwise, put them all into a single long tab/file.
+#' @return NULL; the report will be written to output files as described in the
+#' Output section.
 #' @importFrom magrittr %>%
 #' @export
 generate <- function(scenctl,
@@ -224,4 +226,68 @@ merge_scenarios <- function(rawrslts)
                                })
                dplyr::bind_rows(vtbl)
            })
+}
+
+
+#' Validate the structures read in from the control files
+#'
+#' Check for the following error conditions:
+#' \itemize{
+#'   \item{All expected columns are present.}
+#'   \item{No empty or missing values in columns where missing values are not
+#' permitted.}
+#' }
+#' Issue warnings for the following conditions:
+#' \itemize{
+#'   \item{Extraneous columns present}
+#' }
+#'
+#' @param scenctl Scenario control file structure
+#' @param varctl Variables control file structure
+#' @return NULL; Warnings or errors will be thrown as required.
+#' @keywords internal
+validatectl <- function(scenctl, varctl)
+{
+    scencols <- c('GCAM scenario', 'output scenario', 'scenario db')
+    scenrqd <- scencols
+
+    varcols <- c('GCAM variable', 'output variable', 'aggregation keys',
+                 'aggregation function', 'start year', 'end year', 'filters',
+                 'output units')
+    varrqd <- varcols[1:2]
+
+    validate1(scenctl, 'scenario control', scencols, scenrqd)
+    validate1(varctl, 'variable control', varcols, varrqd)
+    invisible(NULL)
+}
+
+#' Work function for validatectl
+#'
+#' @param ctl Control file structure
+#' @param ctlname Name of the control file we're testing (used in error messages)
+#' @param expectcols Expected columns for this control file
+#' @param rqdcols Columns for which data is required (no missing allowed)
+#' @keywords internal
+validate1 <- function(ctl, ctlname, expectcols, rqdcols) {
+    extraneous <- !(names(ctl) %in% expectcols)
+    if(any(extraneous)) {
+        extstr <- paste(names(ctl)[extraneous], collapse=', ')
+        warning('Unrecognized columns in ', ctlname, ' : ', extstr)
+    }
+
+    missingcols <- !(expectcols %in% names(ctl))
+    if(any(missingcols)) {
+        missingstr <- paste(expectcols[missingcols], collapse=', ')
+        stop('Columns missing in ', ctlname, ' :  ', missingstr)
+    }
+
+    missingdat <- sapply(rqdcols,
+                         function(coln) {
+                             col <- ctl[[coln]]
+                             any(is.na(col) | col == '')
+                         })
+    if(any(missingdat)) {
+        missingstr <- paste(scenrqd[missingdat], collapse=', ')
+        stop('Missing data prohibited in these ', ctlname, ' columns: ', missingstr)
+    }
 }

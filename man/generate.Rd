@@ -23,6 +23,10 @@ as separate tables.}
 \item{tabs}{Flag: if true, put each table into a separate tab or file.
 Otherwise, put them all into a single long tab/file.}
 }
+\value{
+NULL; the report will be written to output files as described in the
+Output section.
+}
 \description{
 Read the user input files (see details below) and run the report generation.
 For each requested scenario the system will pull the queries needed to
