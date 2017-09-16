@@ -16,7 +16,7 @@
 filter <- function(tbl, startyr, endyr, filterstr)
 {
     mask <- rep(TRUE, nrow(tbl))
-    if((is.na(startyr) || startyr == '')) {
+    if(!(is.na(startyr) || startyr == '')) {
         mask <- mask & (tbl$year >= startyr)
     }
 
@@ -57,13 +57,13 @@ filter <- function(tbl, startyr, endyr, filterstr)
 #' @keywords internal
 filterfns <- list(
     ## == and != are assumed to be string comparisons
-    `==` = function(col, x) {col == x},
-    `!=` = function(col, x) {col != x},
+    '==' = function(col, x) {col == x},
+    '!=' = function(col, x) {col != x},
     ## Order relations assumed to be numeric
-    `<` = function(col, x) {col < as.numeric(x)},
-    `>` = function(col, x) {col > as.numeric(x)},
-    `<=` = function(col, x) {col <= as.numeric(x)},
-    `>=` = function(col, x) {col >= as.numeric(x)},
+    '<' = function(col, x) {col < as.numeric(x)},
+    '>' = function(col, x) {col > as.numeric(x)},
+    '<=' = function(col, x) {col <= as.numeric(x)},
+    '>=' = function(col, x) {col >= as.numeric(x)},
     ## regular expressions
     matches = function(col, x) {grepl(x, col)},
     matchesi = function(col, x) {grepl(x, col, ignore.case=TRUE)},
@@ -94,7 +94,7 @@ dofilter <- function(fvec, tbl)
         fstr <- fvec[2]
         colstr <- fvec[3]
         val <- fvec[4]
-        if(!(fstr %in% filterfns)) {
+        if(!(fstr %in% names(filterfns))) {
             warning('Unknown filter function: ', fstr, '  Skipping.')
             rslt <- rep(TRUE, nrow(tbl))
         }
