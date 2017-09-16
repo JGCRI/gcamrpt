@@ -33,37 +33,6 @@ module.population <- function(var, mode, allqueries, aggkeys, aggfn, strtyr, end
     }
 }
 
-#' Table of allowable aggregation functions
-#'
-#' @keywords internal
-AGGFNTBL <- list(
-    sum = base::sum,
-    mean = base::mean,
-    max = base::max,
-    min = base::min,
-    median = stats::median
-    )
-
-
-#' Look up an aggregation function by name.
-#'
-#' Look up an aggregation function by name, restricting it to a whitelisted set
-#' of known functions.
-#'
-#' @param fname Name of the requested function.
-#' @keywords internal
-getaggfn <- function(fname)
-{
-    if(fname %in% names(AGGFNTBL)) {
-        AGGFNTBL[[fname]]
-    }
-    else {
-        warning('Function ', fname,
-                ' not found in allowed aggregation function table.\n',
-                'No aggregation will be performed.')
-        NULL
-    }
-}
 
 #' Filtering function
 #'

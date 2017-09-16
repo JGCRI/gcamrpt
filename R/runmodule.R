@@ -32,13 +32,6 @@
 runModule <- function(var, mode, allqueries=NULL, aggkeys=NULL, aggfn=NULL,
                       strtyr=NULL, endyr=NULL, filters=NULL, ounit=NULL)
 {
-    if(is.null(aggfn) || is.na(aggfn)) {
-        aggfn <- base::sum
-    }
-    else {
-        getaggfn(aggfn)
-    }
-
     fun <- tryCatch(
         ## Find the corresponding function, limited to the package environment
         get(canonicalForm(var), envir=environment(runModule), mode='function',
