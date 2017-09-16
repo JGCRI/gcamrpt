@@ -18,8 +18,11 @@ Imports:
     rgcam (>= 0.4.2),
     readr (>= 1.1.1),
     dplyr (>= 0.5),
+    stringr (>= 1.2.0),
     magrittr (>= 1.5)
 Remotes:
     JGCRI/rgcam
 RoxygenNote: 6.0.1
-Suggests: testthat
+Suggests:
+    testthat,
+    lazyeval
