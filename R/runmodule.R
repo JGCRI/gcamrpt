@@ -42,7 +42,7 @@ runModule <- function(var, mode, allqueries=NULL, aggkeys=NULL, aggfn=NULL,
         },
         finally = NULL
         )
-    fun(var, mode, allqueries, aggkeys, aggfn, strtyr, endyr, filters, ounit)
+    fun(mode, allqueries, aggkeys, aggfn, strtyr, endyr, filters, ounit)
 }
 
 

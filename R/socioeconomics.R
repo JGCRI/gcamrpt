@@ -14,8 +14,8 @@
 #'
 #' @keywords internal
 
-module.population <- function(var, mode, allqueries, aggkeys, aggfn, strtyr, endyr,
-                            filters, ounit)
+module.population <- function(mode, allqueries, aggkeys, aggfn, strtyr, endyr,
+                              filters, ounit)
 {
     if(mode == GETQ) {
         # As a procedure, should return title from query file or manual return?

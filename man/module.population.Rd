@@ -4,7 +4,7 @@
 \alias{module.population}
 \title{Population Data Module}
 \usage{
-module.population(var, mode, allqueries, aggkeys, aggfn, strtyr, endyr, filters,
+module.population(mode, allqueries, aggkeys, aggfn, strtyr, endyr, filters,
   ounit)
 }
 \description{
