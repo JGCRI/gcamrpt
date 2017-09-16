@@ -84,7 +84,7 @@
 #' Filters are specified using three-element modified s-expressions.  For
 #' example:
 #'
-#' (notmatches, technology, CCS)
+#' (notmatches; technology; CCS)
 #'
 #' This would describe a filter that would select only those rows for which the
 #' technology column does not match the regular expression "CCS".  Multiple
