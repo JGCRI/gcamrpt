@@ -5,15 +5,18 @@
 \alias{output_xlsx}
 \title{Output function for CSV format}
 \usage{
-output_csv(rslts, tabs)
+output_csv(rslts, tabs, dirname)
 
-output_xlsx(rslts, tabs)
+output_xlsx(rslts, tabs, dirname)
 }
 \arguments{
-\item{rslts}{Results tables from \code{\link{generate}}.}
+\item{rslts}{Results tables from \code{\link{generate}}.  This must be either
+a list of data frames or a list of lists of data frames.}
 
 \item{tabs}{Flag indicating whether variables should be written to separate
 tabs/files.}
+
+\item{dirname}{Directory to write output file(s) into.}
 }
 \description{
 Output function for CSV format
