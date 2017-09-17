@@ -18,39 +18,25 @@ module.population <- function(mode, allqueries, aggkeys, aggfn, strtyr, endyr,
                               filters, ounit)
 {
     if(mode == GETQ) {
-        # As a procedure, should return title from query file or manual return?
+        # Return titles of necessary queries
         # For more complex variables, will return multiple query titles.
         'Population'
     }
     else {
-        print(paste('Function for processing variable', var))
-        population <- allqueries$'Population'; print(paste('Subset queries to ', var))
-        population$value <- aggfn(population$value); print('Aggregated')
-        population <- subset(population, Year >= strtyr & Year < endyr); print('Apply start and end years')
-        population <- filterfn(population, filters); print('Apply filters')
-        population <- unitconv(population, ounit); print('Convert units')
+        message('Function for processing variable: Population')
+
+        population <- allqueries$'Population'
+        population <- aggregate(population, aggfn, aggkeys)
+        population <- filter(population, startyr, endyr, filters)
+        population <- unitconv_counts(population, ounit)
         population
     }
 }
 
 
-#' Filtering function
+#' Unit conversion: counts
 #'
-#' This function filters query output according to filters parameter
-#'
-#' @param filters Character string giving a list of additional filters to be
-#' applied, in s-exp format.
-#' @keywords internal
-filterfn <- function(module_data, filters)
-{
-    #Needs work
-    module_data
-}
-
-
-#' Unit conversion
-#'
-#' This function converts module data into output units.
+#' This function converts data reported in counts, e.g. thousands, millions, etc..
 #'
 #' @param ounit Desired output unit.  If omitted, results will be returned with
 #' no unit conversion.
@@ -58,5 +44,6 @@ filterfn <- function(module_data, filters)
 unitconv <- function(module_data, ounit)
 {
     #Needs work
+    message("Counts unit conversion function not yet implemented. Data returned unmodified")
     module_data
 }
