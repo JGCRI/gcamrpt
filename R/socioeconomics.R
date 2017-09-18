@@ -66,7 +66,7 @@ module.gdp_mer <- function(mode, allqueries, aggkeys, aggfn, strtyr, endyr,
     }
 }
 
-#' GDP PPP Data Module
+#' Per capita GDP PPP Data Module
 #'
 #' Produce GDP PPP by region.
 #'
@@ -80,16 +80,16 @@ module.gdp_mer <- function(mode, allqueries, aggkeys, aggfn, strtyr, endyr,
 #'
 #' @keywords internal
 
-module.gdp_ppp <- function(mode, allqueries, aggkeys, aggfn, strtyr, endyr,
+module.pcgdp_ppp <- function(mode, allqueries, aggkeys, aggfn, strtyr, endyr,
                            filters, ounit)
 {
     if(mode == GETQ) {
         # Return titles of necessary queries
         # For more complex variables, will return multiple query titles.
-        'GDP PPP'
+        'Per capita GDP PPP'
     }
     else {
-        message('Function for processing variable: GDP PPP')
+        message('Function for processing variable: Per capita GDP PPP')
 
         gdp_ppp <- allqueries$'gdp_ppp'
         gdp_ppp <- aggregate(gdp_ppp, aggfn, aggkeys)

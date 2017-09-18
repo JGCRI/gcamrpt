@@ -12,7 +12,7 @@
 
 	<aQuery>
     		<all-regions/>
-    		<gdpQueryBuilder title="GDP(PPP)">
+    		<gdpQueryBuilder title="pcGDP(PPP)">
 			<axis1 name="Region">region</axis1>
 			<axis2 name="Year">gdp-per-capita-ppp</axis2>
 			<xPath buildList="true" dataName="gdp-per-capita-ppp" group="false" sumAll="false">GDP/gdp-per-capita-ppp/text()</xPath>

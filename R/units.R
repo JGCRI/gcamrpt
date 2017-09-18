@@ -29,3 +29,17 @@ unitconv_energy <- function(module_data, ounit)
     message("Energy unit conversion function not yet implemented. Data returned unmodified")
     module_data
 }
+
+#' Dollar Years
+#'
+#' This function converts dollar values from different years
+#'
+#' @param ounit Desired output unit.  If omitted, results will be returned with
+#' no unit conversion.
+#' @keywords internal
+unitconv_usdollar <- function(module_data, ounit)
+{
+    #Needs work
+    message("Dollar value conversion function not yet implemented. Data returned unmodified")
+    module_data
+}
