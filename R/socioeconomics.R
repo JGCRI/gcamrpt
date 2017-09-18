@@ -47,7 +47,7 @@ module.population <- function(mode, allqueries, aggkeys, aggfn, strtyr, endyr,
 #'
 #' @keywords internal
 
-module.gdp_mer <- function(mode, allqueries, aggkeys, aggfn, strtyr, endyr,
+module.gdp_mer_ <- function(mode, allqueries, aggkeys, aggfn, strtyr, endyr,
                               filters, ounit)
 {
     if(mode == GETQ) {
@@ -80,7 +80,7 @@ module.gdp_mer <- function(mode, allqueries, aggkeys, aggfn, strtyr, endyr,
 #'
 #' @keywords internal
 
-module.pcgdp_ppp <- function(mode, allqueries, aggkeys, aggfn, strtyr, endyr,
+module.pcgdp_ppp_ <- function(mode, allqueries, aggkeys, aggfn, strtyr, endyr,
                            filters, ounit)
 {
     if(mode == GETQ) {
