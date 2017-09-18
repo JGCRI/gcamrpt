@@ -84,7 +84,7 @@
 #' Filters are specified using three-element modified s-expressions.  For
 #' example:
 #'
-#' (notmatches, technology, CCS)
+#' (notmatches; technology; CCS)
 #'
 #' This would describe a filter that would select only those rows for which the
 #' technology column does not match the regular expression "CCS".  Multiple
@@ -104,6 +104,8 @@
 #' as separate tables.
 #' @param tabs Flag: if true, put each table into a separate tab or file.
 #' Otherwise, put them all into a single long tab/file.
+#' @param outputdir Directory to write output to.  Default is the current
+#' working directory.
 #' @return NULL; the report will be written to output files as described in the
 #' Output section.
 #' @importFrom magrittr %>%
@@ -113,7 +115,8 @@ generate <- function(scenctl,
                      dbloc,
                      fileformat = getOption('iamrpt.fileformat', 'CSV'),
                      scenmerge = getOption('iamrpt.scenmerge', TRUE),
-                     tabs = getOption('iamrpt.tabs', TRUE))
+                     tabs = getOption('iamrpt.tabs', TRUE),
+                     outputdir = getwd())
 {
     scenctl <- readr::read_csv(scenctl)
     varctl <- readr::read_csv(varctl)
@@ -142,15 +145,15 @@ generate <- function(scenctl,
 
 
     if(fileformat == 'XLSX') {
-        output_xlsx(rslts, tabs)
+        output_xlsx(rslts, tabs, dirname)
     }
     else if(fileformat == 'CSV') {
-        output_csv(rslts, tabs)
+        output_csv(rslts, tabs, dirname)
     }
     else {
         warning('Unknown file format ', fileformat, ' requested. ',
                 'Writing as CSV.')
-        output_csv(rslts, tabs)
+        output_csv(rslts, tabs, dirname)
     }
 
     message('FIN.')
@@ -212,6 +215,8 @@ merge_scenarios <- function(rawrslts)
     ## set of variables should be the same for all scenarios, so we can just
     ## grab the list from the first scenario.
     vars <- names(rawrslts[[1]])
+    names(vars) <- vars                 # names attribute will be propagated to
+                                        # the result.
     scenarios <- names(rawrslts)
 
     lapply(vars,

@@ -6,7 +6,7 @@
 \usage{
 generate(scenctl, varctl, dbloc, fileformat = getOption("iamrpt.fileformat",
   "CSV"), scenmerge = getOption("iamrpt.scenmerge", TRUE),
-  tabs = getOption("iamrpt.tabs", TRUE))
+  tabs = getOption("iamrpt.tabs", TRUE), outputdir = getwd())
 }
 \arguments{
 \item{scenctl}{Name of the scenario control file.}
@@ -22,6 +22,9 @@ as separate tables.}
 
 \item{tabs}{Flag: if true, put each table into a separate tab or file.
 Otherwise, put them all into a single long tab/file.}
+
+\item{outputdir}{Directory to write output to.  Default is the current
+working directory.}
 }
 \value{
 NULL; the report will be written to output files as described in the
@@ -114,7 +117,7 @@ problems will be indicated with warnings.
 Filters are specified using three-element modified s-expressions.  For
 example:
 
-(notmatches, technology, CCS)
+(notmatches; technology; CCS)
 
 This would describe a filter that would select only those rows for which the
 technology column does not match the regular expression "CCS".  Multiple
