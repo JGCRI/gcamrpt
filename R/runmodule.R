@@ -32,13 +32,6 @@
 runModule <- function(var, mode, allqueries=NULL, aggkeys=NULL, aggfn=NULL,
                       strtyr=NULL, endyr=NULL, filters=NULL, ounit=NULL)
 {
-    if(is.null(aggfn) || is.na(aggfn)) {
-        aggfn <- base::sum
-    }
-    else {
-        getaggfn(aggfn)
-    }
-
     fun <- tryCatch(
         ## Find the corresponding function, limited to the package environment
         get(canonicalForm(var), envir=environment(runModule), mode='function',
@@ -49,7 +42,7 @@ runModule <- function(var, mode, allqueries=NULL, aggkeys=NULL, aggfn=NULL,
         },
         finally = NULL
         )
-    fun(var, mode, allqueries, aggkeys, aggfn, strtyr, endyr, filters, ounit)
+    fun(mode, allqueries, aggkeys, aggfn, strtyr, endyr, filters, ounit)
 }
 
 
@@ -99,38 +92,6 @@ listModules <- function()
     . <- NULL                           # suppress package warnings
     ls(environment(listModules), pattern='^module\\.') %>%
       gsub('^module\\.', '', . )
-}
-
-#' Table of allowable aggregation functions
-#'
-#' @keywords internal
-AGGFNTBL <- list(
-    sum = base::sum,
-    mean = base::mean,
-    max = base::max,
-    min = base::min,
-    median = stats::median
-    )
-
-
-#' Look up an aggregation function by name.
-#'
-#' Look up an aggregation function by name, restricting it to a whitelisted set
-#' of known functions.
-#'
-#' @param fname Name of the requested function.
-#' @keywords internal
-getaggfn <- function(fname)
-{
-    if(fname %in% names(AGGFNTBL)) {
-        AGGFNTBL[[fname]]
-    }
-    else {
-        warning('Function ', fname,
-                ' not found in allowed aggregation function table.\n',
-                'No aggregation will be performed.')
-        NULL
-    }
 }
 
 

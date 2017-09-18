@@ -1,5 +1,0 @@
-GCAM variable,output variable,aggregation keys,aggregation function,start year,end year,filters,ounits
-GDP(MER),,,,,,,
-GDP(PPP),,,,,,,
-Population,,,,,,,
-Electricity,,,,,,,
