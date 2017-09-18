@@ -36,30 +36,42 @@ unitconv_energy <- function(module_data, ounit)
 #'
 #' @param ounit Desired output unit.  If omitted, results will be returned with
 #' no unit conversion.
+#' @importFrom lubridate year
 #' @keywords internal
 unitconv_usdollar <- function(module_data, ounit)
 {
-    #Needs work
-    message("Dollar value conversion function not yet implemented. Data returned unmodified")
-    module_data
+    if (length(unique(module_data$Units)) > 1) {
+        warning(paste("Variable reported in multiple units"))
+    }
+    else {
+        iunit <- gdp_ppp$Units[1]
+        year_pattern <- "[0-9]{2}"
 
-    #average over each year
-    gdpdef <- system.file("extdata", "GDPDEF.csv", package="iamrpt")
-    gdpdef <- read.table(gdpdef, header=TRUE, sep=",", as.is=TRUE)
-    gdpdef$DATE = as.POSIXlt(gdpdef$DATE, format = "%Y-%m-%d") #convert to POSIXct class
-    gdpdef$year = year(gdpdef$DATE) # add year column
-    gdpdef.grp.year = gdpdef[c("GDPDEF", "year")] %>%
-        group_by(year) %>%
-        summarize(avg=mean(GDPDEF))
-    gdpdef.grp.year = data.frame(gdpdef.grp.year) #return to data.frame (tibble after pipe operations)
+        # extract input year
+        m <- regexpr(pattern, iunit)
+        input_year <- paste("19", regmatches(iunit, m), sep="")
 
-    # Check current units
-    iunits <- module_data$units
-    # dollar value conversions
-    val.conversion = overnight[c("cost.year", "year")]
-    rows = match(val.conversion$cost.year, gdpdef.grp.year$year)
-    # positions in gdpdef.grp.year that give the GDPDEF for the cost.year
-    val.conversion = val.conversion %>%
-        mutate( deflator= gdpdef.grp.year[rows,"avg"], #populate column w/ GDPDEF values
-                sevenfive.value.factor = gdpdef.grp.year[gdpdef.grp.year$year==1975, "avg"] / deflator ) #multiply by cost to get in 1975$
+        # regexp extract output year
+        m <- regexpr(pattern, ounit)
+        output_year <- paste("19", regmatches(ounit, m), sep="")
+
+        # take GDPDEF data. average over each year
+        gdpdef <- system.file("extdata", "GDPDEF.csv", package="iamrpt")
+        gdpdef <- read.table(gdpdef, header=TRUE, sep=",", as.is=TRUE)
+        gdpdef$DATE = as.POSIXlt(gdpdef$DATE, format = "%Y-%m-%d") #convert to POSIXct class
+        gdpdef$year = year(gdpdef$DATE) # add year column
+        gdpdef.grp.year = gdpdef[c("GDPDEF", "year")] %>%
+            group_by(year) %>%
+            summarize(avg=mean(GDPDEF))
+        gdpdef.grp.year = data.frame(gdpdef.grp.year) #return to data.frame (tibble after pipe operations)
+
+        # calculate conversion factor
+        conv_factr <- gdpdef.grp.year[which(gdpdef.grp.year$year == output_year), avg] / gdpdef.grp.year[which(gdpdef.grp.year$year == input_year), avg]
+
+        # unit conversion
+        module_data$value <- conv_factr*module_data$value
+
+        # rename units column
+        module_data$Units <- ounit
+    }
 }
