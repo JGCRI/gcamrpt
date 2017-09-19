@@ -40,9 +40,7 @@ unitconv_energy <- function(module_data, ounit)
         iunit <- module_data$Units[1]
     }
 
-    cfacs <- system.file("extdata", "energyconv.csv", package="iamrpt")
-    cfacs <- utils::read.csv(cfacs, header=TRUE, row.names=1, sep=",")
-    cfac <- cfacs[iunit, ounit]
+    cfac <- energyconv[iunit, ounit]
 
     module_data[['value']] <- module_data[['value']] * cfac
 
