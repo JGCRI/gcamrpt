@@ -33,3 +33,4 @@ Therefore, it is an error to call this function without first calling that
 one.  It is similarly an error to include in the query list a query that
 wasn't parsed in the call to \code{parseQueries}.
 }
+\keyword{internal}

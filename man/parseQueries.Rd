@@ -13,8 +13,8 @@ parseQueries(qfile)
 \code{invisible(NULL)}
 }
 \description{
-This function parses queries from the input file and stores them in the
-package namespace, where \code{\link{runQueries}} can use them to run any
+Parses queries from the input file and store them in the
+package namespace, where \code{\link{generate}} can use them to run any
 queries requested.
 }
 \details{
@@ -23,5 +23,15 @@ file.  The stored list will persist until the R session is restarted and the
 package is reloaded.  Subsequent calls will accumulate in the list.  If the
 titles of any new queries duplicate existing queries, the new ones will
 overwrite the old ones.
+
+The function is run automatically at package startup, using the default query
+definitions shipped with the package.  Therefore, users shouldn't ordinarily
+need to run this function directly.  However, it may occasionally be useful
+to redefine one of the existing queries, if, for example, you have output
+databases that don't follow the normal schema for some reason.
+
+In theory you could add queries beyond the ones in the default queries
+configuration, but since none of the other code in the package will refer to
+them, this is primarily useful only to package developers for testing new
+processing code under development.
 }
-\keyword{internal}

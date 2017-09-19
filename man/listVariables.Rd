@@ -8,5 +8,11 @@ listVariables()
 }
 \description{
 Returns a character vector listing the variables that currently have recipes
-in the system.
+in the system.  The variable names will be printed in canonical form, which
+means that all letters will be converted to lowercase, and all
+non-alphanumeric characters will be replaced with \code{_}s.  Names of
+variables requested for output by users will similarly be converted to
+canonical form.  Users can take advantage of this to make the variable lists
+in their input more readable.  For example, the variable with canonical name
+\code{gdp_mer_} can be represented as \code{GDP(MER)} in input files.
 }

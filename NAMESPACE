@@ -2,6 +2,6 @@
 
 export(generate)
 export(listVariables)
-export(runQueries)
+export(parseQueries)
 importFrom(assertthat,assert_that)
 importFrom(magrittr,"%>%")
