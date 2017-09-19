@@ -2,7 +2,7 @@
 % Please edit documentation in R/units.R
 \name{unitconv_usdollar}
 \alias{unitconv_usdollar}
-\title{Dollar Years}
+\title{Unit conversion for dollar years}
 \usage{
 unitconv_usdollar(module_data, ounit)
 }
@@ -11,6 +11,7 @@ unitconv_usdollar(module_data, ounit)
 no unit conversion.}
 }
 \description{
-This function converts dollar values from different years
+Convert US dollar units from one dollar year to another using the GDP
+deflator obtained from the Federal Reserve's FRED database.
 }
 \keyword{internal}
