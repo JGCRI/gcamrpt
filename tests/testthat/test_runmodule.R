@@ -1,7 +1,7 @@
 context('runModule and friends')
 
 test_that('Modules can be listed.', {
-    ml <- listModules()
+    ml <- listVariables()
     expect_true(is.character(ml))
     expect_true('test_fun' %in% ml)
     expect_true('population' %in% ml)

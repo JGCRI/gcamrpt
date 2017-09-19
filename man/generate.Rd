@@ -31,7 +31,7 @@ NULL; the report will be written to output files as described in the
 Output section.
 }
 \description{
-Read the user input files (see details below) and run the report generation.
+Read the user control files (see details below) and run the report generation.
 For each requested scenario the system will pull the queries needed to
 compute the variables requested by the user.  The necessary calculations will
 be run, and the result will be written in the requested format.
@@ -39,37 +39,37 @@ be run, and the result will be written in the requested format.
 \section{Control files}{
 
 
-The report generator requires two control files.  The first lists the scenarios
+The report generator requires two \emph{control files}.  The first lists the scenarios
 to be run.  It should be a CSV file with the following columns:
 \describe{
-    \item{GCAM scenario}{The name that GCAM used for the scenario.}
-    \item{output scenario}{The name that will be used for the scenario in the
+    \item{\strong{GCAM scenario}}{The name that GCAM used for the scenario.}
+    \item{\strong{output scenario}}{The name that will be used for the scenario in the
 final report.}
-    \item{scenario db}{The name of the GCAM database the scenario was recorded in.}
+    \item{\strong{scenario db}}{The name of the GCAM database the scenario was recorded in.}
 }
 Each row in this table will cause a scenario to be generated in the report.
 
 The second control file lists the variables that should be written into the
 report.  It should have the following columns:
 \describe{
-    \item{GCAM variable}{The canonical GCAM name for the variable.  The
-\code{\link{listModules}} function lists the variables known to the report
+    \item{\strong{GCAM variable}}{The canonical GCAM name for the variable.  The
+\code{\link{listVariables}} function lists the variables known to the report
 generation system.}
-    \item{output variable}{The name that will be used for the variable in the
+    \item{\strong{output variable}}{The name that will be used for the variable in the
 output.}
-    \item{aggregation keys}{A comma-separated list of columns to group by
+    \item{\strong{aggregation keys}}{A comma-separated list of columns to group by
 when aggregating the raw GCAM output.  This column can be left blank if no
 aggregation is desired for this variable.}
-    \item{aggregation function}{The function to use in the
+    \item{\strong{aggregation function}}{The function to use in the
 aggregation. Supported functions are \code{sum}, \code{mean}, \code{max},
 \code{min}, and \code{median}.  If none is specified, \code{sum} will be
 used.}
-    \item{start year}{First year to include in the report (inclusive).}
-    \item{end year}{Last year to include in the report (inclusive).}
-    \item{filters}{Arbitrary filters to apply to the table, \emph{before}
+    \item{\strong{start year}}{First year to include in the report (inclusive).}
+    \item{\strong{end year}}{Last year to include in the report (inclusive).}
+    \item{\strong{filters}}{Arbitrary filters to apply to the table, \emph{before}
 aggregating.  These should be in the modified s-expression format described
 below.  If no filters are to be applied this column can be left blank.}
-    \item{output units}{The desired output units for the variable.  The
+    \item{\strong{output units}}{The desired output units for the variable.  The
 report generation system will attempt to convert the units and will throw an
 error if it fails.  If output in GCAM native units is desired, this column
 can be left blank.}
@@ -83,13 +83,13 @@ The system has several options for formatting output.  These can be passed as
 arugments to the system, or set as R options.  The names of the options and
 their functions are:
 \describe{
-    \item{iamrpt.fileformat}{File format for output.  Options are
+    \item{\strong{iamrpt.fileformat}}{File format for output.  Options are
 \code{"CSV"} and \code{"XLSX"}}
-    \item{iamrpt.scenmerge}{If \code{TRUE}, for each variable merge the
+    \item{\strong{iamrpt.scenmerge}}{If \code{TRUE}, for each variable merge the
 results for all scenarios into a single table (distinguished by the value of
 the scenario column).  Otherwise, create a separate table for each
 combination of scenario and variable.}
-    \item{iamrpt.tabs}{If \code{TRUE}, write each table to a separate tab (if
+    \item{\strong{iamrpt.tabs}}{If \code{TRUE}, write each table to a separate tab (if
 outputting to an xlsx file) or file (if outputting to csv files).  In the
 former case each tab/file will be named with the output variable name and
 scenario (if applicable).  In the latter case all of the tables will be
@@ -129,5 +129,23 @@ The s-expressions are "modified" by separating the elements with semicolons
 instead of whitespace.  This allows us to have operands with internal
 whitespace.  However, leading and trailing whitespace will always be
 trimmed.
+
+The filter functions currently recognized by the system are
+\describe{
+  \item{\strong{==}}{String equality}
+  \item{\strong{!=}}{String inequality}
+  \item{\strong{<}}{Numeric less-than}
+  \item{\strong{>}}{Numeric greather-than}
+  \item{\strong{<=}}{Numeric less-than-or-equals}
+  \item{\strong{>=}}{Numeric greater-than-or-equals}
+  \item{\strong{matches}}{Regular expression match.  Note that because of the
+way we parse these strings you can't have a ',', ';', '(', or ')' in your
+regular expressions for this function or any of the ones below.}
+  \item{\strong{matchesi}}{Case-insensitive regular expression match.}
+  \item{\strong{notmatches}}{Regular expression inverted match.  That is,
+select the rows that do \emph{not} match the given regular expression.}
+  \item{\strong{notmatchesi}}{Case-insensitive regular expression inverted
+match.}
+}
 }
 

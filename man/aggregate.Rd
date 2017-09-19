@@ -19,3 +19,4 @@ the table unmodified.}
 Aggregate the input table using the specified aggregation function,
 using the specified columns as keys.
 }
+\keyword{internal}

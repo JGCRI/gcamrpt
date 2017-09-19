@@ -10,6 +10,7 @@
 #' \code{\link[base]{sum}}.
 #' @param aggkeys String giving a list of aggregation keys.  If missing, return
 #' the table unmodified.
+#' @keywords internal
 aggregate <- function(tbl, aggfn, aggkeys)
 {
     if(is.null(aggkeys) || is.na(aggkeys)) {

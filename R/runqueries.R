@@ -26,8 +26,7 @@
 #' @param dbloc Name of the directory containing the database.
 #' @param dbfile Name of the database
 #' @param scenario Name of the scenario to query
-#'
-#' @export
+#' @keywords internal
 runQueries <- function(qlist, dbloc, dbfile, scenario=NULL)
 {
     con <- rgcam::localDBConn(dbloc, dbfile)
@@ -53,8 +52,8 @@ runQueries <- function(qlist, dbloc, dbfile, scenario=NULL)
 
 #' Parse queries from an XML query file
 #'
-#' This function parses queries from the input file and stores them in the
-#' package namespace, where \code{\link{runQueries}} can use them to run any
+#' Parses queries from the input file and store them in the
+#' package namespace, where \code{\link{generate}} can use them to run any
 #' queries requested.
 #'
 #' This function has the side effect of storing the queries retrieved from the
@@ -62,6 +61,17 @@ runQueries <- function(qlist, dbloc, dbfile, scenario=NULL)
 #' package is reloaded.  Subsequent calls will accumulate in the list.  If the
 #' titles of any new queries duplicate existing queries, the new ones will
 #' overwrite the old ones.
+#'
+#' The function is run automatically at package startup, using the default query
+#' definitions shipped with the package.  Therefore, users shouldn't ordinarily
+#' need to run this function directly.  However, it may occasionally be useful
+#' to redefine one of the existing queries, if, for example, you have output
+#' databases that don't follow the normal schema for some reason.
+#'
+#' In theory you could add queries beyond the ones in the default queries
+#' configuration, but since none of the other code in the package will refer to
+#' them, this is primarily useful only to package developers for testing new
+#' processing code under development.
 #'
 #' @param qfile File containing the XML definitions of the queries.
 #' @return \code{invisible(NULL)}
