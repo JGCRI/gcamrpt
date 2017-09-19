@@ -20,6 +20,7 @@ Imports:
     dplyr (>= 0.5),
     stringr (>= 1.2.0),
     assertthat (>= 0.2.0),
+    lubridate (>= 1.6.0),
     magrittr (>= 1.5)
 Remotes:
     JGCRI/rgcam
