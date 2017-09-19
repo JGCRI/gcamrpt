@@ -35,9 +35,21 @@ unitconv_energy <- function(module_data, ounit)
     if (length(unique(module_data$Units)) > 1) {
         ## We'll accommodate this case as best we can, but there is something
         ## squirrelly about this data.
-        warning("Avast! This variable be reported in multiple units.  Arrr!")
-    } else {
-        iunit <- module_data$Units[1]
+        warning("Variable reported in multiple units. ", module_data$Units[1],
+                " will be used for all values.")
+    }
+    iunit <- module_data$Units[1]
+
+
+    if(!iunit %in% row.names(energyconv)) {
+        warning("Input unit ", iunit,
+                " not recognized as an energy unit.  Unit conversion will be skipped.")
+        return(module_data)
+    }
+    if(!ounit %in% colnames(energyconv)) {
+        warning("Output unit ", ounit,
+                " not recognized as an energy unit.  Unit conversion will be skipped.")
+        return(module_data)
     }
 
     cfac <- energyconv[iunit, ounit]

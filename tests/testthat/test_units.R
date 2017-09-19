@@ -43,8 +43,7 @@ test_that('Dollar year conversion works.', {
 })
 
 
-test_that('Energy unit conversion works.',
-      {
+test_that('Energy unit conversion works.', {
     df <- tibble::tibble(value=1, Units='EJ')
     convdf <- unitconv_energy(df, NA)
     expect_identical(df, convdf)
@@ -63,4 +62,25 @@ test_that('Energy unit conversion works.',
     dfq <- tibble::tibble(value=3.6e-9, Units='EJ')
     expect_equal(dfq, convdf)
 
+})
+
+
+test_that('Energy unit conversion warns on bad unit strings.', {
+    df <- tibble::tibble(value=1, Units='MJ')
+    expect_warning({convdf <- unitconv_energy(df, 'MWh')},
+                   'Input unit *MJ *not recognized')
+    expect_identical(df, convdf)
+
+    df$Units <- 'EJ'
+    expect_warning({convdf <- unitconv_energy(df, 'MJ')},
+                   'Output unit *MJ *not recognized')
+    expect_identical(df, convdf)
+
+    ## check multiple unit strings while we're at it.
+    df <- tibble::tibble(value=1, Units=c('EJ','MWh'))
+    expect_warning({convdf <- unitconv_energy(df, 'MWh')},
+                   'Variable reported in multiple units')
+    dfq <- tibble::tibble(value=1, Units=c('EJ','EJ'))
+    convdfq <- unitconv_energy(dfq, 'MWh')
+    expect_identical(convdf, convdfq)
 })
