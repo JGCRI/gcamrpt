@@ -20,7 +20,13 @@ aggregate <- function(tbl, aggfn, aggkeys)
         aggfn <- base::sum
     }
     else {
-        getaggfn(aggfn)
+        aggfn <- getaggfn(aggfn)
+        if (sum(!(aggkeys %in% names(tbl))) > 0 ) {
+            warning(paste0("Agg keys ",
+                           paste0(aggkeys[!(aggkeys %in% names(tbl))], collapse=" & ") ,
+                          " not found in variable data."))
+            aggkeys <- aggkeys[aggkeys %in% names(tbl)]
+        }
     }
 
     warning('Aggregation not yet implemented.  Returning table unmodified.')
