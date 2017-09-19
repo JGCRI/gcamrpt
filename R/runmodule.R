@@ -68,14 +68,14 @@ canonicalForm <- function(var)
 #' This function prints a diagnostic and returns an empty data frame.
 #'
 #' @keywords internal
-module.test_fun <- function(var, mode, allqueries, aggkeys, aggfn, strtyr, endyr,
-                    filters, ounit)
+module.test_fun <- function(mode, allqueries, aggkeys, aggfn, strtyr, endyr,
+                            filters, ounit)
 {
     if(mode == GETQ) {
-        character()
+        "Test Query"
     }
     else {
-        print(paste('Function for processing variable', var))
+        message('Test Module')
         data.frame()
     }
 }
