@@ -65,7 +65,7 @@ runQueries <- function(qlist, dbloc, dbfile, scenario=NULL)
 #'
 #' @param qfile File containing the XML definitions of the queries.
 #' @return \code{invisible(NULL)}
-#' @export
+#' @keywords internal
 parseQueries <- function(qfile)
 {
     if(!file.exists(qfile)) {

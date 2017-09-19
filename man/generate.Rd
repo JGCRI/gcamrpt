@@ -53,7 +53,7 @@ The second control file lists the variables that should be written into the
 report.  It should have the following columns:
 \describe{
     \item{GCAM variable}{The canonical GCAM name for the variable.  The
-\code{\link{listModules}} function lists the variables known to the report
+\code{\link{listVariables}} function lists the variables known to the report
 generation system.}
     \item{output variable}{The name that will be used for the variable in the
 output.}

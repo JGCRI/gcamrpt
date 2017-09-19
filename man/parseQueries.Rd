@@ -24,3 +24,4 @@ package is reloaded.  Subsequent calls will accumulate in the list.  If the
 titles of any new queries duplicate existing queries, the new ones will
 overwrite the old ones.
 }
+\keyword{internal}
