@@ -19,27 +19,32 @@ aggregate <- function(tbl, aggfn, aggkeys)
         aggkeys <- unlist(strsplit(aggkeys, split=",")) %>%
             stringr::str_trim(side="both")
     }
+    value <- NULL                       # silence NSE note in pkg check.
 
     if(is.null(aggfn) || is.na(aggfn)) {
         aggfn <- base::sum
     }
     else {
         aggfn <- getaggfn(aggfn)
+        if(is.null(aggfn))
+            return(tbl)
     }
 
     if (sum(!(aggkeys %in% names(tbl))) > 0 ) {
-        warning(paste0("Agg keys ",
-                       paste0(aggkeys[!(aggkeys %in% names(tbl))], collapse=" & ") ,
-                       " not found in variable data."))
+        warning("Agg keys ",
+                paste0(aggkeys[!(aggkeys %in% names(tbl))], collapse=", ") ,
+                       " not found in variable data.")
         aggkeys <- aggkeys[aggkeys %in% names(tbl)]
     }
 
-    tbl <- dplyr::group_by(module_data, Units, scenario,year, .dots=aggkeys) %>%
+    dots <- c('Units', 'scenario', 'year', aggkeys)
+
+    tbl <- dplyr::group_by_(tbl, .dots=dots) %>%
         dplyr::summarise(value=aggfn(value)) %>%
         dplyr::ungroup()
 
     tbl
-
+}
 
 #' Table of allowable aggregation functions
 #'
