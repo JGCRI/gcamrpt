@@ -15,23 +15,30 @@ aggregate <- function(tbl, aggfn, aggkeys)
     if(is.null(aggkeys) || is.na(aggkeys)) {
         return(tbl)
     }
+    else {
+        aggkeys <- unlist(strsplit(aggkeys, split=",")) %>%
+            stringr::str_trim(side="both")
+    }
 
     if(is.null(aggfn) || is.na(aggfn)) {
         aggfn <- base::sum
     }
     else {
         aggfn <- getaggfn(aggfn)
-        if (sum(!(aggkeys %in% names(tbl))) > 0 ) {
-            warning(paste0("Agg keys ",
-                           paste0(aggkeys[!(aggkeys %in% names(tbl))], collapse=" & ") ,
-                          " not found in variable data."))
-            aggkeys <- aggkeys[aggkeys %in% names(tbl)]
-        }
     }
 
-    warning('Aggregation not yet implemented.  Returning table unmodified.')
+    if (sum(!(aggkeys %in% names(tbl))) > 0 ) {
+        warning(paste0("Agg keys ",
+                       paste0(aggkeys[!(aggkeys %in% names(tbl))], collapse=" & ") ,
+                       " not found in variable data."))
+        aggkeys <- aggkeys[aggkeys %in% names(tbl)]
+    }
+
+    tbl <- dplyr::group_by(module_data, Units, scenario,year, .dots=aggkeys) %>%
+        dplyr::summarise(value=aggfn(value)) %>%
+        dplyr::ungroup()
+
     tbl
-}
 
 
 #' Table of allowable aggregation functions
