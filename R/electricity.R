@@ -28,7 +28,7 @@ module.electricity <- function(mode, allqueries, aggkeys, aggfn, strtyr, endyr,
         electricity <- allqueries$'electricity'
         electricity <- aggregate(electricity, aggfn, aggkeys)
         electricity <- filter(electricity, strtyr, endyr, filters)
-        electricity <- unitconv_counts(electricity, ounit)
+        electricity <- unitconv_energy(electricity, ounit)
         electricity
     }
 }
