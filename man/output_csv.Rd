@@ -26,3 +26,4 @@ Output function for CSV format
 \item \code{output_xlsx}: Output function for XLSX format
 }}
 
+\keyword{internal}

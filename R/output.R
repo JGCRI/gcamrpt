@@ -8,6 +8,7 @@
 #' tabs/files.
 #' @param dirname Directory to write output file(s) into.
 #' @importFrom assertthat assert_that
+#' @keywords internal
 output_csv <- function(rslts, tabs, dirname)
 {
     assert_that(is.list(rslts), !is.data.frame(rslts))

@@ -9,7 +9,7 @@ runModule(var, mode, allqueries = NULL, aggkeys = NULL, aggfn = NULL,
 }
 \arguments{
 \item{var}{Name of the variable to produce.  This must be one of the varibles
-known to the system.  The \code{\link{listModules}} function lists the known
+known to the system.  The \code{\link{listVariables}} function lists the known
 variables.}
 
 \item{mode}{Either \code{GETQ} or \code{RUN}.  The former returns
@@ -42,3 +42,4 @@ return a character vector of the names of all GCAM queries needed as input by
 the module.  If mode is \code{\link{RUN}}, return a data frame containing the
 processed variable.
 }
+\keyword{internal}

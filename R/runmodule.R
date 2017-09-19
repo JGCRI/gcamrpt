@@ -10,7 +10,7 @@
 #' processed variable.
 #'
 #' @param var Name of the variable to produce.  This must be one of the varibles
-#' known to the system.  The \code{\link{listModules}} function lists the known
+#' known to the system.  The \code{\link{listVariables}} function lists the known
 #' variables.
 #' @param mode Either \code{GETQ} or \code{RUN}.  The former returns
 #' the names of the GCAM queries needed for the calculation; the latter runs the
@@ -28,7 +28,7 @@
 #' applied, in s-exp format.
 #' @param ounit Desired output unit.  If omitted, results will be returned with
 #' no unit conversion.
-#' @export
+#' @keywords internal
 runModule <- function(var, mode, allqueries=NULL, aggkeys=NULL, aggfn=NULL,
                       strtyr=NULL, endyr=NULL, filters=NULL, ounit=NULL)
 {
@@ -83,14 +83,20 @@ module.test_fun <- function(mode, allqueries, aggkeys, aggfn, strtyr, endyr,
 #' List the variables that the system knows how to generate
 #'
 #' Returns a character vector listing the variables that currently have recipes
-#' in the system.
+#' in the system.  The variable names will be printed in canonical form, which
+#' means that all letters will be converted to lowercase, and all
+#' non-alphanumeric characters will be replaced with \code{_}s.  Names of
+#' variables requested for output by users will similarly be converted to
+#' canonical form.  Users can take advantage of this to make the variable lists
+#' in their input more readable.  For example, the variable with canonical name
+#' \code{gdp_mer_} can be represented as \code{GDP(MER)} in input files.
 #'
 #' @importFrom magrittr %>%
 #' @export
-listModules <- function()
+listVariables <- function()
 {
     . <- NULL                           # suppress package warnings
-    ls(environment(listModules), pattern='^module\\.') %>%
+    ls(environment(listVariables), pattern='^module\\.') %>%
       gsub('^module\\.', '', . )
 }
 
