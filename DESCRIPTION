@@ -1,6 +1,6 @@
 Package: iamrpt
 Title: Convert GCAM results to the format required by various IAM experiment databases
-Version: 0.0.0.9000
+Version: 0.1.0
 Authors@R: c(
     person("Robert", "Link", email = "robert.link@pnnl.gov", role = c("aut", "cre")),
     person("Xavier", "Gutierrez", email = "xavier.gutierrez@pnnl.gov", role = c("aut"))
