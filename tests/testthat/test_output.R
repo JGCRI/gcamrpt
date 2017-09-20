@@ -44,14 +44,16 @@ test_that('alternate_filename does the right thing with xyz.csv.', {
         unlink(filename)
     on.exit(unlink(file.path(dir, '*.csv')))
 
-    expect_identical(alternate_filename(filename), filename)
+    expect_identical(alternate_filename(filename),
+                     normalizePath(filename))
 
     lastfilename <- filename
     for(i in 1:3) {
         fcon <- file(lastfilename, 'w')
         close(fcon)
         lastfilename <- alternate_filename(filename)
-        expect_identical(lastfilename, file.path(dir,sprintf('xyz%03d.csv',i)))
+        expect_identical(lastfilename,
+                         normalizePath(file.path(dir,sprintf('xyz%03d.csv',i))))
     }
 })
 
@@ -62,14 +64,16 @@ test_that('alternate_filename does the right thing with xyz.abc.csv.', {
         unlink(filename)
     on.exit(unlink(file.path(dir, '*.csv')))
 
-    expect_identical(alternate_filename(filename), filename)
+    expect_identical(alternate_filename(filename),
+                     normalizePath(filename))
 
     lastfilename <- filename
     for(i in 1:3) {
         fcon <- file(lastfilename, 'w')
         close(fcon)
         lastfilename <- alternate_filename(filename)
-        expect_identical(lastfilename, file.path(dir,sprintf('xyz.abc%03d.csv',i)))
+        expect_identical(lastfilename,
+                         normalizePath(file.path(dir,sprintf('xyz.abc%03d.csv',i))))
     }
 })
 
@@ -80,14 +84,16 @@ test_that('alternate_filename does the right thing with no file extension.', {
         unlink(filename)
     on.exit(unlink(file.path(dir, '*.csv')))
 
-    expect_identical(alternate_filename(filename), filename)
+    expect_identical(alternate_filename(filename),
+                     normalizePath(filename))
 
     lastfilename <- filename
     for(i in 1:3) {
         fcon <- file(lastfilename, 'w')
         close(fcon)
         lastfilename <- alternate_filename(filename)
-        expect_identical(lastfilename, file.path(dir,sprintf('xyz%03d',i)))
+        expect_identical(lastfilename,
+                         normalizePath(file.path(dir,sprintf('xyz%03d',i))))
     }
 })
 

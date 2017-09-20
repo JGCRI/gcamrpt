@@ -77,6 +77,7 @@ output_xlsx <- function(rslts, tabs, dirname)
 #' @keywords internal
 alternate_filename <- function(name)
 {
+    name <- normalizePath(name)
     dir <- dirname(name)
     filename <- basename(name)
     np <- nameparse(filename)
@@ -95,7 +96,7 @@ alternate_filename <- function(name)
         name <- file.path(dir, filename)
     }
 
-    name
+    normalizePath(name)
 }
 
 
