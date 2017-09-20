@@ -66,14 +66,13 @@ output_csv <- function(rslts, tabs, dirname)
 #' @describeIn output_csv Output function for XLSX format
 #' @importFrom assertthat assert_that
 #' @importFrom xlsx write.xlsx2
+
 #' @keywords internal
-#' 
+#'
 output_xlsx <- function(rslts, tabs, dirname)
 {
-  stop('output_xlsx not yet implemented.')
-  
   assert_that(is.list(rslts), !is.data.frame(rslts))
-  
+
   ## First flatten the list, if the scenarios haven't already been combined.
   isdf <- sapply(rslts, is.data.frame)
   if(any(isdf)) {
@@ -88,13 +87,13 @@ output_xlsx <- function(rslts, tabs, dirname)
     assert_that(all(isdf),
                 msg='output_xlsx: Invalid results structure, lists nested > 2 deep.')
   }
-  
+
   ## Now we should have a list of data frames.  Output them to file(s) one
   ## by one.
   if(tabs) {
     ## One file for each table
     for(tblname in names(rslts)) {
-      
+
       # xlsx workbook function instead
       filename <- alternate_filename(file.path(dirname, paste0('iamrpt', '.xlsx')))
       xlsx::write.xlsx2(rslts[[tblname]], filename, sheetName="tblname")
@@ -113,7 +112,7 @@ output_xlsx <- function(rslts, tabs, dirname)
       else {
         cat('\n', file=fcon)
       }
-      
+
       cat(tblname, '\n', file=fcon, sep='')
       readr::write_csv(rslts[[tblname]], fcon)
     }
