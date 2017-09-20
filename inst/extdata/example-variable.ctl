@@ -1,4 +1,5 @@
 GCAM variable,output variable,aggregation keys,aggregation function,start year,end year,filters,output units
 Population,Population,,,1990,2020,,thous
-pcGDP(PPP),gdp_ppp,,,,,,Thous80US$/per
-Electricity,Electricity,,,1990,2020,,MWh
+pcGDP(PPP),Per-capita GDP (PPP),,,,,,Thous80US$/per
+Electricity,Electricity by Technology,"region,technology",,1990,2050,,MWh
+Electricity,Electricity by Subsector,"region, subsector",,1990,2050,(matches; sector; electricity),
