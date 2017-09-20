@@ -4,12 +4,12 @@
 #'
 #' @param rslts Results tables from \code{\link{generate}}.  This must be either
 #' a list of data frames or a list of lists of data frames.
-#' @param tabs Flag indicating whether variables should be written to separate
-#' tabs/files.
+#' @param dataformat Indicator of data format:  If 'tabs', write to separate files; if 'merged'
+#' write merged results to a single file.
 #' @param dirname Directory to write output file(s) into.
 #' @importFrom assertthat assert_that
 #' @keywords internal
-output_csv <- function(rslts, tabs, dirname)
+output_csv <- function(rslts, dataformat, dirname)
 {
     assert_that(is.list(rslts), !is.data.frame(rslts))
 
@@ -30,7 +30,7 @@ output_csv <- function(rslts, tabs, dirname)
 
     ## Now we should have a list of data frames.  Output them to file(s) one
     ## by one.
-    if(tabs) {
+    if(dataformat=='tabs') {
         ## One file for each table
         for(tblname in names(rslts)) {
             filename <- alternate_filename(file.path(dirname, paste0(tblname,
@@ -54,7 +54,9 @@ output_csv <- function(rslts, tabs, dirname)
                 cat('\n', file=fcon)
             }
 
-            cat(tblname, '\n', file=fcon, sep='')
+            if(!('Variable' %in% names(rslts[[tblname]]))) {
+                cat(tblname, '\n', file=fcon, sep='')
+            }
             readr::write_csv(rslts[[tblname]], fcon)
         }
         close(fcon)

@@ -112,7 +112,7 @@ test_that('output_csv works for separate tabs mode.', {
     flist <- file.path(dir, paste0(vlist, '.csv'))
     on.exit(unlink(flist))
 
-    output_csv(rslt, TRUE, dir)
+    output_csv(rslt, 'tabs', dir)
 
     for(i in seq_along(vlist)) {
         file <- flist[i]
@@ -131,7 +131,7 @@ test_that('output_csv works for separate tabs mode.', {
     flist <- file.path(dir, paste0(vlist, '.csv'))
     on.exit(unlink(flist), add=TRUE)
 
-    output_csv(rsltmrg, TRUE, dir)
+    output_csv(rsltmrg, 'tabs', dir)
 
     for(i in seq_along(vlist))  {
         file <- flist[i]
@@ -150,7 +150,7 @@ test_that('output_csv works for single tab mode.',
     ## unmerged
     filename <- file.path(dir, 'iamrpt.csv')
     on.exit(unlink(filename))
-    output_csv(rslt, FALSE, dir)
+    output_csv(rslt, 'merged', dir)
     expect_true(file.exists(filename))
 
     ## spot check a few lines in the data
@@ -170,7 +170,7 @@ test_that('output_csv works for single tab mode.',
     ## merged version
     filename <- file.path(dir, 'iamrpt001.csv')
     on.exit(unlink(filename), add=TRUE)
-    output_csv(rsltmrg, FALSE, dir)
+    output_csv(rsltmrg, 'merged', dir)
     expect_true(file.exists(filename))
 
     ## spot check important lines

@@ -52,19 +52,32 @@
 #' arugments to the system, or set as R options.  The names of the options and
 #' their functions are:
 #' \describe{
-#'     \item{\strong{iamrpt.fileformat}}{File format for output.  Options are
+#'     \item{\code{iamrpt.fileformat}}{File format for output.  Options are
 #' \code{"CSV"} and \code{"XLSX"}}
-#'     \item{\strong{iamrpt.scenmerge}}{If \code{TRUE}, for each variable merge the
+#'     \item{\code{iamrpt.scenmerge}}{If \code{TRUE}, for each variable merge the
 #' results for all scenarios into a single table (distinguished by the value of
 #' the scenario column).  Otherwise, create a separate table for each
 #' combination of scenario and variable.}
-#'     \item{\strong{iamrpt.tabs}}{If \code{TRUE}, write each table to a separate tab (if
-#' outputting to an xlsx file) or file (if outputting to csv files).  In the
-#' former case each tab/file will be named with the output variable name and
-#' scenario (if applicable).  In the latter case all of the tables will be
-#' written into a single tab or file, with the name of the scenario and variable
-#' before each table.}
+#'     \item{\code{iamrpt.dataformat}}{Specify the data format; that is, how
+#' the data is organized in the output files.  Three options are available:
+#'       \describe{
+#'         \item{\code{"tabs"}}{Each table generated goes into a separate tab (if
+#' XLS output is selected) or file (if CSV output is selected).  The tab or file
+#' will be named with the output of the table.}
+#'         \item{\code{"merged"}}{The tables will be output sequentially into a
+#' single tab or file.  Each table will be preceded by its name.  This is
+#' similar to the format used by GCAM to output batch queries.}
+#'         \item{\code{"IIASA"}}{The database format used by IIASA.  In this
+#' format each table is spread into a row in a merged table, with a column to
+#' identify the variable that each row comes from.}
+#'    }
+#'  }
+#'    \item{\code{iamrpt.wideformat}}{If \code{TRUE}, reshape the tables into
+#' wide format (years as columns) before output.  Otherwise, leave them in long
+#' format.  If the IIASA data format is selected, then this option is ignored,
+#' since the IIASA format requires wide data.}
 #' }
+#'
 #'
 #' Output filenames will be chosen automatically.  For an XLSX file the filename
 #' will be 'iamrpt.xlsx'.  For CSV output with \code{tabs == FALSE} the result
@@ -99,32 +112,37 @@
 #'
 #' The filter functions currently recognized by the system are
 #' \describe{
-#'   \item{\strong{==}}{String equality}
-#'   \item{\strong{!=}}{String inequality}
-#'   \item{\strong{<}}{Numeric less-than}
-#'   \item{\strong{>}}{Numeric greather-than}
-#'   \item{\strong{<=}}{Numeric less-than-or-equals}
-#'   \item{\strong{>=}}{Numeric greater-than-or-equals}
-#'   \item{\strong{matches}}{Regular expression match.  Note that because of the
-#' way we parse these strings you can't have a ',', ';', '(', or ')' in your
+#'   \item{\code{==}}{String equality}
+#'   \item{\code{!=}}{String inequality}
+#'   \item{\code{<}}{Numeric less-than}
+#'   \item{\code{>}}{Numeric greather-than}
+#'   \item{\code{<=}}{Numeric less-than-or-equals}
+#'   \item{\code{>=}}{Numeric greater-than-or-equals}
+#'   \item{\code{matches}}{Regular expression match.  Note that because of the
+#' way we parse these strings you can't have a \code{','}, \code{';'},
+#' \code{'('}, or \code{')'} in your
 #' regular expressions for this function or any of the ones below.}
-#'   \item{\strong{matchesi}}{Case-insensitive regular expression match.}
-#'   \item{\strong{notmatches}}{Regular expression inverted match.  That is,
+#'   \item{\code{matchesi}}{Case-insensitive regular expression match.}
+#'   \item{\code{notmatches}}{Regular expression inverted match.  That is,
 #' select the rows that do \emph{not} match the given regular expression.}
-#'   \item{\strong{notmatchesi}}{Case-insensitive regular expression inverted
+#'   \item{\code{notmatchesi}}{Case-insensitive regular expression inverted
 #' match.}
 #' }
 #'
 #' @param scenctl Name of the scenario control file.
 #' @param varctl Name of the variable control file.
 #' @param dbloc Directory holding the GCAM databases
+#' @param outputdir Directory to write output to.  Default is the current
+#' working directory.
+#' @param model Name of the model (e.g., \code{'GCAM'}).  This is required for
+#' the IIASA data format.  It is ignored for all other formats.
 #' @param fileformat Desired format for output files.
 #' @param scenmerge Flag: if true, merge scenarios; otherwise, leave scenarios
 #' as separate tables.
-#' @param tabs Flag: if true, put each table into a separate tab or file.
-#' Otherwise, put them all into a single long tab/file.
-#' @param outputdir Directory to write output to.  Default is the current
-#' working directory.
+#' @param dataformat Indicates desired data format.  Supported formats are
+#' \code{'tabs'}, \code{'merged'}, or \code{'IIASA'}
+#' @param wideformat Flag: if true, convert data to wide format before output;
+#' otherwise, leave in long format.
 #' @return NULL; the report will be written to output files as described in the
 #' Output section.
 #' @importFrom magrittr %>%
@@ -132,15 +150,31 @@
 generate <- function(scenctl,
                      varctl,
                      dbloc,
+                     outputdir = getwd(),
+                     model = 'GCAM',
                      fileformat = getOption('iamrpt.fileformat', 'CSV'),
                      scenmerge = getOption('iamrpt.scenmerge', TRUE),
-                     tabs = getOption('iamrpt.tabs', TRUE),
-                     outputdir = getwd())
+                     dataformat = getOption('iamrpt.dataformat', 'tabs'),
+                     wideformat = getOption('iamrpt.wideformat', TRUE)
+                     )
 {
+    year <- value <- NULL               # silence package check notes.
     suppressMessages({scenctl <- readr::read_csv(scenctl)})
     suppressMessages({varctl <- readr::read_csv(varctl)})
 
     validatectl(scenctl, varctl)
+
+    ## special condition:  If using the IIASA format, all variables must be
+    ## aggregated to region.  If all left blank, then replace them silently.
+    ## Otherwise issue a warning and replace.
+    if(dataformat == 'IIASA') {
+        if(any(varctl$`aggregation keys` != 'scenario, region') &&
+           !(all(is.na(varctl$`aggregation keys`) | varctl$`aggregation keys` == ''))) {
+            warning('Variables must be aggregated to region for IIASA output format. ',
+                    'Aggregation keys will be replaced with "scenario, region".')
+        }
+        varctl[['aggregation keys']] <- 'scenario, region'
+    }
 
     gcvars <- varctl[['GCAM variable']]
 
@@ -160,19 +194,43 @@ generate <- function(scenctl,
 
 
     if(scenmerge)
-        merge_scenarios(rslts)
+        rslts <- merge_scenarios(rslts)
 
+    if(dataformat == 'IIASA') {
+        ## convert results to IIASA format.  If we didn't merge scenarios, write
+        ## each one to a separate file named for the scenario; otherwise write a
+        ## single file.
+        . <- NULL    # suppress notes
+        if(scenmerge) {
+            rslts <- iiasafy(rslts) %>%
+                dplyr::mutate(Model=model) %>%
+                iiasa_sortcols() %>%
+                list(allscen=.)
+            dataformat <- 'merged'
+        }
+        else {
+            rslts <- lapply(rslts, iiasafy) %>%
+              lapply(function(df) {
+                  dplyr::mutate(df, Model=model) %>%
+                      iiasa_sortcols()
+              })
+            dataformat <- 'tabs'
+        }
+    }
+    else if(wideformat) {
+        rslts <- lapply(rslts, function(df) {tidyr::spread(df, year, value)})
+    }
 
     if(fileformat == 'XLSX') {
-        output_xlsx(rslts, tabs, outputdir)
+        output_xlsx(rslts, dataformat, outputdir)
     }
     else if(fileformat == 'CSV') {
-        output_csv(rslts, tabs, outputdir)
+        output_csv(rslts, dataformat, outputdir)
     }
     else {
         warning('Unknown file format ', fileformat, ' requested. ',
                 'Writing as CSV.')
-        output_csv(rslts, tabs, outputdir)
+        output_csv(rslts, dataformat, outputdir)
     }
 
     message('FIN.')
@@ -282,6 +340,7 @@ validatectl <- function(scenctl, varctl)
 
     validate1(scenctl, 'scenario control', scencols, scenrqd)
     validate1(varctl, 'variable control', varcols, varrqd)
+
     invisible(NULL)
 }
 
@@ -314,4 +373,59 @@ validate1 <- function(ctl, ctlname, expectcols, rqdcols) {
         missingstr <- paste(rqdcols[missingdat], collapse=', ')
         stop('Missing data prohibited in these ', ctlname, ' columns: ', missingstr)
     }
+}
+
+#' Convert a list of tables to a single table in IIASA format
+#'
+#' The result of this transformation will be a single table with the following
+#' columns:
+#'
+#' \itemize{
+#'   \item{Model}
+#'   \item{Scenario}
+#'   \item{Region}
+#'   \item{Variable (taken from the output name of the input)}
+#'   \item{Unit}
+#'   \item{NNNN - one for each year}
+#' }
+#'
+#' @param datalist List of data frames, one for each variable.
+#' @keywords internal
+iiasafy <- function(datalist)
+{
+    varlist <- lapply(datalist, proc_var_iiasa)
+
+    varlist <- lapply(names(varlist),   # Add variable name (need access to names(varlist) for this.)
+                      function(var) {
+                          dplyr::mutate(varlist[[var]], Variable=var)
+                      }) %>%
+      dplyr::bind_rows()              # Combine into a single table
+}
+
+
+#' Select the columns needed for the IIASA format
+#'
+#' Starting with data in long format, keep only the columns needed to form the
+#' IIASA format, namely, scenario, region, year, value, and Units.  Then rename
+#' variables according to the IIASA conventions, and spread to wide format.  We don't
+#' add the model or variable names at this point, however.
+#' @keywords internal
+proc_var_iiasa <- function(df)
+{
+    scenario <- region <- variable <- year <- value <- Units <- NULL # silence
+                                        # check notes
+    df <- df %>%
+        dplyr::select(scenario, region, year, value, Units) %>%
+        dplyr::rename(Scenario=scenario, Region=region, Unit=Units) %>%
+        tidyr::spread(year, value)
+}
+
+#' Put columns in canonical order for IIASA data format
+#'
+#' @param df Data frame
+#' @keywords internal
+iiasa_sortcols <- function(df)
+{
+    cols <- unique(c('Model', 'Scenario', 'Region', 'Variable', 'Unit', names(df)))
+    dplyr::select(df, dplyr::one_of(cols))
 }
