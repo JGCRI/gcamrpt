@@ -101,8 +101,7 @@ output_xlsx <- function(rslts, tabs, dirname)
   }
   else {
     ## Single file in PITA format.
-    filename <- alternate_filename(file.path(dirname, 'iamrpt.csv'))
-    fcon <- file(filename, 'w')
+    filename <- alternate_filename(file.path(dirname, 'iamrpt.xlsx'))
     line1 <- TRUE
     for(tblname in names(rslts)) {
       if(line1) {
@@ -110,13 +109,11 @@ output_xlsx <- function(rslts, tabs, dirname)
         line1 <- FALSE
       }
       else {
-        cat('\n', file=fcon)
+          xlsx::write.xlsx2('', filename, append=TRUE)
       }
-
-      cat(tblname, '\n', file=fcon, sep='')
-      readr::write_csv(rslts[[tblname]], fcon)
+        xlsx::write.xlsx2(tblname, filename, append=TRUE)
+        xlsx::write.xlsx2(rslts[[tblname]], filename, append=TRUE)
     }
-    close(fcon)
   }
   invisible(NULL)
 }
