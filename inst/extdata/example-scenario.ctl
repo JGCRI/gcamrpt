@@ -1,2 +1,2 @@
 GCAM scenario,output scenario,scenario db
-Reference,reference,sample_basexdb
+Reference,reference,database_basexdb
