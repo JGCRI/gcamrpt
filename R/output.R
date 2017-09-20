@@ -33,13 +33,16 @@ output_csv <- function(rslts, tabs, dirname)
     if(tabs) {
         ## One file for each table
         for(tblname in names(rslts)) {
-            filename <- alternate_filename(file.path(dirname, paste0(tblname, '.csv')))
+            filename <- alternate_filename(file.path(dirname, paste0(tblname,
+                                                                     '.csv')))
+            message('Writing file ', filename)
             readr::write_csv(rslts[[tblname]], filename)
         }
     }
     else {
         ## Single file in PITA format.
         filename <- alternate_filename(file.path(dirname, 'iamrpt.csv'))
+        message('Writing file ', filename)
         fcon <- file(filename, 'w')
         line1 <- TRUE
         for(tblname in names(rslts)) {
