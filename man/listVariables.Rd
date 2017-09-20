@@ -16,3 +16,12 @@ canonical form.  Users can take advantage of this to make the variable lists
 in their input more readable.  For example, the variable with canonical name
 \code{gdp_mer_} can be represented as \code{GDP(MER)} in input files.
 }
+\details{
+Processing the data for a variable is done in a function called
+module.varname, for example, the variable \code{gdp_mer_} is processed in
+\code{\link{module.gdp_mer_}}.  The documentation for these functions
+contains a list of the columns in the raw table produced by the function,
+prior to aggregation or filtering.  This information is potentially useful
+for planning filtering or aggregation operations.  The module documentation
+will also have any notes pertinent to the computation of the data.
+}
