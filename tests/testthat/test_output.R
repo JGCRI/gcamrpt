@@ -45,7 +45,7 @@ test_that('alternate_filename does the right thing with xyz.csv.', {
     on.exit(unlink(file.path(dir, '*.csv')))
 
     expect_identical(alternate_filename(filename),
-                     normalizePath(filename))
+                     normalizePath(filename, mustWork=FALSE))
 
     lastfilename <- filename
     for(i in 1:3) {
@@ -53,7 +53,8 @@ test_that('alternate_filename does the right thing with xyz.csv.', {
         close(fcon)
         lastfilename <- alternate_filename(filename)
         expect_identical(lastfilename,
-                         normalizePath(file.path(dir,sprintf('xyz%03d.csv',i))))
+                         normalizePath(file.path(dir,sprintf('xyz%03d.csv',i)),
+                                       mustWork=FALSE))
     }
 })
 
@@ -65,7 +66,7 @@ test_that('alternate_filename does the right thing with xyz.abc.csv.', {
     on.exit(unlink(file.path(dir, '*.csv')))
 
     expect_identical(alternate_filename(filename),
-                     normalizePath(filename))
+                     normalizePath(filename, mustWork=FALSE))
 
     lastfilename <- filename
     for(i in 1:3) {
@@ -73,7 +74,8 @@ test_that('alternate_filename does the right thing with xyz.abc.csv.', {
         close(fcon)
         lastfilename <- alternate_filename(filename)
         expect_identical(lastfilename,
-                         normalizePath(file.path(dir,sprintf('xyz.abc%03d.csv',i))))
+                         normalizePath(file.path(dir,sprintf('xyz.abc%03d.csv',i)),
+                                       mustWork=FALSE))
     }
 })
 
@@ -85,7 +87,7 @@ test_that('alternate_filename does the right thing with no file extension.', {
     on.exit(unlink(file.path(dir, '*.csv')))
 
     expect_identical(alternate_filename(filename),
-                     normalizePath(filename))
+                     normalizePath(filename, mustWork=FALSE))
 
     lastfilename <- filename
     for(i in 1:3) {
@@ -93,7 +95,8 @@ test_that('alternate_filename does the right thing with no file extension.', {
         close(fcon)
         lastfilename <- alternate_filename(filename)
         expect_identical(lastfilename,
-                         normalizePath(file.path(dir,sprintf('xyz%03d',i))))
+                         normalizePath(file.path(dir,sprintf('xyz%03d',i)),
+                                       mustWork=FALSE))
     }
 })
 
