@@ -4,12 +4,13 @@
 #'
 #' Produce population by region.
 #'
-#' Columns:
+#' The raw table used by this module has columns:
 #' \itemize{
+#'   \item{scenario}
 #'   \item{region}
 #'   \item{year}
 #'   \item{value}
-#'   \item{units}
+#'   \item{Units}
 #' }
 #'
 #' @keywords internal
@@ -37,16 +38,16 @@ module.population <- function(mode, allqueries, aggkeys, aggfn, strtyr, endyr,
 #'
 #' Produce GDP MER by region.
 #'
-#' Columns:
+#' The raw table used by this module has columns:
 #' \itemize{
+#'   \item{scenario}
 #'   \item{region}
 #'   \item{year}
 #'   \item{value}
-#'   \item{units}
+#'   \item{Units}
 #' }
 #'
 #' @keywords internal
-
 module.gdp_mer_ <- function(mode, allqueries, aggkeys, aggfn, strtyr, endyr,
                               filters, ounit)
 {
@@ -70,16 +71,16 @@ module.gdp_mer_ <- function(mode, allqueries, aggkeys, aggfn, strtyr, endyr,
 #'
 #' Produce GDP PPP by region.
 #'
-#' Columns:
+#' The raw table used by this module has columns:
 #' \itemize{
+#'   \item{scenario}
 #'   \item{region}
 #'   \item{year}
 #'   \item{value}
-#'   \item{units}
+#'   \item{Units}
 #' }
 #'
 #' @keywords internal
-
 module.pcgdp_ppp_ <- function(mode, allqueries, aggkeys, aggfn, strtyr, endyr,
                            filters, ounit)
 {

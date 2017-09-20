@@ -11,12 +11,13 @@ module.pcgdp_ppp_(mode, allqueries, aggkeys, aggfn, strtyr, endyr, filters,
 Produce GDP PPP by region.
 }
 \details{
-Columns:
+The raw table used by this module has columns:
 \itemize{
+  \item{scenario}
   \item{region}
   \item{year}
   \item{value}
-  \item{units}
+  \item{Units}
 }
 }
 \keyword{internal}

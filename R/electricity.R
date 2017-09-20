@@ -4,12 +4,16 @@
 #'
 #' Produce electricity by region.
 #'
-#' Columns:
+#' The raw table used by this module has columns:
 #' \itemize{
+#'   \item{scenario}
 #'   \item{region}
+#'   \item{sector}
+#'   \item{subsector}
+#'   \item{technology}
 #'   \item{year}
 #'   \item{value}
-#'   \item{units}
+#'   \item{Units}
 #' }
 #'
 #' @keywords internal
