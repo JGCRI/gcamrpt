@@ -137,8 +137,8 @@ generate <- function(scenctl,
                      tabs = getOption('iamrpt.tabs', TRUE),
                      outputdir = getwd())
 {
-    scenctl <- readr::read_csv(scenctl)
-    varctl <- readr::read_csv(varctl)
+    suppressMessages({scenctl <- readr::read_csv(scenctl)})
+    suppressMessages({varctl <- readr::read_csv(varctl)})
 
     validatectl(scenctl, varctl)
 
@@ -164,15 +164,15 @@ generate <- function(scenctl,
 
 
     if(fileformat == 'XLSX') {
-        output_xlsx(rslts, tabs, dirname)
+        output_xlsx(rslts, tabs, outputdir)
     }
     else if(fileformat == 'CSV') {
-        output_csv(rslts, tabs, dirname)
+        output_csv(rslts, tabs, outputdir)
     }
     else {
         warning('Unknown file format ', fileformat, ' requested. ',
                 'Writing as CSV.')
-        output_csv(rslts, tabs, dirname)
+        output_csv(rslts, tabs, outputdir)
     }
 
     message('FIN.')
