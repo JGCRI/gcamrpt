@@ -4,12 +4,16 @@
 #'
 #' Produce electricity by region.
 #'
-#' Columns:
+#' The raw table used by this module has columns:
 #' \itemize{
+#'   \item{scenario}
 #'   \item{region}
+#'   \item{sector}
+#'   \item{subsector}
+#'   \item{technology}
 #'   \item{year}
 #'   \item{value}
-#'   \item{units}
+#'   \item{Units}
 #' }
 #'
 #' @keywords internal
@@ -25,10 +29,10 @@ module.electricity <- function(mode, allqueries, aggkeys, aggfn, strtyr, endyr,
     else {
         message('Function for processing variable: Electricity')
 
-        electricity <- allqueries$'electricity'
-        electricity <- aggregate(electricity, aggfn, aggkeys)
+        electricity <- allqueries$'Electricity'
         electricity <- filter(electricity, strtyr, endyr, filters)
-        electricity <- unitconv_counts(electricity, ounit)
+        electricity <- aggregate(electricity, aggfn, aggkeys)
+        electricity <- unitconv_energy(electricity, ounit)
         electricity
     }
 }

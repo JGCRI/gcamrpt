@@ -164,15 +164,15 @@ generate <- function(scenctl,
 
 
     if(fileformat == 'XLSX') {
-        output_xlsx(rslts, tabs, dirname)
+        output_xlsx(rslts, tabs, dbloc)
     }
     else if(fileformat == 'CSV') {
-        output_csv(rslts, tabs, dirname)
+        output_csv(rslts, tabs, dbloc)
     }
     else {
         warning('Unknown file format ', fileformat, ' requested. ',
                 'Writing as CSV.')
-        output_csv(rslts, tabs, dirname)
+        output_csv(rslts, tabs, dbloc)
     }
 
     message('FIN.')

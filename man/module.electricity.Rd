@@ -11,12 +11,16 @@ module.electricity(mode, allqueries, aggkeys, aggfn, strtyr, endyr, filters,
 Produce electricity by region.
 }
 \details{
-Columns:
+The raw table used by this module has columns:
 \itemize{
+  \item{scenario}
   \item{region}
+  \item{sector}
+  \item{subsector}
+  \item{technology}
   \item{year}
   \item{value}
-  \item{units}
+  \item{Units}
 }
 }
 \keyword{internal}

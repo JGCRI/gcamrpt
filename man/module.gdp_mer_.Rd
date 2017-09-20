@@ -10,12 +10,13 @@ module.gdp_mer_(mode, allqueries, aggkeys, aggfn, strtyr, endyr, filters, ounit)
 Produce GDP MER by region.
 }
 \details{
-Columns:
+The raw table used by this module has columns:
 \itemize{
+  \item{scenario}
   \item{region}
   \item{year}
   \item{value}
-  \item{units}
+  \item{Units}
 }
 }
 \keyword{internal}

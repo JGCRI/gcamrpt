@@ -18,15 +18,47 @@ unitconv_counts <- function(module_data, ounit)
 
 #' Energy
 #'
-#' This function converts data reported as energy, e.g. exaJoules, MegaWatt-hours, etc..
+#' This function converts data reported as energy, e.g. exaJoules,
+#' MegaWatt-hours, etc.
 #'
 #' @param ounit Desired output unit.  If omitted, results will be returned with
 #' no unit conversion.
 #' @keywords internal
 unitconv_energy <- function(module_data, ounit)
 {
-    #Needs work
-    message("Energy unit conversion function not yet implemented. Data returned unmodified")
+    if(is.null(ounit) || is.na(ounit)) {
+        return(module_data)
+    }
+    assert_that(length(ounit) == 1)
+    assert_that(is.character(ounit))
+
+    if (length(unique(module_data$Units)) > 1) {
+        ## We'll accommodate this case as best we can, but there is something
+        ## squirrelly about this data.
+        warning("Variable reported in multiple units. ", module_data$Units[1],
+                " will be used for all values.")
+    }
+    iunit <- module_data$Units[1]
+
+
+    if(!iunit %in% row.names(energyconv)) {
+        warning("Input unit ", iunit,
+                " not recognized as an energy unit.  Unit conversion will be skipped.")
+        return(module_data)
+    }
+    if(!ounit %in% colnames(energyconv)) {
+        warning("Output unit ", ounit,
+                " not recognized as an energy unit.  Unit conversion will be skipped.")
+        return(module_data)
+    }
+
+    cfac <- energyconv[iunit, ounit]
+
+    module_data[['value']] <- module_data[['value']] * cfac
+
+    ## Update the units
+    module_data[['Units']] <- ounit
+
     module_data
 }
 

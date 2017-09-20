@@ -1,3 +1,15 @@
 comment:
 	behavior: new
 ignore: R/mcl.R
+
+coverage:
+  precision: 1
+
+  status:
+    project:
+      default:
+        enabled: no
+
+    patch:
+      default:
+        enabled: no

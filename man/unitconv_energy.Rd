@@ -11,6 +11,7 @@ unitconv_energy(module_data, ounit)
 no unit conversion.}
 }
 \description{
-This function converts data reported as energy, e.g. exaJoules, MegaWatt-hours, etc..
+This function converts data reported as energy, e.g. exaJoules,
+MegaWatt-hours, etc.
 }
 \keyword{internal}
