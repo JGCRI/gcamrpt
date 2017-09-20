@@ -9,8 +9,8 @@ queries <- stats::setNames(queries, c("Population", "GDP(MER)", "pcGDP(PPP)"))
 
 test_that('GETQ Mode returns correct query titles', {
     expect_match(module.population(iamrpt:::GETQ), 'Population')
-    expect_match(module.gdp_mer_(iamrpt:::GETQ), 'GDP(MER)')
-    expect_match(module.pcgdp_ppp_(iamrpt:::GETQ), 'pcGDP(PPP)')
+    expect_match(module.pcgdp_ppp_(iamrpt:::GETQ), 'pcGDP\\(PPP\\)')
+    expect_match(module.gdp_mer_(iamrpt:::GETQ), "GDP\\(MER\\)")
 
 })
 
@@ -21,10 +21,10 @@ test_that('Call to modules without aggkeys, aggfn, strtyr, endyr, filters, and o
               endyr <- NA
               filters <- NA
               ounit <- NA
-              expect_identical(module.population(iamrpt:::RUN, sociec[['Population']] , aggkeys, aggfn, strtyr, endyr, filters, ounit),
-                               popq)
-              expect_identical(module.gdp_mer_(iamrpt:::RUN, sociec[['GDP(MER)']] , aggkeys, aggfn, strtyr, endyr, filters, ounit),
-                               popq)
-              expect_identical(module.pcgdp_ppp_(iamrpt:::RUN, sociec[['pcGDP(PPP)']] , aggkeys, aggfn, strtyr, endyr, filters, ounit),
-                               popq)
+              expect_identical(module.population(iamrpt:::RUN, queries , aggkeys, aggfn, strtyr, endyr, filters, ounit),
+                               queries$Population)
+              expect_identical(module.gdp_mer_(iamrpt:::RUN, queries , aggkeys, aggfn, strtyr, endyr, filters, ounit),
+                               queries$`GDP(MER)`)
+              expect_identical(module.pcgdp_ppp_(iamrpt:::RUN, queries , aggkeys, aggfn, strtyr, endyr, filters, ounit),
+                               queries$`pcGDP(PPP)`)
 })
