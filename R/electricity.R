@@ -26,8 +26,8 @@ module.electricity <- function(mode, allqueries, aggkeys, aggfn, strtyr, endyr,
         message('Function for processing variable: Electricity')
 
         electricity <- allqueries$'Electricity'
-        electricity <- aggregate(electricity, aggfn, aggkeys)
         electricity <- filter(electricity, strtyr, endyr, filters)
+        electricity <- aggregate(electricity, aggfn, aggkeys)
         electricity <- unitconv_energy(electricity, ounit)
         electricity
     }

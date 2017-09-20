@@ -26,8 +26,8 @@ module.population <- function(mode, allqueries, aggkeys, aggfn, strtyr, endyr,
         message('Function for processing variable: Population')
 
         population <- allqueries$'Population'
-        population <- aggregate(population, aggfn, aggkeys)
         population <- filter(population, strtyr, endyr, filters)
+        population <- aggregate(population, aggfn, aggkeys)
         population <- unitconv_counts(population, ounit)
         population
     }
@@ -59,8 +59,8 @@ module.gdp_mer_ <- function(mode, allqueries, aggkeys, aggfn, strtyr, endyr,
         message('Function for processing variable: GDP MER')
 
         gdp_mer <- allqueries$'GDP(MER)'
+        gdp_mer <- filter(gdp_mer, strtyr, endyr, filters)
         gdp_mer <- aggregate(gdp_mer, aggfn, aggkeys)
-        #gdp_mer <- filter(gdp_mer, strtyr, endyr, filters)
         gdp_mer <- unitconv_usdollar(gdp_mer, ounit)
         gdp_mer
     }
@@ -92,8 +92,8 @@ module.pcgdp_ppp_ <- function(mode, allqueries, aggkeys, aggfn, strtyr, endyr,
         message('Function for processing variable: Per capita GDP PPP')
 
         gdp_ppp <- allqueries$'pcGDP(PPP)'
+        gdp_ppp <- filter(gdp_ppp, strtyr, endyr, filters)
         gdp_ppp <- aggregate(gdp_ppp, aggfn, aggkeys)
-        #gdp_ppp <- filter(gdp_ppp, strtyr, endyr, filters)
         gdp_ppp <- unitconv_usdollar(gdp_ppp, ounit)
         gdp_ppp
     }
