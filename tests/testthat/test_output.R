@@ -189,3 +189,37 @@ test_that('output_csv works for single tab mode.',
                      'billion m^2,Reference,Africa_Northern,resid,resid,resid_building,2075,5.3585')
 
 })
+
+
+test_that('Single table can be converted to iiasa format.', {
+    pop <- dplyr::filter(popq, year >= 2005, year <= 2020)
+    popiia <- proc_var_iiasa(pop) %>%
+      dplyr:::mutate(Variable='Population', Model='GCAM') %>%
+      iiasa_sortcols()
+
+    expect_equal(nrow(popiia), length(unique(pop$region)))
+    expect_identical(names(popiia), c('Model', 'Scenario', 'Region', 'Variable',
+                                      'Unit', as.character(seq(2005,2020,5))))
+    expect_equal(popiia[['2010']], dplyr::filter(pop, year==2010)[['value']])
+})
+
+test_that('List of tables can be converted to iiasa format.', {
+    pop <- dplyr::filter(popq, year >= 2005, year <= 2020)
+    flrspc <-
+        dplyr::filter(flrspcq, year >= 2005, year <= 2020) %>%
+          aggregate('sum', 'scenario, region')
+
+    allvar <- list(Population=pop, Floorspace=flrspc)
+
+    iitbl <- iiasafy(allvar) %>%
+      dplyr::mutate(Model='GCAM') %>%
+      iiasa_sortcols()
+
+    expect_true(is.data.frame(iitbl))
+    expect_equal(nrow(iitbl), 2*length(unique(pop$region)))
+    expect_identical(names(iitbl), c('Model', 'Scenario', 'Region', 'Variable',
+                                     'Unit', as.character(seq(2005,2020,5))))
+
+    expect_identical(unique(iitbl$Variable), c('Population', 'Floorspace'))
+
+})

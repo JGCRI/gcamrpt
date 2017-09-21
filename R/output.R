@@ -124,3 +124,59 @@ nameparse <- function(name)
         c(stringr::str_c(splt[1:(len-1)], collapse='.'), splt[len])
     }
 }
+
+
+#' Convert a list of tables to a single table in IIASA format
+#'
+#' The result of this transformation will be a single table with the following
+#' columns:
+#'
+#' \itemize{
+#'   \item{Model}
+#'   \item{Scenario}
+#'   \item{Region}
+#'   \item{Variable (taken from the output name of the input)}
+#'   \item{Unit}
+#'   \item{NNNN - one for each year}
+#' }
+#'
+#' @param datalist List of data frames, one for each variable.
+#' @keywords internal
+iiasafy <- function(datalist)
+{
+    varlist <- lapply(datalist, proc_var_iiasa)
+
+    varlist <- lapply(names(varlist),   # Add variable name (need access to names(varlist) for this.)
+                      function(var) {
+                          dplyr::mutate(varlist[[var]], Variable=var)
+                      }) %>%
+      dplyr::bind_rows()              # Combine into a single table
+}
+
+
+#' Select the columns needed for the IIASA format
+#'
+#' Starting with data in long format, keep only the columns needed to form the
+#' IIASA format, namely, scenario, region, year, value, and Units.  Then rename
+#' variables according to the IIASA conventions, and spread to wide format.  We don't
+#' add the model or variable names at this point, however.
+#' @keywords internal
+proc_var_iiasa <- function(df)
+{
+    scenario <- region <- year <- value <- Units <- NULL # silence
+                                        # check notes
+    df <- df %>%
+        dplyr::select(scenario, region, year, value, Units) %>%
+        dplyr::rename(Scenario=scenario, Region=region, Unit=Units) %>%
+        tidyr::spread(year, value)
+}
+
+#' Put columns in canonical order for IIASA data format
+#'
+#' @param df Data frame
+#' @keywords internal
+iiasa_sortcols <- function(df)
+{
+    cols <- unique(c('Model', 'Scenario', 'Region', 'Variable', 'Unit', names(df)))
+    dplyr::select(df, dplyr::one_of(cols))
+}
