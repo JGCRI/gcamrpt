@@ -12,6 +12,8 @@ install:
 
 # Adapt as necessary starting from here
 
+platform: x64
+
 build_script:
   - travis-tool.sh install_deps
 
