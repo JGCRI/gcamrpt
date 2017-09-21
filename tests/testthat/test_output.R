@@ -112,7 +112,7 @@ test_that('output_csv works for separate tabs mode.', {
     flist <- file.path(dir, paste0(vlist, '.csv'))
     on.exit(unlink(flist))
 
-    output_csv(rslt, TRUE, dir)
+    output_csv(rslt, 'tabs', dir)
 
     for(i in seq_along(vlist)) {
         file <- flist[i]
@@ -131,7 +131,7 @@ test_that('output_csv works for separate tabs mode.', {
     flist <- file.path(dir, paste0(vlist, '.csv'))
     on.exit(unlink(flist), add=TRUE)
 
-    output_csv(rsltmrg, TRUE, dir)
+    output_csv(rsltmrg, 'tabs', dir)
 
     for(i in seq_along(vlist))  {
         file <- flist[i]
@@ -150,7 +150,7 @@ test_that('output_csv works for single tab mode.',
     ## unmerged
     filename <- file.path(dir, 'iamrpt.csv')
     on.exit(unlink(filename))
-    output_csv(rslt, FALSE, dir)
+    output_csv(rslt, 'merged', dir)
     expect_true(file.exists(filename))
 
     ## spot check a few lines in the data
@@ -170,7 +170,7 @@ test_that('output_csv works for single tab mode.',
     ## merged version
     filename <- file.path(dir, 'iamrpt001.csv')
     on.exit(unlink(filename), add=TRUE)
-    output_csv(rsltmrg, FALSE, dir)
+    output_csv(rsltmrg, 'merged', dir)
     expect_true(file.exists(filename))
 
     ## spot check important lines
@@ -187,5 +187,39 @@ test_that('output_csv works for single tab mode.',
                      'Units,scenario,region,building,nodeinput,building-node-input,year,value')
     expect_identical(data[2200],
                      'billion m^2,Reference,Africa_Northern,resid,resid,resid_building,2075,5.3585')
+
+})
+
+
+test_that('Single table can be converted to iiasa format.', {
+    pop <- dplyr::filter(popq, year >= 2005, year <= 2020)
+    popiia <- proc_var_iiasa(pop) %>%
+      dplyr:::mutate(Variable='Population', Model='GCAM') %>%
+      iiasa_sortcols()
+
+    expect_equal(nrow(popiia), length(unique(pop$region)))
+    expect_identical(names(popiia), c('Model', 'Scenario', 'Region', 'Variable',
+                                      'Unit', as.character(seq(2005,2020,5))))
+    expect_equal(popiia[['2010']], dplyr::filter(pop, year==2010)[['value']])
+})
+
+test_that('List of tables can be converted to iiasa format.', {
+    pop <- dplyr::filter(popq, year >= 2005, year <= 2020)
+    flrspc <-
+        dplyr::filter(flrspcq, year >= 2005, year <= 2020) %>%
+          aggregate('sum', 'scenario, region')
+
+    allvar <- list(Population=pop, Floorspace=flrspc)
+
+    iitbl <- iiasafy(allvar) %>%
+      dplyr::mutate(Model='GCAM') %>%
+      iiasa_sortcols()
+
+    expect_true(is.data.frame(iitbl))
+    expect_equal(nrow(iitbl), 2*length(unique(pop$region)))
+    expect_identical(names(iitbl), c('Model', 'Scenario', 'Region', 'Variable',
+                                     'Unit', as.character(seq(2005,2020,5))))
+
+    expect_identical(unique(iitbl$Variable), c('Population', 'Floorspace'))
 
 })

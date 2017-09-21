@@ -5,7 +5,7 @@
 \alias{output_xlsx}
 \title{Output function for CSV format}
 \usage{
-output_csv(rslts, tabs, dirname)
+output_csv(rslts, dataformat, dirname)
 
 output_xlsx(rslts, tabs, dirname)
 }
@@ -13,8 +13,8 @@ output_xlsx(rslts, tabs, dirname)
 \item{rslts}{Results tables from \code{\link{generate}}.  This must be either
 a list of data frames or a list of lists of data frames.}
 
-\item{tabs}{Flag indicating whether variables should be written to separate
-tabs/files.}
+\item{dataformat}{Indicator of data format:  If 'tabs', write to separate files; if 'merged'
+write merged results to a single file.}
 
 \item{dirname}{Directory to write output file(s) into.}
 }
