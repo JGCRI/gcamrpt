@@ -4,9 +4,11 @@
 \alias{generate}
 \title{Generate a report for a GCAM experiment}
 \usage{
-generate(scenctl, varctl, dbloc, fileformat = getOption("iamrpt.fileformat",
-  "CSV"), scenmerge = getOption("iamrpt.scenmerge", TRUE),
-  tabs = getOption("iamrpt.tabs", TRUE), outputdir = getwd())
+generate(scenctl, varctl, dbloc, outputdir = getwd(), model = "GCAM",
+  fileformat = getOption("iamrpt.fileformat", "CSV"),
+  scenmerge = getOption("iamrpt.scenmerge", TRUE),
+  dataformat = getOption("iamrpt.dataformat", "tabs"),
+  wideformat = getOption("iamrpt.wideformat", TRUE))
 }
 \arguments{
 \item{scenctl}{Name of the scenario control file.}
@@ -15,16 +17,22 @@ generate(scenctl, varctl, dbloc, fileformat = getOption("iamrpt.fileformat",
 
 \item{dbloc}{Directory holding the GCAM databases}
 
+\item{outputdir}{Directory to write output to.  Default is the current
+working directory.}
+
+\item{model}{Name of the model (e.g., \code{'GCAM'}).  This is required for
+the IIASA data format.  It is ignored for all other formats.}
+
 \item{fileformat}{Desired format for output files.}
 
 \item{scenmerge}{Flag: if true, merge scenarios; otherwise, leave scenarios
 as separate tables.}
 
-\item{tabs}{Flag: if true, put each table into a separate tab or file.
-Otherwise, put them all into a single long tab/file.}
+\item{dataformat}{Indicates desired data format.  Supported formats are
+\code{'tabs'}, \code{'merged'}, or \code{'IIASA'}}
 
-\item{outputdir}{Directory to write output to.  Default is the current
-working directory.}
+\item{wideformat}{Flag: if true, convert data to wide format before output;
+otherwise, leave in long format.}
 }
 \value{
 NULL; the report will be written to output files as described in the
@@ -83,19 +91,32 @@ The system has several options for formatting output.  These can be passed as
 arugments to the system, or set as R options.  The names of the options and
 their functions are:
 \describe{
-    \item{\strong{iamrpt.fileformat}}{File format for output.  Options are
+    \item{\code{iamrpt.fileformat}}{File format for output.  Options are
 \code{"CSV"} and \code{"XLSX"}}
-    \item{\strong{iamrpt.scenmerge}}{If \code{TRUE}, for each variable merge the
+    \item{\code{iamrpt.scenmerge}}{If \code{TRUE}, for each variable merge the
 results for all scenarios into a single table (distinguished by the value of
 the scenario column).  Otherwise, create a separate table for each
 combination of scenario and variable.}
-    \item{\strong{iamrpt.tabs}}{If \code{TRUE}, write each table to a separate tab (if
-outputting to an xlsx file) or file (if outputting to csv files).  In the
-former case each tab/file will be named with the output variable name and
-scenario (if applicable).  In the latter case all of the tables will be
-written into a single tab or file, with the name of the scenario and variable
-before each table.}
+    \item{\code{iamrpt.dataformat}}{Specify the data format; that is, how
+the data is organized in the output files.  Three options are available:
+      \describe{
+        \item{\code{"tabs"}}{Each table generated goes into a separate tab (if
+XLS output is selected) or file (if CSV output is selected).  The tab or file
+will be named with the output of the table.}
+        \item{\code{"merged"}}{The tables will be output sequentially into a
+single tab or file.  Each table will be preceded by its name.  This is
+similar to the format used by GCAM to output batch queries.}
+        \item{\code{"IIASA"}}{The database format used by IIASA.  In this
+format each table is spread into a row in a merged table, with a column to
+identify the variable that each row comes from.}
+   }
+ }
+   \item{\code{iamrpt.wideformat}}{If \code{TRUE}, reshape the tables into
+wide format (years as columns) before output.  Otherwise, leave them in long
+format.  If the IIASA data format is selected, then this option is ignored,
+since the IIASA format requires wide data.}
 }
+
 
 Output filenames will be chosen automatically.  For an XLSX file the filename
 will be 'iamrpt.xlsx'.  For CSV output with \code{tabs == FALSE} the result
@@ -132,19 +153,20 @@ trimmed.
 
 The filter functions currently recognized by the system are
 \describe{
-  \item{\strong{==}}{String equality}
-  \item{\strong{!=}}{String inequality}
-  \item{\strong{<}}{Numeric less-than}
-  \item{\strong{>}}{Numeric greather-than}
-  \item{\strong{<=}}{Numeric less-than-or-equals}
-  \item{\strong{>=}}{Numeric greater-than-or-equals}
-  \item{\strong{matches}}{Regular expression match.  Note that because of the
-way we parse these strings you can't have a ',', ';', '(', or ')' in your
+  \item{\code{==}}{String equality}
+  \item{\code{!=}}{String inequality}
+  \item{\code{<}}{Numeric less-than}
+  \item{\code{>}}{Numeric greather-than}
+  \item{\code{<=}}{Numeric less-than-or-equals}
+  \item{\code{>=}}{Numeric greater-than-or-equals}
+  \item{\code{matches}}{Regular expression match.  Note that because of the
+way we parse these strings you can't have a \code{','}, \code{';'},
+\code{'('}, or \code{')'} in your
 regular expressions for this function or any of the ones below.}
-  \item{\strong{matchesi}}{Case-insensitive regular expression match.}
-  \item{\strong{notmatches}}{Regular expression inverted match.  That is,
+  \item{\code{matchesi}}{Case-insensitive regular expression match.}
+  \item{\code{notmatches}}{Regular expression inverted match.  That is,
 select the rows that do \emph{not} match the given regular expression.}
-  \item{\strong{notmatchesi}}{Case-insensitive regular expression inverted
+  \item{\code{notmatchesi}}{Case-insensitive regular expression inverted
 match.}
 }
 }
