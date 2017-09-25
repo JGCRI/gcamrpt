@@ -23,7 +23,7 @@ Imports:
     assertthat (>= 0.2.0),
     lubridate (>= 1.6.0),
     magrittr (>= 1.5),
-	xlsx (>= 0.5.7)
+    openxlsx (>= 4.0.17)
 Remotes:
     JGCRI/rgcam
 RoxygenNote: 6.0.1
