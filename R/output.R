@@ -6,10 +6,11 @@
 #' a list of data frames or a list of lists of data frames.
 #' @param dataformat Indicator of data format:  If 'tabs', write to separate files; if 'merged'
 #' write merged results to a single file.
+#' @param fileformat File format for the output:  'CSV' or 'XLSX'
 #' @param dirname Directory to write output file(s) into.
 #' @importFrom assertthat assert_that
 #' @keywords internal
-output_csv <- function(rslts, dataformat, dirname)
+output <- function(rslts, dataformat, fileformat, dirname)
 {
     assert_that(is.list(rslts), !is.data.frame(rslts))
 
@@ -28,22 +29,41 @@ output_csv <- function(rslts, dataformat, dirname)
                     msg='output_csv: Invalid results structure, lists nested > 2 deep.')
     }
 
+    if(!fileformat %in% c('CSV', 'XLSX')) {
+        warning('Unknown fileformat requested: ', fileformat, '.  Using CSV.')
+        fileformat = 'CSV'
+    }
+
     ## Now we should have a list of data frames.  Output them to file(s) one
     ## by one.
     if(dataformat=='tabs') {
         ## One file for each table
         for(tblname in names(rslts)) {
-            filename <- alternate_filename(file.path(dirname, paste0(tblname,
-                                                                     '.csv')))
-            message('Writing file ', filename)
-            readr::write_csv(rslts[[tblname]], filename)
+            if(fileformat == 'CSV') {
+                filename <-
+                    alternate_filename(file.path(dirname,
+                                                 paste0(tblname, '.csv')))
+                message('Writing file ', filename)
+                readr::write_csv(rslts[[tblname]], filename)
+            }
+            else {
+                filename <-
+                    alternate_filename(file.path(dirname, 'iamrpt.xlsx'))
+                message('Writing file ', filename)
+                xlsx::write.xlsx2(rslts[[tblname]], filename, sheetName=tblname)
+            }
         }
     }
     else {
         ## Single file in PITA format.
-        filename <- alternate_filename(file.path(dirname, 'iamrpt.csv'))
+        if(fileformat == 'CSV') {
+            filename <- alternate_filename(file.path(dirname, 'iamrpt.csv'))
+            fcon <- file(filename, 'w')
+        }
+        else {
+            filename <- alternate_filename(file.path(dirname, 'iamrpt.xlsx'))
+        }
         message('Writing file ', filename)
-        fcon <- file(filename, 'w')
         line1 <- TRUE
         for(tblname in names(rslts)) {
             if(line1) {
@@ -51,76 +71,29 @@ output_csv <- function(rslts, dataformat, dirname)
                 line1 <- FALSE
             }
             else {
-                cat('\n', file=fcon)
+                if(fileformat == 'CSV')
+                    cat('\n', file=fcon)
+                else
+                    xlsx::write.xlsx2('', filename, append=TRUE)
             }
 
             if(!('Variable' %in% names(rslts[[tblname]]))) {
-                cat(tblname, '\n', file=fcon, sep='')
+                if(fileformat == 'CSV')
+                    cat(tblname, '\n', file=fcon, sep='')
+                else
+                    xlsx::write.xlsx2(tblname, filename, append=TRUE)
             }
-            readr::write_csv(rslts[[tblname]], fcon)
+
+            if(fileformat == 'CSV')
+                readr::write_csv(rslts[[tblname]], fcon)
+            else
+                xlsx::write.xlsx2(rslts[[tblname]], filename, append=TRUE)
         }
-        close(fcon)
+        if(fileformat == 'CSV')
+            close(fcon)
     }
     invisible(NULL)
 }
-
-
-#' @describeIn output_csv Output function for XLSX format
-#' @importFrom assertthat assert_that
-#' @importFrom xlsx write.xlsx2
-
-#' @keywords internal
-#'
-output_xlsx <- function(rslts, tabs, dirname)
-{
-  assert_that(is.list(rslts), !is.data.frame(rslts))
-
-  ## First flatten the list, if the scenarios haven't already been combined.
-  isdf <- sapply(rslts, is.data.frame)
-  if(any(isdf)) {
-    assert_that(all(isdf),
-                msg='output_xlsx:  Invalid results structure, unbalanced tree.')
-    ## This list is ready to go in the next step
-  }
-  else {
-    ## Two-level tree, with scenarios at the top level
-    rslts <- unlist(rslts, recursive=FALSE)
-    isdf <- sapply(rslts, is.data.frame)
-    assert_that(all(isdf),
-                msg='output_xlsx: Invalid results structure, lists nested > 2 deep.')
-  }
-
-  ## Now we should have a list of data frames.  Output them to file(s) one
-  ## by one.
-  if(tabs) {
-    ## One file for each table
-    for(tblname in names(rslts)) {
-
-      # xlsx workbook function instead
-      filename <- alternate_filename(file.path(dirname, paste0('iamrpt', '.xlsx')))
-      xlsx::write.xlsx2(rslts[[tblname]], filename, sheetName="tblname")
-    }
-  }
-  else {
-    ## Single file in PITA format.
-    filename <- alternate_filename(file.path(dirname, 'iamrpt.xlsx'))
-    line1 <- TRUE
-    for(tblname in names(rslts)) {
-      if(line1) {
-        ## Don't write an extra newline at the start of the line
-        line1 <- FALSE
-      }
-      else {
-          xlsx::write.xlsx2('', filename, append=TRUE)
-      }
-        xlsx::write.xlsx2(tblname, filename, append=TRUE)
-        xlsx::write.xlsx2(rslts[[tblname]], filename, append=TRUE)
-    }
-  }
-  invisible(NULL)
-}
-
-
 
 
 #' Generate an alternate file name, if input name is already in use.

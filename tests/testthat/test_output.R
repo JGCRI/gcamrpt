@@ -100,7 +100,7 @@ test_that('alternate_filename does the right thing with no file extension.', {
     }
 })
 
-test_that('output_csv works for separate tabs mode.', {
+test_that('csv output works for separate tabs mode.', {
     ## unmerged version
     dir <- tempdir()
     varmat <- sapply(names(rslt), function(scen) {
@@ -112,7 +112,7 @@ test_that('output_csv works for separate tabs mode.', {
     flist <- file.path(dir, paste0(vlist, '.csv'))
     on.exit(unlink(flist))
 
-    output_csv(rslt, 'tabs', dir)
+    output(rslt, 'tabs', 'CSV', dir)
 
     for(i in seq_along(vlist)) {
         file <- flist[i]
@@ -131,7 +131,7 @@ test_that('output_csv works for separate tabs mode.', {
     flist <- file.path(dir, paste0(vlist, '.csv'))
     on.exit(unlink(flist), add=TRUE)
 
-    output_csv(rsltmrg, 'tabs', dir)
+    output(rsltmrg, 'tabs', 'CSV', dir)
 
     for(i in seq_along(vlist))  {
         file <- flist[i]
@@ -143,14 +143,14 @@ test_that('output_csv works for separate tabs mode.', {
     }
 })
 
-test_that('output_csv works for single tab mode.',
+test_that('csv output works for single tab mode.',
       {
     dir <- tempdir()
 
     ## unmerged
     filename <- file.path(dir, 'iamrpt.csv')
     on.exit(unlink(filename))
-    output_csv(rslt, 'merged', dir)
+    output(rslt, 'merged', 'CSV', dir)
     expect_true(file.exists(filename))
 
     ## spot check a few lines in the data
@@ -170,7 +170,7 @@ test_that('output_csv works for single tab mode.',
     ## merged version
     filename <- file.path(dir, 'iamrpt001.csv')
     on.exit(unlink(filename), add=TRUE)
-    output_csv(rsltmrg, 'merged', dir)
+    output(rsltmrg, 'merged', 'CSV', dir)
     expect_true(file.exists(filename))
 
     ## spot check important lines
