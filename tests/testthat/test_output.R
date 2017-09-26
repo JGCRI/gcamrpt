@@ -100,7 +100,7 @@ test_that('alternate_filename does the right thing with no file extension.', {
     }
 })
 
-test_that('output_csv works for separate tabs mode.', {
+test_that('csv output works for separate tabs mode.', {
     ## unmerged version
     dir <- tempdir()
     varmat <- sapply(names(rslt), function(scen) {
@@ -110,9 +110,9 @@ test_that('output_csv works for separate tabs mode.', {
                           })
     vlist <- as.vector(varmat)
     flist <- file.path(dir, paste0(vlist, '.csv'))
-    on.exit(unlink(flist))
+    on.exit(unlink(file.path(dir,'*.csv')))
 
-    output_csv(rslt, 'tabs', dir)
+    output(rslt, 'tabs', 'CSV', dir)
 
     for(i in seq_along(vlist)) {
         file <- flist[i]
@@ -129,9 +129,8 @@ test_that('output_csv works for separate tabs mode.', {
     ## merged version
     vlist <- names(rsltmrg)
     flist <- file.path(dir, paste0(vlist, '.csv'))
-    on.exit(unlink(flist), add=TRUE)
 
-    output_csv(rsltmrg, 'tabs', dir)
+    output(rsltmrg, 'tabs', 'CSV', dir)
 
     for(i in seq_along(vlist))  {
         file <- flist[i]
@@ -143,14 +142,14 @@ test_that('output_csv works for separate tabs mode.', {
     }
 })
 
-test_that('output_csv works for single tab mode.',
+test_that('csv output works for single tab mode.',
       {
     dir <- tempdir()
 
     ## unmerged
     filename <- file.path(dir, 'iamrpt.csv')
-    on.exit(unlink(filename))
-    output_csv(rslt, 'merged', dir)
+    on.exit(unlink(file.path(dir, '*.csv')))
+    output(rslt, 'merged', 'CSV', dir)
     expect_true(file.exists(filename))
 
     ## spot check a few lines in the data
@@ -169,8 +168,7 @@ test_that('output_csv works for single tab mode.',
 
     ## merged version
     filename <- file.path(dir, 'iamrpt001.csv')
-    on.exit(unlink(filename), add=TRUE)
-    output_csv(rsltmrg, 'merged', dir)
+    output(rsltmrg, 'merged', 'CSV', dir)
     expect_true(file.exists(filename))
 
     ## spot check important lines
@@ -223,3 +221,115 @@ test_that('List of tables can be converted to iiasa format.', {
     expect_identical(unique(iitbl$Variable), c('Population', 'Floorspace'))
 
 })
+
+
+test_that('xlsx output works for separate tabs mode.', {
+    ## unmerged scenarios version
+    dir <- tempdir()
+    varmat <- sapply(names(rslt), function(scen) {
+                              sapply(names(rslt[[scen]]), function(var) {
+                                              paste(scen, var, sep='.')
+                                          })
+                          })
+    vlist <- as.vector(varmat)
+    filename <- file.path(dir, 'iamrpt.xlsx')
+    on.exit(unlink(file.path(dir, '*.xlsx')))
+
+    output(rslt, 'tabs', 'XLSX', dir)
+
+    expect_true(file.exists(filename),
+                info=paste('Output file ', filename, ' does not exist.'))
+    wb <- openxlsx::loadWorkbook(filename)
+
+    for(var in vlist) {
+        df <- openxlsx::readWorkbook(wb, var)
+        splt <- unlist(strsplit(var,'.', fixed=TRUE))
+        s <- splt[1]
+        v <- splt[2]
+        expect_equivalent(df, rslt[[s]][[v]])
+    }
+
+    ## merged scenarios version
+    vlist <- names(rsltmrg)
+    filename <- file.path(dir, 'iamrpt001.xlsx')
+
+    output(rsltmrg, 'tabs', 'XLSX', dir)
+
+    expect_true(file.exists(filename),
+                info=paste('Output file ', filename, ' does not exist.'))
+    wb <- openxlsx::loadWorkbook(filename)
+
+    for(var in vlist)  {
+        df <- openxlsx::readWorkbook(wb, var)
+        expect_equivalent(df, rsltmrg[[var]])
+    }
+})
+
+
+test_that('xlsx output works in merged output mode.',
+      {
+    ## unmerged scenarios version
+    dir <- tempdir()
+    varmat <- sapply(names(rslt), function(scen) {
+                              sapply(names(rslt[[scen]]), function(var) {
+                                              paste(scen, var, sep='.')
+                                          })
+                          })
+    vlist <- as.vector(varmat)
+    filename <- file.path(dir, 'iamrpt.xlsx')
+    on.exit(unlink(file.path(dir,'*.xlsx')))
+
+    ## convert to wide format, which will make doing these tests so much
+    ## easier.
+    rsltw <- rslt
+    for(scen in names(rslt)) {
+        rsltw[[scen]] <-
+            lapply(rsltw[[scen]],
+                   function(df) {tidyr::spread(df, year, value)})
+    }
+
+    output(rsltw, 'merged', 'XLSX', dir)
+
+    expect_true(file.exists(filename),
+                info=paste('Output file ', filename, ' does not exist.'))
+
+    wb <- openxlsx::loadWorkbook(filename)
+
+    ## spot check some results
+    r1 <- openxlsx::readWorkbook(wb, rows=1, colNames=FALSE)
+    expect_identical(r1[1,1], 'Reference.population')
+    r2 <- openxlsx::readWorkbook(wb, rows=(2:34))
+    expect_equivalent(r2, rsltw$Reference$population)
+
+    r1 <- openxlsx::readWorkbook(wb, rows=36, colNames=FALSE)
+    expect_identical(r1[1,1], 'Reference.floorspace')
+    r2 <- openxlsx::readWorkbook(wb, rows=(37:101))
+    expect_equivalent(r2, rsltw$Reference$floorspace)
+
+    r1 <- openxlsx::readWorkbook(wb, rows=240, colNames=FALSE)
+    expect_identical(r1[1,1], 'Experiment 2.floorspace')
+    r2 <- openxlsx::readWorkbook(wb, startRow=241)
+    expect_equivalent(r2, rsltw[['Experiment 2']]$floorspace)
+
+    ## merged scenarios version
+    vlist <- names(rsltmrg)
+    filename <- file.path(dir, 'iamrpt001.xlsx')
+
+    rsltmw <- lapply(rsltmrg, function(df) {tidyr::spread(df, year, value)})
+    output(rsltmw, 'merged', 'XLSX', dir)
+    expect_true(file.exists(filename))
+
+    wb <- openxlsx::loadWorkbook(filename)
+
+    r1 <- openxlsx::readWorkbook(wb, rows=1, colNames=FALSE)
+    expect_identical(r1[1,1], 'population')
+    r2 <- openxlsx::readWorkbook(wb, rows=(2:98))
+    expect_equivalent(r2, rsltmw$population)
+
+    r1 <- openxlsx::readWorkbook(wb, rows=100, colNames=FALSE)
+    expect_identical(r1[1,1], 'floorspace')
+    r2 <- openxlsx::readWorkbook(wb, startRow=101)
+    expect_equivalent(r2, rsltmw$floorspace)
+
+})
+

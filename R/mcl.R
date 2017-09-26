@@ -221,17 +221,7 @@ generate <- function(scenctl,
         rslts <- lapply(rslts, function(df) {tidyr::spread(df, year, value)})
     }
 
-    if(fileformat == 'XLSX') {
-        output_xlsx(rslts, dataformat, outputdir)
-    }
-    else if(fileformat == 'CSV') {
-        output_csv(rslts, dataformat, outputdir)
-    }
-    else {
-        warning('Unknown file format ', fileformat, ' requested. ',
-                'Writing as CSV.')
-        output_csv(rslts, dataformat, outputdir)
-    }
+    output(rslts, dataformat, fileformat, outputdir)
 
     message('FIN.')
     invisible(NULL)

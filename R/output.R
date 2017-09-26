@@ -6,11 +6,14 @@
 #' a list of data frames or a list of lists of data frames.
 #' @param dataformat Indicator of data format:  If 'tabs', write to separate files; if 'merged'
 #' write merged results to a single file.
+#' @param fileformat File format for the output:  'CSV' or 'XLSX'
 #' @param dirname Directory to write output file(s) into.
 #' @importFrom assertthat assert_that
 #' @keywords internal
-output_csv <- function(rslts, dataformat, dirname)
+output <- function(rslts, dataformat, fileformat, dirname)
 {
+    ## results should be a list of data frames or a list of lists of data
+    ## frames.
     assert_that(is.list(rslts), !is.data.frame(rslts))
 
     ## First flatten the list, if the scenarios haven't already been combined.
@@ -28,22 +31,51 @@ output_csv <- function(rslts, dataformat, dirname)
                     msg='output_csv: Invalid results structure, lists nested > 2 deep.')
     }
 
+    if(!fileformat %in% c('CSV', 'XLSX')) {
+        warning('Unknown fileformat requested: ', fileformat, '.  Using CSV.')
+        fileformat = 'CSV'
+    }
+
     ## Now we should have a list of data frames.  Output them to file(s) one
     ## by one.
     if(dataformat=='tabs') {
-        ## One file for each table
+        ## One file or tab for each table
+        if(fileformat == 'XLSX')
+            wb <- openxlsx::createWorkbook()
+
         for(tblname in names(rslts)) {
-            filename <- alternate_filename(file.path(dirname, paste0(tblname,
-                                                                     '.csv')))
+            if(fileformat == 'CSV') {
+                filename <-
+                    alternate_filename(file.path(dirname,
+                                                 paste0(tblname, '.csv')))
+                message('Writing file ', filename)
+                readr::write_csv(rslts[[tblname]], filename)
+            }
+            else {
+                openxlsx::addWorksheet(wb, tblname)
+                openxlsx::writeData(wb, tblname, rslts[[tblname]])
+            }
+        }
+
+        if(fileformat == 'XLSX') {
+            filename <- alternate_filename(file.path(dirname, 'iamrpt.xlsx'))
             message('Writing file ', filename)
-            readr::write_csv(rslts[[tblname]], filename)
+            openxlsx::saveWorkbook(wb, filename)
         }
     }
     else {
         ## Single file in PITA format.
-        filename <- alternate_filename(file.path(dirname, 'iamrpt.csv'))
+        if(fileformat == 'CSV') {
+            filename <- alternate_filename(file.path(dirname, 'iamrpt.csv'))
+            fcon <- file(filename, 'w')
+        }
+        else {
+            filename <- alternate_filename(file.path(dirname, 'iamrpt.xlsx'))
+            wb <- openxlsx::createWorkbook()
+            openxlsx::addWorksheet(wb, 'iamrpt')
+            row <- 1                    # current write row
+        }
         message('Writing file ', filename)
-        fcon <- file(filename, 'w')
         line1 <- TRUE
         for(tblname in names(rslts)) {
             if(line1) {
@@ -51,26 +83,43 @@ output_csv <- function(rslts, dataformat, dirname)
                 line1 <- FALSE
             }
             else {
-                cat('\n', file=fcon)
+                if(fileformat == 'CSV') {
+                    cat('\n', file=fcon)
+                }
+                else {
+                    openxlsx::writeData(wb, 'iamrpt' , '', startRow=row)
+                    row <- row + 1
+                }
             }
 
             if(!('Variable' %in% names(rslts[[tblname]]))) {
-                cat(tblname, '\n', file=fcon, sep='')
+                if(fileformat == 'CSV') {
+                    cat(tblname, '\n', file=fcon, sep='')
+                }
+                else {
+                    openxlsx::writeData(wb, 'iamrpt', tblname, startRow=row)
+                    row <- row + 1
+                }
             }
-            readr::write_csv(rslts[[tblname]], fcon)
+
+            if(fileformat == 'CSV') {
+                readr::write_csv(rslts[[tblname]], fcon)
+            }
+            else {
+                openxlsx::writeData(wb, 'iamrpt', rslts[[tblname]],
+                                    startRow=row)
+                row <- row + nrow(rslts[[tblname]]) + 1
+            }
         }
-        close(fcon)
+        if(fileformat == 'CSV') {
+            close(fcon)
+        }
+        else {
+            openxlsx::saveWorkbook(wb, filename)
+        }
     }
     invisible(NULL)
 }
-
-
-#' @describeIn output_csv Output function for XLSX format
-output_xlsx <- function(rslts, tabs, dirname)
-{
-    stop('output_xlsx not yet implemented.')
-}
-
 
 
 #' Generate an alternate file name, if input name is already in use.

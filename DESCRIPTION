@@ -1,6 +1,6 @@
 Package: iamrpt
 Title: Convert GCAM results to the format required by various IAM experiment databases
-Version: 0.2.0
+Version: 0.2.0-9000
 Authors@R: c(
     person("Robert", "Link", email = "robert.link@pnnl.gov", role = c("aut", "cre")),
     person("Xavier", "Gutierrez", email = "xavier.gutierrez@pnnl.gov", role = c("aut"))
@@ -22,7 +22,8 @@ Imports:
     stringr (>= 1.2.0),
     assertthat (>= 0.2.0),
     lubridate (>= 1.6.0),
-    magrittr (>= 1.5)
+    magrittr (>= 1.5),
+    openxlsx (>= 4.0.17)
 Remotes:
     JGCRI/rgcam
 RoxygenNote: 6.0.1
