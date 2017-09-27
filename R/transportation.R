@@ -15,7 +15,7 @@
 #'
 #' @keywords internal
 
-module.service_output <- function(mode, allqueries, aggkeys, aggfn, years,
+module.service_output <- function(mode, allqueries, aggkeys, aggfn, strtyr, endyr,
                               filters, ounit)
 {
     if(mode == GETQ) {
@@ -26,8 +26,13 @@ module.service_output <- function(mode, allqueries, aggkeys, aggfn, years,
     else {
         message('Function for processing variable: Service output')
         serviceOutput <- allqueries$'Service output'
-        serviceOutput <- tech_vint_split(serviceOutput)
-        serviceOutput <- parse_sectr(serviceOutput)
+        serviceOutput <- vint_tech_split(serviceOutput)
+        serviceOutput <- parse_sector(serviceOutput)
+        serviceOutput <- filter(serviceOutput, strtyr, endyr, filters)
+        serviceOutput <- aggregate(serviceOutput, aggfn, aggkeys)
+        # units example: million p-km
+        serviceOutput <- unitconv_counts(serviceOutput, ounit)
+        serviceOutput
     }
 }
 
@@ -46,7 +51,7 @@ module.service_output <- function(mode, allqueries, aggkeys, aggfn, years,
 #'
 #' @keywords internal
 
-module.load_factors <- function(mode, allqueries, aggkeys, aggfn, years,
+module.load_factors <- function(mode, allqueries, aggkeys, aggfn, strtyr, endyr,
                                   filters, ounit)
 {
     if(mode == GETQ) {
@@ -73,8 +78,9 @@ module.load_factors <- function(mode, allqueries, aggkeys, aggfn, years,
 #' @param df Data returned for individual query
 #' @keywords internal
 vint_tech_split <- function(df) {
-    df$vintage <- lapply(df$technology, split, col='vint')
-    df$technology <- lapply(df$technology, split, col='tech')
+    df$vintage <- lapply(df$technology, split.vt, col='vint')
+    df$technology <- lapply(df$technology, split.vt, col='tech')
+    df
 }
 
 #' Parse sector column
@@ -95,6 +101,7 @@ parse_sector <- function(df) {
     #Mode cond'ns
     ship <- grepl('shipping', df$sector)
     road <- grepl('road', df$sector)
+    av <- grepl('aviation', df$sector)
 
     #Submode cond'ns
     LDV <- grepl('LDV', df$sector)
@@ -109,12 +116,13 @@ parse_sector <- function(df) {
     #Service
     df[freight | ship, 'service'] <- 'Freight'
     df[pass & road, 'service'] <- 'Passenger'
-    # df[serv2 & !mode2] is 'trn_pass': unsure
+    df[pass & !(road), 'service'] <- df[pass & !(road), 'sector'] #trn_pass
 
     #Mode
     df[freight & !(road), 'mode'] <- 'Rail'
     df[road, 'mode'] <- 'Road'
     df[ship,'mode'] <- 'Shipping'
+    df[av, 'mode'] <-df[av,'sector'] #trn_aviation_intl
 
     #Submode
     df[pass & road & LDV & W2, 'submode'] <- '2W'
@@ -129,6 +137,9 @@ parse_sector <- function(df) {
     df[freight & road & t16, 'submode'] <- 'HHDT'
 
     df[freight & !(road), 'submode'] <- 'Freight Rail'
+
+    df
+}
 
 #' Split: vintage, technology
 #'
@@ -145,17 +156,4 @@ split.vt <- function(text, col) {
     } else if (col =='vint') {
         strsplit(splt[2],'=')[[1]][2]
     }
-}
-
-#' Split: Service, Mode, Submode
-#'
-#' Using text in the approximate format of 'trn_service_mode', splits text at '_' and returns
-#' new cols
-#'
-#' @param text Text entry of original technology column
-#' @param col Specifies which string from text to return
-#' @keywords internal
-split.sm <- function(text, col) {
-
-
 }
