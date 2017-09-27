@@ -22,15 +22,14 @@
 #' of the function.  If empty or NULL, no aggregation will be performed.
 #' @param aggfn Function to use for aggregating.  If none specified,
 #' \code{\link[base]{sum}} will be used.
-#' @param strtyr Start year.  All years prior to this will be dropped.
-#' @param endyr End year.  All years after this will be dropped.
+#' @param years Years to include in the output
 #' @param filters Character string giving a list of additional filters to be
 #' applied, in s-exp format.
 #' @param ounit Desired output unit.  If omitted, results will be returned with
 #' no unit conversion.
 #' @keywords internal
 runModule <- function(var, mode, allqueries=NULL, aggkeys=NULL, aggfn=NULL,
-                      strtyr=NULL, endyr=NULL, filters=NULL, ounit=NULL)
+                      years=NULL, filters=NULL, ounit=NULL)
 {
     fun <- tryCatch(
         ## Find the corresponding function, limited to the package environment
@@ -42,7 +41,7 @@ runModule <- function(var, mode, allqueries=NULL, aggkeys=NULL, aggfn=NULL,
         },
         finally = NULL
         )
-    fun(mode, allqueries, aggkeys, aggfn, strtyr, endyr, filters, ounit)
+    fun(mode, allqueries, aggkeys, aggfn, years, filters, ounit)
 }
 
 
@@ -68,7 +67,7 @@ canonicalForm <- function(var)
 #' This function prints a diagnostic and returns an empty data frame.
 #'
 #' @keywords internal
-module.test_fun <- function(mode, allqueries, aggkeys, aggfn, strtyr, endyr,
+module.test_fun <- function(mode, allqueries, aggkeys, aggfn, years,
                             filters, ounit)
 {
     if(mode == GETQ) {

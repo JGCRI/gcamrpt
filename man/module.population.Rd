@@ -4,8 +4,7 @@
 \alias{module.population}
 \title{Population Data Module}
 \usage{
-module.population(mode, allqueries, aggkeys, aggfn, strtyr, endyr, filters,
-  ounit)
+module.population(mode, allqueries, aggkeys, aggfn, years, filters, ounit)
 }
 \description{
 Produce population by region.

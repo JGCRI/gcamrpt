@@ -18,7 +18,7 @@
 #'
 #' @keywords internal
 
-module.electricity <- function(mode, allqueries, aggkeys, aggfn, strtyr, endyr,
+module.electricity <- function(mode, allqueries, aggkeys, aggfn, years,
                               filters, ounit)
 {
     if(mode == GETQ) {
@@ -30,7 +30,7 @@ module.electricity <- function(mode, allqueries, aggkeys, aggfn, strtyr, endyr,
         message('Function for processing variable: Electricity')
 
         electricity <- allqueries$'Electricity'
-        electricity <- filter(electricity, strtyr, endyr, filters)
+        electricity <- filter(electricity, years, filters)
         electricity <- aggregate(electricity, aggfn, aggkeys)
         electricity <- unitconv_energy(electricity, ounit)
         electricity
