@@ -1,6 +1,8 @@
 comment:
-	behavior: new
-ignore: R/mcl.R
+	behavior: "default"
+ignore:
+  - R/mcl.R
+  - R/zzz.R
 
 coverage:
   precision: 1

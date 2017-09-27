@@ -7,21 +7,18 @@
 #' filter string.  The return value is the filtered data set.
 #'
 #' @param tbl Table to filter
-#' @param startyr Start year.  Years less than this will be dropped.
-#' @param endyr End year.  Years greater than this will be dropped.
+#' @param years String listing the years to include in the output
 #' @param filterstr Filter string.  A list of filter s-expressions.  These will
 #' be parsed and applied to the input table.
 #' @return Filtered variable table.
 #' @keywords internal
-filter <- function(tbl, startyr, endyr, filterstr)
+filter <- function(tbl, years, filterstr)
 {
     mask <- rep(TRUE, nrow(tbl))
-    if(!(is.na(startyr) || startyr == '')) {
-        mask <- mask & (tbl$year >= startyr)
-    }
 
-    if(!(is.na(endyr) || endyr == '')) {
-        mask <- mask & (tbl$year <= endyr)
+    if(!(is.na(years) || years == '')) {
+        years <- parse_yrlist(years)
+        mask <- mask & (tbl$year %in% years)
     }
 
     if(!(is.na(filterstr) || filterstr == '')) {
@@ -115,4 +112,64 @@ dofilter <- function(fvec, tbl)
         rslt <- rep(TRUE, nrow(tbl))
     }
     rslt
+}
+
+
+#' Parse a string describing the years to include in the output
+#'
+#' Parse the input string and return an integer vector of years to include.
+#'
+#' The years are specified as a comma-separated list, where each element is one
+#' of:
+#' \itemize{
+#'   \item{A single integer, which includes that individual year}
+#'   \item{A range in the form start:end, which includes all years from start to
+#' end, inclusive.}
+#'   \item{A stepped range in the form start:end:step, which includes all years
+#' from start to end in steps of step.}
+#' }
+#' @param yrlist String containing the year list
+#' @keywords internal
+parse_yrlist <- function(yrlist)
+{
+    yrsep <- stringr::str_split(yrlist,',') %>%
+      unlist() %>%  stringr::str_trim()
+
+    yrsep <- sapply(yrsep, function(x) {stringr::str_split(x, ':')})
+
+    lapply(yrsep, yr2list) %>%
+      unlist(use.names=FALSE) %>%
+      unique() %>%
+      sort()
+
+}
+
+#' Helper function for parse_yrlist
+#'
+#' Process each year specification
+#'
+#' @param y Year spec
+#' @keywords internal
+yr2list <- function(y)
+{
+    if(length(y) == 0) {
+        ## empty string
+        return(NULL)
+    }
+
+    y <- as.integer(y)
+    if(length(y) > 3) {
+        ## Got something like x:y:z:w; ignore everything after the 'z'
+        warning('Badly formatted year spec: ', stringr::str_c(y, collapse=':'))
+    }
+
+    if(length(y)==1) {
+        y
+    }
+    else if(length(y)==2) {
+        seq(y[1], y[2])
+    }
+    else {
+        seq(y[1], y[2], y[3])
+    }
 }

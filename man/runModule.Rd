@@ -5,7 +5,7 @@
 \title{Run a data module}
 \usage{
 runModule(var, mode, allqueries = NULL, aggkeys = NULL, aggfn = NULL,
-  strtyr = NULL, endyr = NULL, filters = NULL, ounit = NULL)
+  years = NULL, filters = NULL, ounit = NULL)
 }
 \arguments{
 \item{var}{Name of the variable to produce.  This must be one of the varibles
@@ -26,9 +26,7 @@ of the function.  If empty or NULL, no aggregation will be performed.}
 \item{aggfn}{Function to use for aggregating.  If none specified,
 \code{\link[base]{sum}} will be used.}
 
-\item{strtyr}{Start year.  All years prior to this will be dropped.}
-
-\item{endyr}{End year.  All years after this will be dropped.}
+\item{years}{Years to include in the output}
 
 \item{filters}{Character string giving a list of additional filters to be
 applied, in s-exp format.}

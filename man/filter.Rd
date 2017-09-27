@@ -4,14 +4,12 @@
 \alias{filter}
 \title{Filter an output variable}
 \usage{
-filter(tbl, startyr, endyr, filterstr)
+filter(tbl, years, filterstr)
 }
 \arguments{
 \item{tbl}{Table to filter}
 
-\item{startyr}{Start year.  Years less than this will be dropped.}
-
-\item{endyr}{End year.  Years greater than this will be dropped.}
+\item{years}{String listing the years to include in the output}
 
 \item{filterstr}{Filter string.  A list of filter s-expressions.  These will
 be parsed and applied to the input table.}
