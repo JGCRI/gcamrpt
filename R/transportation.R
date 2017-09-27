@@ -27,6 +27,7 @@ module.service_output <- function(mode, allqueries, aggkeys, aggfn, years,
         message('Function for processing variable: Service output')
         serviceOutput <- allqueries$'Service output'
         serviceOutput <- tech_vint_split(serviceOutput)
+        serviceOutput <- parse_sectr(serviceOutput)
     }
 }
 
@@ -69,11 +70,11 @@ module.load_factors <- function(mode, allqueries, aggkeys, aggfn, years,
 #' Makes use of split.vt() function below. This function must write Vintage column first
 #' before rewriting Technology column.
 #'
-#' @param data Data returned for individual query
+#' @param df Data returned for individual query
 #' @keywords internal
-vint_tech_split <- function(data) {
-    data$vintage <- lapply(data$technology, split, col='vint')
-    data$technology <- lapply(data$technology, split, col='tech')
+vint_tech_split <- function(df) {
+    df$vintage <- lapply(df$technology, split, col='vint')
+    df$technology <- lapply(df$technology, split, col='tech')
 }
 
 #' Parse sector column
@@ -83,12 +84,51 @@ vint_tech_split <- function(data) {
 #'
 #'Makes use of split.sm() function below.
 #'
-#' @param data Data returned for individual query
+#' @param df Data returned for individual query
 #' @keywords internal
-parse_sector <- function(data) {
-    data$service <- lapply(data$sector, split.sm, col='service')
-    data$mode <- lapply(data$sector, split.sm, col='mode')
-}
+parse_sector <- function(df) {
+
+    #Service cond'ns
+    freight <- grepl('freight', df$sector)
+    pass <- grepl('pass', df$sector)
+
+    #Mode cond'ns
+    ship <- grepl('shipping', df$sector)
+    road <- grepl('road', df$sector)
+
+    #Submode cond'ns
+    LDV <- grepl('LDV', df$sector)
+    W2 <- grepl('2W', df$sector)
+    W4 <- grepl('4W', df$sector)
+
+    t2 <- grepl('0-2t', df$subsector)
+    t5 <- grepl('2-5t', df$subsector)
+    t9 <- grepl('5-9t', df$subsector)
+    t16 <- grepl('9-16t', df$subsector)
+
+    #Service
+    df[freight | ship, 'service'] <- 'Freight'
+    df[pass & road, 'service'] <- 'Passenger'
+    # df[serv2 & !mode2] is 'trn_pass': unsure
+
+    #Mode
+    df[freight & !(road), 'mode'] <- 'Rail'
+    df[road, 'mode'] <- 'Road'
+    df[ship,'mode'] <- 'Shipping'
+
+    #Submode
+    df[pass & road & LDV & W2, 'submode'] <- '2W'
+    df[pass & road & LDV & W4, 'submode'] <- 'LDV'
+    df[pass & road & LDV & !(W2 & W4), 'submode'] <- '3W'
+    df[pass & road & !(LDV), 'submode'] <- 'Bus'
+
+    df[ship,'submode'] <- 'Shipping'
+
+    df[freight & road & (t2 | t5), 'submode'] <- 'LHDT'
+    df[freight & road & t9, 'submode'] <- 'MHDT'
+    df[freight & road & t16, 'submode'] <- 'HHDT'
+
+    df[freight & !(road), 'submode'] <- 'Freight Rail'
 
 #' Split: vintage, technology
 #'
@@ -116,53 +156,6 @@ split.vt <- function(text, col) {
 #' @param col Specifies which string from text to return
 #' @keywords internal
 split.sm <- function(text, col) {
-    splt <- strsplit(text, '_')[[1]]
-    if(col=='service') {
-
-        if('freight' %in% splt | 'shipping' %in% splt) {'Freight'}
-
-        if('pass' %in% splt && 'road' %in% splt) {'Passenger'} # unsure about trn_pass
-
-        else if ('pass' %in% splt) {
-            Message('trn_pass mapped to any Service/Mode/Submode')
-        }
-    }
-
-    if(col=='mode') {
-
-        if('freight' %in% splt) {
-            if('road' %in% splt) {'Road'}
-            else ('Rail')
-        }
-
-        if('road' %in% splt) {'Road'}
-
-        if('shipping' %in% splt) {'Shipping'}
-    }
-
-    if(col=='submode') {
-
-        if('road' %in% splt) {
-
-            if('pass' %in% splt) {  # pass && road
-                if('LDV' %in% splt) { # pass && road && LDV
-                    if('2W' %in% splt) {'2W'}
-                    else if('4W' %in% splt) {'LDV'}
-                    else {'3W'}
-                } else {'Bus'} # pass && road
-            }
 
 
-            # freight && road
-            if('freight' %in% splt) {
-                message('sector: trn_freight_road')
-                message('Need to look at subsector info to determine Submode')
-            }
-
-
-        else if('freight' %in% splt) {'Freight Rail'} # !('road') && 'freight'
-
-        else if('shipping' %in% splt) {'Shipping'} # !('road') && 'shipping'
-        }
-    }
 }
