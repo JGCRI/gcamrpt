@@ -15,7 +15,7 @@
 #'
 #' @keywords internal
 
-module.service_output <- function(mode, allqueries, aggkeys, aggfn, strtyr, endyr,
+module.service_output <- function(mode, allqueries, aggkeys, aggfn, years,
                               filters, ounit)
 {
     if(mode == GETQ) {
@@ -28,7 +28,7 @@ module.service_output <- function(mode, allqueries, aggkeys, aggfn, strtyr, endy
         serviceOutput <- allqueries$'Service output'
         serviceOutput <- vint_tech_split(serviceOutput)
         serviceOutput <- parse_sector(serviceOutput)
-        serviceOutput <- filter(serviceOutput, strtyr, endyr, filters)
+        serviceOutput <- filter(serviceOutput, years, filters)
         serviceOutput <- aggregate(serviceOutput, aggfn, aggkeys)
         # units example: million p-km
         serviceOutput <- unitconv_counts(serviceOutput, ounit)
@@ -51,7 +51,7 @@ module.service_output <- function(mode, allqueries, aggkeys, aggfn, strtyr, endy
 #'
 #' @keywords internal
 
-module.load_factors <- function(mode, allqueries, aggkeys, aggfn, strtyr, endyr,
+module.load_factors <- function(mode, allqueries, aggkeys, aggfn, years,
                                   filters, ounit)
 {
     if(mode == GETQ) {
@@ -116,18 +116,16 @@ parse_sector <- function(df) {
     #Service
     df[freight | ship, 'service'] <- 'Freight'
     df[pass & road, 'service'] <- 'Passenger'
-    df[pass & !(road), 'service'] <- df[pass & !(road), 'sector'] #trn_pass
 
     #Mode
     df[freight & !(road), 'mode'] <- 'Rail'
     df[road, 'mode'] <- 'Road'
     df[ship,'mode'] <- 'Shipping'
-    df[av, 'mode'] <-df[av,'sector'] #trn_aviation_intl
 
     #Submode
     df[pass & road & LDV & W2, 'submode'] <- '2W'
     df[pass & road & LDV & W4, 'submode'] <- 'LDV'
-    df[pass & road & LDV & !(W2 & W4), 'submode'] <- '3W'
+    df[pass & road & LDV & !(W2 | W4), 'submode'] <- '3W'
     df[pass & road & !(LDV), 'submode'] <- 'Bus'
 
     df[ship,'submode'] <- 'Shipping'
@@ -137,6 +135,15 @@ parse_sector <- function(df) {
     df[freight & road & t16, 'submode'] <- 'HHDT'
 
     df[freight & !(road), 'submode'] <- 'Freight Rail'
+
+    # unmapped
+    df[pass & !(road), 'service'] <- 'trn_pass'
+    df[pass & !(road), 'mode'] <- 'trn_pass'
+    df[pass & !(road), 'submode'] <- 'trn_pass'
+
+    df[av, 'service'] <- 'trn_aviation_intl'
+    df[av, 'mode'] <- 'trn_aviation_intl'
+    df[av, 'submode'] <- 'trn_aviation_intl'
 
     df
 }
