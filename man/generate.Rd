@@ -72,8 +72,11 @@ aggregation is desired for this variable.}
 aggregation. Supported functions are \code{sum}, \code{mean}, \code{max},
 \code{min}, and \code{median}.  If none is specified, \code{sum} will be
 used.}
-    \item{\strong{start year}}{First year to include in the report (inclusive).}
-    \item{\strong{end year}}{Last year to include in the report (inclusive).}
+    \item{\strong{years}}{List of years to include in the output.  You can
+list individual years, ranges in the form start:end, or stepped ranges in the
+form start:end:step.  Ranges are inclusive, so 2000:2010:5 is the same as
+2000, 2005, 2010.  If the year list is omitted, all years in the data will be
+included.}
     \item{\strong{filters}}{Arbitrary filters to apply to the table, \emph{before}
 aggregating.  These should be in the modified s-expression format described
 below.  If no filters are to be applied this column can be left blank.}

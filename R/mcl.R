@@ -35,8 +35,11 @@
 #' aggregation. Supported functions are \code{sum}, \code{mean}, \code{max},
 #' \code{min}, and \code{median}.  If none is specified, \code{sum} will be
 #' used.}
-#'     \item{\strong{start year}}{First year to include in the report (inclusive).}
-#'     \item{\strong{end year}}{Last year to include in the report (inclusive).}
+#'     \item{\strong{years}}{List of years to include in the output.  You can
+#' list individual years, ranges in the form start:end, or stepped ranges in the
+#' form start:end:step.  Ranges are inclusive, so 2000:2010:5 is the same as
+#' 2000, 2005, 2010.  If the year list is omitted, all years in the data will be
+#' included.}
 #'     \item{\strong{filters}}{Arbitrary filters to apply to the table, \emph{before}
 #' aggregating.  These should be in the modified s-expression format described
 #' below.  If no filters are to be applied this column can be left blank.}
@@ -221,17 +224,7 @@ generate <- function(scenctl,
         rslts <- lapply(rslts, function(df) {tidyr::spread(df, year, value)})
     }
 
-    if(fileformat == 'XLSX') {
-        output_xlsx(rslts, dataformat, outputdir)
-    }
-    else if(fileformat == 'CSV') {
-        output_csv(rslts, dataformat, outputdir)
-    }
-    else {
-        warning('Unknown file format ', fileformat, ' requested. ',
-                'Writing as CSV.')
-        output_csv(rslts, dataformat, outputdir)
-    }
+    output(rslts, dataformat, fileformat, outputdir)
 
     message('FIN.')
     invisible(NULL)
@@ -258,15 +251,14 @@ process_scenario <- function(scen, dbloc, dbname, q2run, varctl)
 
     ## Process each requested variable
     rslts <-
-        Map(function(var, aggkeys, aggfn, strtyr, endyr, filters, ounit) {
-                runModule(var, RUN, queries, aggkeys, aggfn, strtyr, endyr,
+        Map(function(var, aggkeys, aggfn, years, filters, ounit) {
+                runModule(var, RUN, queries, aggkeys, aggfn, years,
                           filters, ounit)
             },
             varctl[['GCAM variable']],
             varctl[['aggregation keys']],
             varctl[['aggregation function']],
-            varctl[['start year']],
-            varctl[['end year']],
+            varctl[['years']],
             varctl[['filters']],
             varctl[['output units']])
 
@@ -334,7 +326,7 @@ validatectl <- function(scenctl, varctl)
     scenrqd <- scencols
 
     varcols <- c('GCAM variable', 'output variable', 'aggregation keys',
-                 'aggregation function', 'start year', 'end year', 'filters',
+                 'aggregation function', 'years', 'filters',
                  'output units')
     varrqd <- varcols[1:2]
 
