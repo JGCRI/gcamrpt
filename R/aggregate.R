@@ -38,7 +38,7 @@ aggregate <- function(tbl, aggfn, aggkeys)
         aggkeys <- aggkeys[aggkeys %in% names(tbl)]
     }
 
-    dots <- c('Units', 'scenario', 'year', aggkeys)
+    dots <- c('Units', 'scenario', 'Year', aggkeys)
 
     tbl <- dplyr::group_by_(tbl, .dots=dots) %>%
         dplyr::summarise(value=aggfn(value)) %>%
