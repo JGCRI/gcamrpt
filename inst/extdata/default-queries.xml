@@ -31,6 +31,7 @@
 	</aQuery>
 
 	<aQuery>
+		<all-regions/>
 	  <supplyDemandQuery title="Electricity">
             <axis1 name="region">region</axis1>
             <axis2 name="Year">physical-output[@vintage]</axis2>
@@ -60,4 +61,16 @@
 			<comments/>
 		</supplyDemandQuery>
       </aQuery>
+
+      <aQuery>
+		<all-regions/>
+		<supplyDemandQuery title="Final energy">
+			<axis1 name="technology">technology</axis1>
+			<axis2 name="Year">demand-physical[@vintage]</axis2>
+			<xPath buildList="true" dataName="input" group="false" sumAll="false">*[@type = 'sector' and (@name='transportation' or (exists(child::keyword[@final-energy='transportation'])))]/*[@type = 'subsector']/*[@type = 'technology']/*[@type='input' and not (@name='renewable')]/demand-physical[@unit='EJ']/node()</xPath>
+			<comments/>
+			<showAttribute attribute-name="year" level="technology"/>
+		</supplyDemandQuery>
+      </aQuery>
+
 </queries>
