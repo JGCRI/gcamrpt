@@ -128,58 +128,61 @@ vint_tech_split <- function(df) {
 #' @keywords internal
 parse_sector <- function(df) {
 
-    #Service cond'ns
+    ## Service cond'ns
     freight <- grepl('freight', df$sector)
     pass <- grepl('pass', df$sector)
 
-    #Mode cond'ns
-    ship <- grepl('shipping', df$sector)
+    ## Mode cond'ns
+    ship <- grepl('ship', tolower(df$subsector))
+    av <- grepl('aviation', tolower(df$subsector))
     road <- grepl('road', df$sector)
-    av <- grepl('aviation', df$sector)
+    rail <- grepl('rail', tolower(df$subsector))
 
+    ## Service
+    df[,'service'] <- NA # na.omit(df) later
+    df[freight | ship, 'service'] <- 'Freight'
+    df[pass, 'service'] <- 'Passenger'
+
+    ## Mode
+    df[,'mode'] <- NA #na.omit(df) later
+    df[rail, 'mode'] <- 'Rail'
+    df[road, 'mode'] <- 'Road'
+    df[ship,'mode'] <- 'Shipping'
+    df[av, 'mode'] <- 'Aviation'
+  
+    
     #Submode cond'ns
-    LDV <- grepl('LDV', df$sector)
-    W2 <- grepl('2W', df$sector)
-    W4 <- grepl('4W', df$sector)
-
+    df[,'submode'] <- NA #na.omit(df) later
+    intl <- grepl('international', tolower(df$subsector)) # av and ship
+    dom <- grepl('domestic', tolower(df$subsector)) # av and ship
+    
+    freightrail <- grepl('freight rail', tolower(df$subsector))
+    passrail <- grepl('passenger rail', tolower(df$subsector))
+    
+    w2 <- grepl('2w', tolower(df$subsector))
+    w3 <- grepl('three-wheeler', tolower(df$subsector))
+    w4 <- grepl('4w', tolower(df$subsector))
+    bus <- grepl('bus', tolower(df$subsector))
+    
     t2 <- grepl('0-2t', df$subsector)
     t5 <- grepl('2-5t', df$subsector)
     t9 <- grepl('5-9t', df$subsector)
     t16 <- grepl('9-16t', df$subsector)
-
-    #Service
-    df[freight | ship, 'service'] <- 'Freight'
-    df[pass & road, 'service'] <- 'Passenger'
-
-    #Mode
-    df[freight & !(road), 'mode'] <- 'Rail'
-    df[road, 'mode'] <- 'Road'
-    df[ship,'mode'] <- 'Shipping'
-
+    
     #Submode
-    df[pass & road & LDV & W2, 'submode'] <- '2W'
-    df[pass & road & LDV & W4, 'submode'] <- 'LDV'
-    df[pass & road & LDV & !(W2 | W4), 'submode'] <- '3W'
-    df[pass & road & !(LDV), 'submode'] <- 'Bus'
+    df[intl, 'submode'] <- 'International'
+    df[dom, 'submode'] <- 'Domestic'
+    df[freightrail, 'submode'] <- 'Freight Rail'
+    df[passrail, 'submode'] <- 'Passenger Rail'
+    df[w2, 'submode'] <- '2W'
+    df[w3, 'submode'] <- '3W'
+    df[w4, 'submode'] <- '4W'
+    df[bus, 'submode'] <- 'Bus'
+    df[t2 | t5, 'submode'] <- 'LHDT'
+    df[t9, 'submode'] <- 'MHDT'
+    df[t16, 'submode'] <- 'HHDT'
 
-    df[ship,'submode'] <- 'Shipping'
-
-    df[freight & road & (t2 | t5), 'submode'] <- 'LHDT'
-    df[freight & road & t9, 'submode'] <- 'MHDT'
-    df[freight & road & t16, 'submode'] <- 'HHDT'
-
-    df[freight & !(road), 'submode'] <- 'Freight Rail'
-
-    # unmapped
-    df[pass & !(road), 'service'] <- 'trn_pass'
-    df[pass & !(road), 'mode'] <- 'trn_pass'
-    df[pass & !(road), 'submode'] <- 'trn_pass'
-
-    df[av, 'service'] <- 'trn_aviation_intl'
-    df[av, 'mode'] <- 'trn_aviation_intl'
-    df[av, 'submode'] <- 'trn_aviation_intl'
-
-    df
+    na.omit(df) # remove incomplete observations (no service/mode/submode assigned)
 }
 
 #' Split: vintage, technology
