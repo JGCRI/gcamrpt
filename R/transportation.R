@@ -119,10 +119,11 @@ vint_tech_split <- function(df) {
 
 #' Parse sector column
 #'
-#'Query returns data with Sector column in the format 'trn_service_mode_submode'
-#'This function returns the data frame with new Service, Mode and Submode cols
+#' Service, mode, and submode can be parsed from sector and subsector cols of 
+#' query data. Some sectors are disaggregated versions of other sectors, making
+#' the data redundant. This is handled by filling service, mode, and submode cols
+#' only for those observations that meet present demands of reporting templates. 
 #'
-#'Makes use of split.sm() function below.
 #'
 #' @param df Data returned for individual query
 #' @keywords internal
