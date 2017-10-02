@@ -186,7 +186,7 @@ nameparse <- function(name)
 #'   \item{Region}
 #'   \item{Variable (taken from the output name of the input)}
 #'   \item{Unit}
-#'   \item{NNNN - one for each Year}
+#'   \item{NNNN - one for each year}
 #' }
 #'
 #' @param datalist List of data frames, one for each variable.
@@ -206,18 +206,18 @@ iiasafy <- function(datalist)
 #' Select the columns needed for the IIASA format
 #'
 #' Starting with data in long format, keep only the columns needed to form the
-#' IIASA format, namely, scenario, region, Year, value, and Units.  Then rename
+#' IIASA format, namely, scenario, region, year, value, and Units.  Then rename
 #' variables according to the IIASA conventions, and spread to wide format.  We don't
 #' add the model or variable names at this point, however.
 #' @keywords internal
 proc_var_iiasa <- function(df)
 {
-    scenario <- region <- Year <- value <- Units <- NULL # silence
+    scenario <- region <- year <- value <- Units <- NULL # silence
                                         # check notes
     df <- df %>%
-        dplyr::select(scenario, region, Year, value, Units) %>%
+        dplyr::select(scenario, region, year, value, Units) %>%
         dplyr::rename(Scenario=scenario, Region=region, Unit=Units) %>%
-        tidyr::spread(Year, value)
+        tidyr::spread(year, value)
 }
 
 #' Put columns in canonical order for IIASA data format
