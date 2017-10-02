@@ -220,9 +220,14 @@ generate <- function(scenctl,
             dataformat <- 'tabs'
         }
     }
-    else if(wideformat) {
-        rslts <- lapply(rslts, function(df) {tidyr::spread(df, year, value)})
-    }
+    else if (wideformat) {
+            if (scenmerge) {
+                rslts <- lapply(rslts, function(df) {tidyr::spread(df, year, value)})
+            }
+            else {
+                rslts<- lapply(rslts, function(df) {lapply(df, tidyr::spread, year,value)})
+            }
+        }
 
     output(rslts, dataformat, fileformat, outputdir)
 
