@@ -30,7 +30,7 @@ module.service_output <- function(mode, allqueries, aggkeys, aggfn, years,
         serviceOutput <- parse_sector(serviceOutput)
         serviceOutput <- filter(serviceOutput, years, filters)
         serviceOutput <- aggregate(serviceOutput, aggfn, aggkeys)
-        # units example: EJ/yr
+        # units example: million p-km
         serviceOutput <- unitconv_energy(serviceOutput, ounit)
         serviceOutput
     }
@@ -64,7 +64,7 @@ module.final_energy <- function(mode, allqueries, aggkeys, aggfn, years,
         energy <- parse_sector(energy)
         energy <- filter(energy, years, filters)
         energy <- aggregate(energy, aggfn, aggkeys)
-        # units example: million p-km
+        # units example: EJ/yr
         energy <- unitconv_counts(energy, ounit)
         energy
 
