@@ -31,7 +31,7 @@ module.service_output <- function(mode, allqueries, aggkeys, aggfn, years,
         serviceOutput <- filter(serviceOutput, years, filters)
         serviceOutput <- aggregate(serviceOutput, aggfn, aggkeys)
         # units example: million p-km
-        serviceOutput <- unitconv_energy(serviceOutput, ounit)
+        serviceOutput <- unitconv_counts(serviceOutput, ounit)
         serviceOutput
     }
 }
@@ -65,7 +65,7 @@ module.final_energy <- function(mode, allqueries, aggkeys, aggfn, years,
         energy <- filter(energy, years, filters)
         energy <- aggregate(energy, aggfn, aggkeys)
         # units example: EJ/yr
-        energy <- unitconv_counts(energy, ounit)
+        energy <- unitconv_energy(energy, ounit)
         energy
 
     }
@@ -119,10 +119,10 @@ vint_tech_split <- function(df) {
 
 #' Parse sector column
 #'
-#' Service, mode, and submode can be parsed from sector and subsector cols of 
+#' Service, mode, and submode can be parsed from sector and subsector cols of
 #' query data. Some sectors are disaggregated versions of other sectors, making
 #' the data redundant. This is handled by filling service, mode, and submode cols
-#' only for those observations that meet present demands of reporting templates. 
+#' only for those observations that meet present demands of reporting templates.
 #'
 #'
 #' @param df Data returned for individual query
@@ -150,26 +150,26 @@ parse_sector <- function(df) {
     df[road, 'mode'] <- 'Road'
     df[ship,'mode'] <- 'Shipping'
     df[av, 'mode'] <- 'Aviation'
-  
-    
+
+
     #Submode cond'ns
     df[,'submode'] <- NA #na.omit(df) later
     intl <- grepl('international', tolower(df$subsector)) # av and ship
     dom <- grepl('domestic', tolower(df$subsector)) # av and ship
-    
+
     freightrail <- grepl('freight rail', tolower(df$subsector))
     passrail <- grepl('passenger rail', tolower(df$subsector))
-    
+
     w2 <- grepl('2w', tolower(df$subsector))
     w3 <- grepl('three-wheeler', tolower(df$subsector))
     w4 <- grepl('4w', tolower(df$subsector))
     bus <- grepl('bus', tolower(df$subsector))
-    
+
     t2 <- grepl('0-2t', df$subsector)
     t5 <- grepl('2-5t', df$subsector)
     t9 <- grepl('5-9t', df$subsector)
     t16 <- grepl('9-16t', df$subsector)
-    
+
     #Submode
     df[intl, 'submode'] <- 'International'
     df[dom, 'submode'] <- 'Domestic'
