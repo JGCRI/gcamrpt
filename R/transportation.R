@@ -62,6 +62,7 @@ module.final_energy <- function(mode, allqueries, aggkeys, aggfn, years,
         energy <- allqueries$'Final energy'
         energy <- vint_tech_split(energy)
         energy <- parse_sector(energy)
+        energy <- fuel(energy)
         energy <- filter(energy, years, filters)
         energy <- aggregate(energy, aggfn, aggkeys)
         # units example: EJ/yr
@@ -112,8 +113,8 @@ module.load_factors <- function(mode, allqueries, aggkeys, aggfn, years,
 #' @param df Data returned for individual query
 #' @keywords internal
 vint_tech_split <- function(df) {
-    df$vintage <- lapply(df$technology, split.vt, col='vint')
-    df$technology <- lapply(df$technology, split.vt, col='tech')
+    df$vintage <- unlist(lapply(df$technology, split.vt, col='vint'))
+    df$technology <- unlist(lapply(df$technology, split.vt, col='tech'))
     df
 }
 
@@ -201,4 +202,29 @@ split.vt <- function(text, col) {
     } else if (col =='vint') {
         strsplit(splt[2],'=')[[1]][2]
     }
+}
+
+#' Fuel
+#'
+#' Service, mode, and submode can be parsed from sector and subsector cols of
+#' query data. Some sectors are disaggregated versions of other sectors, making
+#' the data redundant. This is handled by filling service, mode, and submode cols
+#' only for those observations that meet present demands of reporting templates.
+#'
+#'
+#' @param df Data returned for individual query
+#' @keywords internal
+fuel <- function(df) {
+    # cond'ns
+    coal <- grepl('coal', tolower(df$input))
+    gas <- grepl('gas', tolower(df$input))
+    elec <- grepl('elec', tolower(df$input))
+    hyd <- grepl('h2', tolower(df$input))
+    liq <- grepl('liquids' tolower(df$input))
+
+    df[coal, 'fuel'] <- 'Coal'
+    df[gas, 'fuel'] <- 'Natural Gas'
+    df[elec, 'fuel'] <- 'Electricity'
+    df[hyd, 'fuel'] <- 'Hydrogen'
+    df[liq, 'fuel'] <- 'Liquids'
 }
