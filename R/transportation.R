@@ -56,13 +56,14 @@ module.final_energy <- function(mode, allqueries, aggkeys, aggfn, years,
     if(mode == GETQ) {
         # Return titles of necessary queries
         # For more complex variables, will return multiple query titles.
-        'Final energy'
+        c('Final energy', 'Refined liquids')
     }
     else {
         energy <- allqueries$'Final energy'
+        refining <- allqueries$'Refined liquids'
         energy <- vint_tech_split(energy)
         energy <- parse_sector(energy)
-        energy <- fuel(energy)
+        energy <- fuel(energy, refining)
         energy <- filter(energy, years, filters)
         energy <- aggregate(energy, aggfn, aggkeys)
         # units example: EJ/yr
@@ -214,17 +215,20 @@ split.vt <- function(text, col) {
 #'
 #' @param df Data returned for individual query
 #' @keywords internal
-fuel <- function(df) {
+fuel <- function(df, refining) {
     # cond'ns
     coal <- grepl('coal', tolower(df$input))
     gas <- grepl('gas', tolower(df$input))
     elec <- grepl('elec', tolower(df$input))
     hyd <- grepl('h2', tolower(df$input))
-    liq <- grepl('liquids' tolower(df$input))
+    liq <- grepl('liquids', tolower(df$input))
 
     df[coal, 'fuel'] <- 'Coal'
     df[gas, 'fuel'] <- 'Natural Gas'
     df[elec, 'fuel'] <- 'Electricity'
     df[hyd, 'fuel'] <- 'Hydrogen'
     df[liq, 'fuel'] <- 'Liquids'
+
+    refining_bio <- refining[refining$subsector == 'biomass liquids', ]
+
 }

@@ -184,7 +184,8 @@ generate <- function(scenctl,
     ## Collect the queries that we will need to run.
     q2run <-
         sapply(gcvars, function(v) {runModule(v, GETQ)}) %>%
-          unique
+            unlist %>%
+            unique
 
     ## process the scenarios, one by one
     rslts <- Map(function(scen, dbname) {
