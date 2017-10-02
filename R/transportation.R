@@ -30,12 +30,46 @@ module.service_output <- function(mode, allqueries, aggkeys, aggfn, years,
         serviceOutput <- parse_sector(serviceOutput)
         serviceOutput <- filter(serviceOutput, years, filters)
         serviceOutput <- aggregate(serviceOutput, aggfn, aggkeys)
-        # units example: million p-km
-        serviceOutput <- unitconv_counts(serviceOutput, ounit)
+        # units example: EJ/yr
+        serviceOutput <- unitconv_energy(serviceOutput, ounit)
         serviceOutput
     }
 }
+#' Energy Data Module
+#'
+#' Produce final energy by technology and vintage
+#'
+#' The raw table used by this module has columns:
+#' \itemize{
+#'   \item{scenario}
+#'   \item{region}
+#'   \item{year}
+#'   \item{value}
+#'   \item{Units}
+#' }
+#'
+#' @keywords internal
 
+module.final_energy <- function(mode, allqueries, aggkeys, aggfn, years,
+                                filters, ounit)
+{
+    if(mode == GETQ) {
+        # Return titles of necessary queries
+        # For more complex variables, will return multiple query titles.
+        'Final energy'
+    }
+    else {
+        energy <- allqueries$'Final energy'
+        energy <- vint_tech_split(energy)
+        energy <- parse_sector(energy)
+        energy <- filter(energy, years, filters)
+        energy <- aggregate(energy, aggfn, aggkeys)
+        # units example: million p-km
+        energy <- unitconv_counts(energy, ounit)
+        energy
+
+    }
+}
 #' Load Factors Data Module
 #'
 #' Produce load factors by technology and vintage
