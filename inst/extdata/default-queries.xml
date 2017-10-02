@@ -73,4 +73,14 @@
 		</supplyDemandQuery>
       </aQuery>
 
+	<aQuery>
+		<all-regions/>
+		<supplyDemandQuery title="Refined liquids production">
+			<axis1 name="subsector">subsector</axis1>
+			<axis2 name="year">physical-output[@vintage]</axis2>
+			<xPath buildList="true" dataName="output" group="false" sumAll="false">*[@type = 'sector' (:collapse:) and ((@name='refining'))]/*[@type = 'subsector']//*[@type='output' (:collapse:)]/physical-output/node()</xPath>
+			<comments/>
+		</supplyDemandQuery>
+      </aQuery>
+
 </queries>
