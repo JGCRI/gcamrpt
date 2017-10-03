@@ -223,6 +223,18 @@ generate <- function(scenctl,
     }
     else if (wideformat) {
             if (scenmerge) {
+
+                # year col must be char
+                # handle emtpty df by filling with empty row first
+                rslts <- lapply(rslts, function(df) {
+                    if (nrow(df) ==0) {
+                        df[1,] <- rep(0, ncol(df))
+
+                    }
+                    df$year <- unlist(lapply(df$year, toString))
+                    df
+                })
+
                 rslts <- lapply(rslts, function(df) {tidyr::spread(df, year, value)})
             }
             else {
