@@ -55,7 +55,7 @@ module.final_energy <- function(mode, allqueries, aggkeys, aggfn, years,
 {
     if(mode == GETQ) {
         # Return titles of necessary queries
-        # For more complex variables, will return multiple query titles.
+        # For more complex variables, will return multiple query titles in vector
         c('Final energy', 'Refined liquids')
     }
     else {
@@ -63,7 +63,7 @@ module.final_energy <- function(mode, allqueries, aggkeys, aggfn, years,
         refining <- allqueries$'Refined liquids'
         energy <- vint_tech_split(energy)
         energy <- parse_sector(energy)
-        energy <- fuel(energy, refining)
+        #energy <- fuel(energy, refining)
         energy <- filter(energy, years, filters)
         energy <- aggregate(energy, aggfn, aggkeys)
         # units example: EJ/yr
@@ -185,7 +185,9 @@ parse_sector <- function(df) {
     df[t9, 'submode'] <- 'MHDT'
     df[t16, 'submode'] <- 'HHDT'
 
-    na.omit(df) # remove incomplete observations (no service/mode/submode assigned)
+    df <- na.omit(df) # remove incomplete observations (no service/mode/submode assigned)
+    df <- dplyr::select(df, -sector, -subsector, -technology) # remove sector, subsector, technology
+    df
 }
 
 #' Split: vintage, technology
@@ -213,22 +215,80 @@ split.vt <- function(text, col) {
 #' only for those observations that meet present demands of reporting templates.
 #'
 #'
-#' @param df Data returned for individual query
+#' @param en Data returned for final energy query
+#' @param en Data returned for refined liquids query
+
 #' @keywords internal
-fuel <- function(df, refining) {
+fuel <- function(en, ref) {
     # cond'ns
-    coal <- grepl('coal', tolower(df$input))
-    gas <- grepl('gas', tolower(df$input))
-    elec <- grepl('elec', tolower(df$input))
-    hyd <- grepl('h2', tolower(df$input))
-    liq <- grepl('liquids', tolower(df$input))
+    coal <- grepl('coal', tolower(en$input))
+    gas <- grepl('gas', tolower(en$input))
+    elec <- grepl('elec', tolower(en$input))
+    hyd <- grepl('h2', tolower(en$input))
+    liq <- grepl('liquids', tolower(en$input))
 
-    df[coal, 'fuel'] <- 'Coal'
-    df[gas, 'fuel'] <- 'Natural Gas'
-    df[elec, 'fuel'] <- 'Electricity'
-    df[hyd, 'fuel'] <- 'Hydrogen'
-    df[liq, 'fuel'] <- 'Liquids'
+    en[coal, 'fuel'] <- 'Coal'
+    en[gas, 'fuel'] <- 'Natural Gas'
+    en[elec, 'fuel'] <- 'Electricity'
+    en[hyd, 'fuel'] <- 'Hydrogen'
+    en[liq, 'fuel'] <- 'Liquids'
 
-    refining_bio <- refining[refining$subsector == 'biomass liquids', ]
+    en <- dplyr::select(en, -input)
+    #en <- liquids(en, ref)
 
+    en
+}
+
+#' Liquid Fuels
+#'
+#' Calculate biomass liquids energy output from biomass' share of total liquids refining
+#'
+#'
+#' @param en Data returned for final energy query
+#' @param ref Data returned for refined liquids query
+#' @keywords internal
+liquids <- function(en, ref) {
+
+    ## Refined Liquids
+    # aggregate for total
+    ref_tot <- ref %>%
+        dplyr::group_by(scenario, region, year) %>%
+        dplyr::summarise(total = sum(value)) %>%
+        dplyr::ungroup() %>%
+        dplyr::select(scenario, region, year, total)
+    # subset to biomass -- bioethanol vs biodiesel??
+    ref_bio <- ref[ref$subsector == 'biomass liquids', ] %>%
+        dplyr::select(-subsector) %>%
+        dplyr::inner_join(ref_tot, by=c("scenario", "region", "year")) %>%
+        dplyr::mutate(share = value/total) %>%
+        dplyr::select(-value, -total, -Units, -rundate)
+
+    ## Energy from Liquids
+    # Biomass liquids
+    en_bio <- en[en$fuel =='Liquids', ] %>%
+        dplyr::mutate(liquid_type = 'biomass') %>%
+        dplyr::inner_join(ref_bio, by=c("scenario", "region", "year")) %>% # lose 1k obs
+        dplyr::mutate(value=value*share) %>% # scale total energy down to fraction produced by refined biomass liquids
+        dplyr::select(-share, -rundate)
+
+
+    # Non-biomass liquids
+    en_nonbio <- en[en$fuel =='Liquids', ] %>%
+        dplyr::mutate(liquid_type = 'traditional') %>% # traditional = all liquids minus bio
+        dplyr::inner_join(en_bio[, c("Units", "scenario", "region", "year", "vintage", "value",
+                                     "service", "mode", "submode", "fuel")],
+                          by=c("Units", "scenario", "region", "year", "vintage",
+                               "service", "mode", "submode", "fuel")) %>% # gain 2k obs
+        dplyr::mutate(value.x=value.x - value.y) %>% # subtract biomass liquids
+        dplyr::rename(value = value.x) %>% # keep traditional/non-biomass
+        dplyr::select(-value.y, -rundate) # drop biomass
+
+
+    # Replace liquids with bio/nonbio liquids
+    en_nonliq <- en[en$fuel != 'Liquids',] %>%
+        dplyr::mutate(liquid_type = NA) %>%
+        dplyr::select(-rundate)
+    en <- rbind(en_nonliq, en_bio, en_nonbio)
+
+    en
 }
