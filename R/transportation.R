@@ -28,6 +28,15 @@ module.service_output <- function(mode, allqueries, aggkeys, aggfn, years,
         serviceOutput <- allqueries$'Service output'
         serviceOutput <- vint_tech_split(serviceOutput)
         serviceOutput <- parse_sector(serviceOutput)
+
+        # Need to handle 'LHDT' redundancy differently because not all queries have input col, which changes call to group_by()
+        serviceOutput <- serviceOutput %>%
+            dplyr::select(-sector, -subsector) %>%
+            dplyr::group_by(Units, scenario, region, year, technology, service, mode, submode) %>%
+            dplyr::summarise(value = sum(value)) %>%
+            dplyr::ungroup()
+
+
         serviceOutput <- filter(serviceOutput, years, filters)
         serviceOutput <- aggregate(serviceOutput, aggfn, aggkeys)
         # units example: million p-km
@@ -62,8 +71,15 @@ module.final_energy <- function(mode, allqueries, aggkeys, aggfn, years,
         energy <- allqueries$'Final energy'
         refining <- allqueries$'Refined liquids'
         energy <- vint_tech_split(energy)
-        energy <- parse_sector(energy)
-        #energy <- fuel(energy, refining)
+        energy <- fuel(energy, refining)
+        energy <- parse_sector(energy) # must go after fuel() because 'input' col disrupts aggregating over submodes
+        # Need to handle 'LHDT' redundancy differently because not all queries have input col, which changes call to group_by()
+        energy <- energy %>%
+            dplyr::select(-sector, -subsector, -technology, -input) %>%
+            dplyr::group_by(Units, scenario, region, year, service, mode, submode, fuel) %>%
+            dplyr::summarise(value = sum(value)) %>%
+            dplyr::ungroup()
+
         energy <- filter(energy, years, filters)
         energy <- aggregate(energy, aggfn, aggkeys)
         # units example: EJ/yr
@@ -145,6 +161,7 @@ parse_sector <- function(df) {
     df[,'service'] <- NA # na.omit(df) later
     df[freight | ship, 'service'] <- 'Freight'
     df[pass, 'service'] <- 'Passenger'
+    df[av, 'service'] <- 'Passenger'
 
     ## Mode
     df[,'mode'] <- NA #na.omit(df) later
@@ -181,12 +198,11 @@ parse_sector <- function(df) {
     df[w3, 'submode'] <- '3W'
     df[w4, 'submode'] <- '4W'
     df[bus, 'submode'] <- 'Bus'
-    df[t2 | t5, 'submode'] <- 'LHDT'
+    df[t2 | t5, 'submode'] <- 'LHDT' # aggregated over to collapse LHDT submode in data module
     df[t9, 'submode'] <- 'MHDT'
     df[t16, 'submode'] <- 'HHDT'
 
     df <- na.omit(df) # remove incomplete observations (no service/mode/submode assigned)
-    df <- dplyr::select(df, -sector, -subsector, -technology) # remove sector, subsector, technology
     df
 }
 
@@ -233,7 +249,6 @@ fuel <- function(en, ref) {
     en[hyd, 'fuel'] <- 'Hydrogen'
     en[liq, 'fuel'] <- 'Liquids'
 
-    en <- dplyr::select(en, -input)
     #en <- liquids(en, ref)
 
     en
