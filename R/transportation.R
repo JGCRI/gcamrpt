@@ -20,7 +20,7 @@ module.service_output <- function(mode, allqueries, aggkeys, aggfn, years,
 {
     if(mode == GETQ) {
         # Return titles of necessary queries
-        # For more complex variables, will return multiple query titles.
+        # For more complex variables, will return multiple query titles in vector
         'Service output'
     }
     else {
@@ -76,7 +76,7 @@ module.final_energy <- function(mode, allqueries, aggkeys, aggfn, years,
         # Need to handle 'LHDT' redundancy differently because not all queries have input col, which changes call to group_by()
         energy <- energy %>%
             dplyr::select(-sector, -subsector, -technology, -input) %>%
-            dplyr::group_by(Units, scenario, region, year, service, mode, submode, fuel) %>%
+            dplyr::group_by(Units, scenario, region, year, service, mode, submode, fuel, liquid_type) %>%
             dplyr::summarise(value = sum(value)) %>%
             dplyr::ungroup()
 
@@ -108,12 +108,27 @@ module.load_factors <- function(mode, allqueries, aggkeys, aggfn, years,
 {
     if(mode == GETQ) {
         # Return titles of necessary queries
-        # For more complex variables, will return multiple query titles.
-        'Load factors'
+        # For more complex variables, will return multiple query titles in vector
+        c('Load factors', 'Service output')
     }
     else {
         message('Function for processing variable: Load factors')
-        message('Not implemented yet')
+
+        ldfctr <- allqueries$'Load factors'
+        ldfctr <- ldfctr[, !(names(ldfctr) %in% c('load-factor', 'technology', 'rundate'))]
+        # query output includes NA column
+        # ldfctr technology col has diff levels than that of service output
+        ldfctr <- parse_sector(ldfctr) %>% dplyr::select(-sector, subsector)
+        # parse_sector makes sector/subsector redundant
+
+        serviceOutput <- allqueries$'Service output'
+        serviceOutput <- dplyr::select(serviceOutput, -technology, -rundate)
+        # no need to split tech and vint bc not matching to ldfctr by technology
+        serviceOutput <- parse_sector(serviceOutput) %>% dplyr::select(-sector, -subsector)
+        # parse_sector makes sector/subsector redundant
+
+        ldfctr
+
     }
 }
 
@@ -249,7 +264,7 @@ fuel <- function(en, ref) {
     en[hyd, 'fuel'] <- 'Hydrogen'
     en[liq, 'fuel'] <- 'Liquids'
 
-    #en <- liquids(en, ref)
+    en <- liquids(en, ref)
 
     en
 }
@@ -290,10 +305,8 @@ liquids <- function(en, ref) {
     # Non-biomass liquids
     en_nonbio <- en[en$fuel =='Liquids', ] %>%
         dplyr::mutate(liquid_type = 'traditional') %>% # traditional = all liquids minus bio
-        dplyr::inner_join(en_bio[, c("Units", "scenario", "region", "year", "vintage", "value",
-                                     "service", "mode", "submode", "fuel")],
-                          by=c("Units", "scenario", "region", "year", "vintage",
-                               "service", "mode", "submode", "fuel")) %>% # gain 2k obs
+        dplyr::inner_join(en_bio[, c("Units", "scenario", "region", "year", "value")],
+                          by=c("Units", "scenario", "region", "year")) %>% # gain 2k obs
         dplyr::mutate(value.x=value.x - value.y) %>% # subtract biomass liquids
         dplyr::rename(value = value.x) %>% # keep traditional/non-biomass
         dplyr::select(-value.y, -rundate) # drop biomass
