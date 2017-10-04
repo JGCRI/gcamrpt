@@ -206,6 +206,18 @@ generate <- function(scenctl,
         ## single file.
         . <- NULL    # suppress notes
         if(scenmerge) {
+
+            # year col must be char
+            # handle emtpty df by filling with empty row first
+            rslts <- lapply(rslts, function(df) {
+                if (nrow(df) ==0) {
+                    df[1,] <- rep(0, ncol(df))
+
+                }
+                df$year <- unlist(lapply(df$year, toString))
+                df
+            })
+
             rslts <- iiasafy(rslts) %>%
                 dplyr::mutate(Model=model) %>%
                 iiasa_sortcols() %>%
