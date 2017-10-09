@@ -166,3 +166,18 @@ clamp <- function(x, xlo, xhi)
 {
     pmax(x,xlo) %>% pmin(xhi)
 }
+
+
+#' CO2 Emissions
+#'
+#' This function converts weight of co2 emissions.
+#'
+#' @param ounit Desired output unit.  If omitted, results will be returned with
+#' no unit conversion.
+#' @keywords internal
+unitconv_co2 <- function(module_data, ounit)
+{
+    #Needs work
+    message("CO2 emissions weight unit conversion function not yet implemented. Data returned unmodified")
+    module_data
+}
