@@ -160,7 +160,7 @@ vint_tech_split <- function(df) {
 #' @param hasfuel Logical indicating if data has fuel and liquid_type col after fuel() processing
 #' @param hastechnology Logical indication if data has technology col from query file
 #' @keywords internal
-parse_sector <- function(df, hasvintage, hasfuel) {
+parse_sector <- function(df, hasvintage, hasfuel, hastechnology) {
 
     ## Service cond'ns
     freight <- grepl('freight', df$sector)
@@ -219,17 +219,7 @@ parse_sector <- function(df, hasvintage, hasfuel) {
     df[is.na(df$submode), 'submode'] <- 'Unassigned'
 
     # Remove t2 t5 subsector redundancy, collapse both subsectors into same row for each region
-    if (!hasfuel ) {
-        df <- df %>%
-            dplyr::select(-sector, -subsector) %>% #sector/subsector info no longer important
-            dplyr::group_by(Units, scenario, region, service, mode, submode, technology, year, vintage) %>%
-            # vintage col is probably unnecessary, but its the query saved in the pkg
-            # technology column is used in some filters for service output
-            dplyr::summarise(value=sum(value)) %>%
-            dplyr::ungroup()
-    }
-
-    if (hasfuel) {
+    if ( hasvintage && hasfuel && !hastechnology ) {
         df <- df %>%
             dplyr::select(-sector, -subsector) %>% #sector/subsector info no longer important
             dplyr::group_by(Units, scenario, region, service, mode, submode, fuel, liquid_type, year, vintage) %>%
@@ -239,7 +229,17 @@ parse_sector <- function(df, hasvintage, hasfuel) {
             dplyr::ungroup()
     }
 
-    if (!hasvintage && !hasfuel) {
+    if ( hasvintage && !hasfuel && hastechnology  ) {
+        df <- df %>%
+            dplyr::select(-sector, -subsector) %>% #sector/subsector info no longer important
+            dplyr::group_by(Units, scenario, region, service, mode, submode, technology, year, vintage) %>%
+            # vintage col is probably unnecessary, but its the query saved in the pkg
+            # technology column is used in some filters for service output
+            dplyr::summarise(value=sum(value)) %>%
+            dplyr::ungroup()
+    }
+
+    if ( !hasvintage && !hasfuel && hastechnology ) {
         df <- df %>%
             dplyr::select(-sector, -subsector) %>% #sector/subsector info no longer important
             dplyr::group_by(Units, scenario, region, service, mode, submode, technology, year) %>%
