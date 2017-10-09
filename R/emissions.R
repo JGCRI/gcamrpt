@@ -26,11 +26,14 @@ module.co2_emissions <- function(mode, allqueries, aggkeys, aggfn, years,
     else {
         message('Function for processing variable: CO2 emissions')
         co2 <- allqueries$'CO2 emissions'
+        # sometimes appears in query. useless info
+        if ('rundate' %in% names(co2)) {co2 <- dplyr::select(co2, -rundate)}
+
         co2 <- semiaggregate(co2)
-        co2 <- parse_sector(co2, hasvintage=FALSE, hasfuel=FALSE)
+        co2 <- parse_sector(co2, hasvintage=FALSE, hasfuel=FALSE, hastechnology=FALSE)
         co2 <- filter(co2, years, filters)
         co2 <- aggregate(co2, aggfn, aggkeys)
-        co2 <- unitconv_counts(co2, ounit)
+        co2 <- unitconv_co2(co2, ounit)
         co2
     }
 }
