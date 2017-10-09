@@ -26,16 +26,12 @@ module.service_output <- function(mode, allqueries, aggkeys, aggfn, years,
     else {
         message('Function for processing variable: Service output')
         serviceOutput <- allqueries$'Service output'
+
+        # sometimes appears in query. useless info
+        if ('rundate' %in% names(serviceOutput)) {serviceOutput <- dplyr::select(serviceOutput, -rundate)}
+
         serviceOutput <- vint_tech_split(serviceOutput)
-        serviceOutput <- parse_sector(serviceOutput)
-
-        # Need to handle 'LHDT' redundancy differently because not all queries have input col, which changes call to group_by()
-        serviceOutput <- serviceOutput %>%
-            dplyr::select(-sector, -subsector) %>%
-            dplyr::group_by(Units, scenario, region, year, technology, service, mode, submode) %>%
-            dplyr::summarise(value = sum(value)) %>%
-            dplyr::ungroup()
-
+        serviceOutput <- parse_sector(serviceOutput, hasvintage=TRUE, hasfuel=FALSE)
 
         serviceOutput <- filter(serviceOutput, years, filters)
         serviceOutput <- aggregate(serviceOutput, aggfn, aggkeys)
@@ -68,18 +64,21 @@ module.final_energy <- function(mode, allqueries, aggkeys, aggfn, years,
         c('Final energy', 'Refined liquids')
     }
     else {
+        message('Function for processing variable: Final energy')
+
         energy <- allqueries$'Final energy'
         refining <- allqueries$'Refined liquids'
-        energy <- vint_tech_split(energy)
-        energy <- fuel(energy, refining)
-        energy <- parse_sector(energy) # must go after fuel() because 'input' col disrupts aggregating over submodes
-        # Need to handle 'LHDT' redundancy differently because not all queries have input col, which changes call to group_by()
-        energy <- energy %>%
-            dplyr::select(-sector, -subsector, -technology, -input) %>%
-            dplyr::group_by(Units, scenario, region, year, service, mode, submode, fuel, liquid_type) %>%
-            dplyr::summarise(value = sum(value)) %>%
-            dplyr::ungroup()
 
+        # sometimes appears in query. useless info
+        if ('rundate' %in% names(energy)) {energy <- dplyr::select(energy, -rundate)}
+        if ('rundate' %in% names(refining)) {refining <- dplyr::select(refining, -rundate)}
+
+        energy <- vint_tech_split(energy)
+        energy <- mapfuel(energy, refining)
+
+        energy <- semiaggregate(energy)
+
+        energy <- parse_sector(energy, hasvintage=TRUE, hasfuel=TRUE) # must go after mapfuel() because group_by call in this func'n uses 'fuel' and 'liquid_type'
         energy <- filter(energy, years, filters)
         energy <- aggregate(energy, aggfn, aggkeys)
         # units example: EJ/yr
@@ -115,17 +114,19 @@ module.load_factors <- function(mode, allqueries, aggkeys, aggfn, years,
         message('Function for processing variable: Load factors')
 
         ldfctr <- allqueries$'Load factors'
-        ldfctr <- ldfctr[, !(names(ldfctr) %in% c('load-factor', 'technology', 'rundate'))]
-        # query output includes NA column
-        # ldfctr technology col has diff levels than that of service output
-        ldfctr <- parse_sector(ldfctr) %>% dplyr::select(-sector, subsector)
-        # parse_sector makes sector/subsector redundant
 
-        serviceOutput <- allqueries$'Service output'
-        serviceOutput <- dplyr::select(serviceOutput, -technology, -rundate)
-        # no need to split tech and vint bc not matching to ldfctr by technology
-        serviceOutput <- parse_sector(serviceOutput) %>% dplyr::select(-sector, -subsector)
-        # parse_sector makes sector/subsector redundant
+        # sometimes appears in query. useless info
+        if ('rundate' %in% names(ldfctr)) {ldfctr <- dplyr::select(ldfctr, -rundate)}
+        # query output includes NA column
+        ldfctr <- ldfctr[, !(names(ldfctr) %in% c('load-factor'))]
+
+        # data prep
+        ldfctr <- semiaggregate(ldfctr)
+        ldfctr <- parse_sector(ldfctr, hasvintage=FALSE, hasfuel=FALSE)
+
+        # after calculation
+        ldfctr <- filter(ldfctr, years, filters)
+        ldfctr <- aggregate(ldfctr, aggfn, aggkeys)
 
         ldfctr
 
@@ -139,14 +140,10 @@ module.load_factors <- function(mode, allqueries, aggkeys, aggfn, years,
 #' This function returns the data frame with Technology split into a Technology and
 #' Vintage column.
 #'
-#' Makes use of split.vt() function below. This function must write Vintage column first
-#' before rewriting Technology column.
-#'
 #' @param df Data returned for individual query
 #' @keywords internal
 vint_tech_split <- function(df) {
-    df$vintage <- unlist(lapply(df$technology, split.vt, col='vint'))
-    df$technology <- unlist(lapply(df$technology, split.vt, col='tech'))
+    df <- tidyr::separate(df, technology, c("technology", "vintage"), ",year=")
     df
 }
 
@@ -159,8 +156,11 @@ vint_tech_split <- function(df) {
 #'
 #'
 #' @param df Data returned for individual query
+#' @param hasvintage Logical indicating if data has vintage col from query file
+#' @param hasfuel Logical indicating if data has fuel and liquid_type col after fuel() processing
+
 #' @keywords internal
-parse_sector <- function(df) {
+parse_sector <- function(df, hasvintage, hasfuel) {
 
     ## Service cond'ns
     freight <- grepl('freight', df$sector)
@@ -173,21 +173,20 @@ parse_sector <- function(df) {
     rail <- grepl('rail', tolower(df$subsector))
 
     ## Service
-    df[,'service'] <- NA # na.omit(df) later
     df[freight | ship, 'service'] <- 'Freight'
     df[pass, 'service'] <- 'Passenger'
     df[av, 'service'] <- 'Passenger'
 
     ## Mode
-    df[,'mode'] <- NA #na.omit(df) later
+    df[,'mode'] <- NA # use as index later
     df[rail, 'mode'] <- 'Rail'
     df[road, 'mode'] <- 'Road'
     df[ship,'mode'] <- 'Shipping'
     df[av, 'mode'] <- 'Aviation'
+    df[is.na(df$mode), 'mode'] <- 'Unassigned'
 
 
     #Submode cond'ns
-    df[,'submode'] <- NA #na.omit(df) later
     intl <- grepl('international', tolower(df$subsector)) # av and ship
     dom <- grepl('domestic', tolower(df$subsector)) # av and ship
 
@@ -205,6 +204,7 @@ parse_sector <- function(df) {
     t16 <- grepl('9-16t', df$subsector)
 
     #Submode
+    df[,'submode'] <- NA #use as index later
     df[intl, 'submode'] <- 'International'
     df[dom, 'submode'] <- 'Domestic'
     df[freightrail, 'submode'] <- 'Freight Rail'
@@ -216,27 +216,66 @@ parse_sector <- function(df) {
     df[t2 | t5, 'submode'] <- 'LHDT' # aggregated over to collapse LHDT submode in data module
     df[t9, 'submode'] <- 'MHDT'
     df[t16, 'submode'] <- 'HHDT'
+    df[is.na(df$submode), 'submode'] <- 'Unassigned'
 
-    df <- na.omit(df) # remove incomplete observations (no service/mode/submode assigned)
+    # Remove t2 t5 subsector redundancy, collapse both subsectors into same row for each region
+    if (hasvintage && !hasfuel ) {
+        df <- df %>%
+            dplyr::select(-sector, -subsector) %>% #sector/subsector info no longer important
+            dplyr::group_by(Units, scenario, region, service, mode, submode, technology, year, vintage) %>%
+            # vintage col is probably unnecessary, but its the query saved in the pkg
+            # technology column is used in some filters for service output
+            dplyr::summarise(value=sum(value)) %>%
+            dplyr::ungroup()
+    }
+
+    if (hasvintage && hasfuel) {
+        df <- df %>%
+            dplyr::select(-sector, -subsector) %>% #sector/subsector info no longer important
+            dplyr::group_by(Units, scenario, region, service, mode, submode, fuel, liquid_type, year, vintage) %>%
+            # vintage col is probably unnecessary, but its the query saved in the pkg
+            # technology is dropped in fuel() because the input and tech cols are replaced with fuel and liquid_type
+            dplyr::summarise(value=sum(value)) %>%
+            dplyr::ungroup()
+    }
+
+    if (!hasvintage && !hasfuel) {
+        df <- df %>%
+            dplyr::select(-sector, -subsector) %>% #sector/subsector info no longer important
+            dplyr::group_by(Units, scenario, region, service, mode, submode, technology, year) %>%
+            # vintage col is probably unnecessary, but its the query saved in the pkg
+            # technology is dropped in fuel() because the input and tech cols are replaced with fuel and liquid_type
+            dplyr::summarise(value=sum(value)) %>%
+            dplyr::ungroup()
+    }
+
+
     df
 }
 
-#' Split: vintage, technology
+
+#' Semiaggregate
 #'
-#' Using text in the format of 'Technology, year=Vintage', splits text at
-#' ',' and '=', and returns entry indicated by col
+#' some queries return queries with disaggregated sectors/subsectors, which requires ones like (trn_pass_road_LDV_2W, moped)
+#  to be mapped to (trn_pass_road_LDV, 2W) before being passed to parse_sector
 #'
-#' @param text Text entry of original technology column
-#' @param col Specifies which string from text to return
+#'
+#' @param df Data returned for individual query
 #' @keywords internal
-split.vt <- function(text, col) {
-    splt <- strsplit(text, ',')[[1]]
-    if (col =='tech') {
-        splt[1]
-    } else if (col =='vint') {
-        strsplit(splt[2],'=')[[1]][2]
-    }
+semiaggregate <- function(df) {
+    w2 <- grepl('2w', tolower(df$sector))
+    df[w2,'sector'] <- 'trn_pass_road_LDV'
+    df[w2, 'subsector'] <- '2W'
+
+    w4 <- grepl('4w', tolower(df$sector))
+    df[w4,'sector'] <- 'trn_pass_road_LDV'
+    df[w4,'subsector'] <- '4W'
+
+    adv_tech <- grepl('adv', tolower(df$technology))
+    df <- df[!adv_tech, ]
+    df
 }
+
 
 #' Fuel
 #'
@@ -250,7 +289,7 @@ split.vt <- function(text, col) {
 #' @param en Data returned for refined liquids query
 
 #' @keywords internal
-fuel <- function(en, ref) {
+mapfuel <- function(en, ref) {
     # cond'ns
     coal <- grepl('coal', tolower(en$input))
     gas <- grepl('gas', tolower(en$input))
@@ -264,6 +303,7 @@ fuel <- function(en, ref) {
     en[hyd, 'fuel'] <- 'Hydrogen'
     en[liq, 'fuel'] <- 'Liquids'
 
+    en <- dplyr::select(en, -input, -technology) # input replaced with fuel col; tech col not used
     en <- liquids(en, ref)
 
     en
@@ -291,7 +331,7 @@ liquids <- function(en, ref) {
         dplyr::select(-subsector) %>%
         dplyr::inner_join(ref_tot, by=c("scenario", "region", "year")) %>%
         dplyr::mutate(share = value/total) %>%
-        dplyr::select(-value, -total, -Units, -rundate)
+        dplyr::select(-value, -total, -Units)
 
     ## Energy from Liquids
     # Biomass liquids
@@ -299,7 +339,7 @@ liquids <- function(en, ref) {
         dplyr::mutate(liquid_type = 'biomass') %>%
         dplyr::inner_join(ref_bio, by=c("scenario", "region", "year")) %>% # lose 1k obs
         dplyr::mutate(value=value*share) %>% # scale total energy down to fraction produced by refined biomass liquids
-        dplyr::select(-share, -rundate)
+        dplyr::select(-share)
 
 
     # Non-biomass liquids
@@ -309,14 +349,14 @@ liquids <- function(en, ref) {
                           by=c("Units", "scenario", "region", "year")) %>% # gain 2k obs
         dplyr::mutate(value.x=value.x - value.y) %>% # subtract biomass liquids
         dplyr::rename(value = value.x) %>% # keep traditional/non-biomass
-        dplyr::select(-value.y, -rundate) # drop biomass
+        dplyr::select(-value.y) # drop biomass
 
 
     # Replace liquids with bio/nonbio liquids
     en_nonliq <- en[en$fuel != 'Liquids',] %>%
-        dplyr::mutate(liquid_type = NA) %>%
-        dplyr::select(-rundate)
+        dplyr::mutate(liquid_type = 'Unassigned')
     en <- rbind(en_nonliq, en_bio, en_nonbio)
 
     en
 }
+
