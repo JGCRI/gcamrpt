@@ -37,3 +37,44 @@ module.co2_emissions <- function(mode, allqueries, aggkeys, aggfn, years,
         co2
     }
 }
+
+#' CO2 emissions Data Module
+#'
+#' Produce service output by technology and vintage
+#'
+#' The raw table used by this module has columns:
+#' \itemize{
+#'   \item{scenario}
+#'   \item{region}
+#'   \item{year}
+#'   \item{value}
+#'   \item{Units}
+#' }
+#'
+#' @keywords internal
+
+module.pm_emissions <- function(mode, allqueries, aggkeys, aggfn, years,
+                                 filters, ounit)
+{
+    if(mode == GETQ) {
+        # Return titles of necessary queries
+        # For more complex variables, will return multiple query titles in vector
+        'Final energy'
+    }
+    else {
+        message('Function for processing variable: CO2 emissions')
+        energy <- allqueries$'Final energy'
+        # sometimes appears in query. useless info
+        if ('rundate' %in% names(energy)) {energy <- dplyr::select(energy, -rundate)}
+
+        energy <- vint_tech_split(energy)
+        energy <- parse_sector(energy, hasvintage=TRUE, hasfuel=FALSE, hastechnology=TRUE)
+        # calculation?? see Page script
+        pm <- energy
+
+        pm <- filter(pm, years, filters)
+        pm <- aggregate(pm, aggfn, aggkeys)
+        pm <- unitconv_weight(pm, ounit)
+        pm
+    }
+}

@@ -168,9 +168,9 @@ clamp <- function(x, xlo, xhi)
 }
 
 
-#' CO2 Emissions
+#' Weight conversion
 #'
-#' This function converts weight of co2 emissions.
+#' This function converts weight
 #'
 #' @param ounit Desired output unit.  If omitted, results will be returned with
 #' no unit conversion.
@@ -178,6 +178,6 @@ clamp <- function(x, xlo, xhi)
 unitconv_co2 <- function(module_data, ounit)
 {
     #Needs work
-    message("CO2 emissions weight unit conversion function not yet implemented. Data returned unmodified")
+    message("Emissions weight unit conversion function not yet implemented. Data returned unmodified")
     module_data
 }
