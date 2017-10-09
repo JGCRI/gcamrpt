@@ -31,7 +31,7 @@ module.service_output <- function(mode, allqueries, aggkeys, aggfn, years,
         if ('rundate' %in% names(serviceOutput)) {serviceOutput <- dplyr::select(serviceOutput, -rundate)}
 
         serviceOutput <- vint_tech_split(serviceOutput)
-        serviceOutput <- parse_sector(serviceOutput, hasvintage=TRUE, hasfuel=FALSE)
+        serviceOutput <- parse_sector(serviceOutput, hasvintage=TRUE, hasfuel=FALSE, hastechnology=TRUE)
 
         serviceOutput <- filter(serviceOutput, years, filters)
         serviceOutput <- aggregate(serviceOutput, aggfn, aggkeys)
@@ -78,7 +78,7 @@ module.final_energy <- function(mode, allqueries, aggkeys, aggfn, years,
 
         energy <- semiaggregate(energy)
 
-        energy <- parse_sector(energy, hasvintage=TRUE, hasfuel=TRUE) # must go after mapfuel() because group_by call in this func'n uses 'fuel' and 'liquid_type'
+        energy <- parse_sector(energy, hasvintage=TRUE, hasfuel=TRUE, hastechnology=TRUE) # must go after mapfuel() because group_by call in this func'n uses 'fuel' and 'liquid_type'
         energy <- filter(energy, years, filters)
         energy <- aggregate(energy, aggfn, aggkeys)
         # units example: EJ/yr
@@ -122,7 +122,7 @@ module.load_factors <- function(mode, allqueries, aggkeys, aggfn, years,
 
         # data prep
         ldfctr <- semiaggregate(ldfctr)
-        ldfctr <- parse_sector(ldfctr, hasvintage=FALSE, hasfuel=FALSE)
+        ldfctr <- parse_sector(ldfctr, hasvintage=FALSE, hasfuel=FALSE, hastechnology=TRUE)
 
         # after calculation
         ldfctr <- filter(ldfctr, years, filters)
@@ -158,7 +158,7 @@ vint_tech_split <- function(df) {
 #' @param df Data returned for individual query
 #' @param hasvintage Logical indicating if data has vintage col from query file
 #' @param hasfuel Logical indicating if data has fuel and liquid_type col after fuel() processing
-
+#' @param hastechnology Logical indication if data has technology col from query file
 #' @keywords internal
 parse_sector <- function(df, hasvintage, hasfuel) {
 
@@ -219,7 +219,7 @@ parse_sector <- function(df, hasvintage, hasfuel) {
     df[is.na(df$submode), 'submode'] <- 'Unassigned'
 
     # Remove t2 t5 subsector redundancy, collapse both subsectors into same row for each region
-    if (hasvintage && !hasfuel ) {
+    if (!hasfuel ) {
         df <- df %>%
             dplyr::select(-sector, -subsector) %>% #sector/subsector info no longer important
             dplyr::group_by(Units, scenario, region, service, mode, submode, technology, year, vintage) %>%
@@ -229,7 +229,7 @@ parse_sector <- function(df, hasvintage, hasfuel) {
             dplyr::ungroup()
     }
 
-    if (hasvintage && hasfuel) {
+    if (hasfuel) {
         df <- df %>%
             dplyr::select(-sector, -subsector) %>% #sector/subsector info no longer important
             dplyr::group_by(Units, scenario, region, service, mode, submode, fuel, liquid_type, year, vintage) %>%
@@ -248,6 +248,17 @@ parse_sector <- function(df, hasvintage, hasfuel) {
             dplyr::summarise(value=sum(value)) %>%
             dplyr::ungroup()
     }
+
+    if (!hasvintage && !hasfuel && !hastechnology) {
+        df <- df %>%
+            dplyr::select(-sector, -subsector) %>% #sector/subsector info no longer important
+            dplyr::group_by(Units, scenario, region, service, mode, submode, year) %>%
+            # vintage col is probably unnecessary, but its the query saved in the pkg
+            # technology is dropped in fuel() because the input and tech cols are replaced with fuel and liquid_type
+            dplyr::summarise(value=sum(value)) %>%
+            dplyr::ungroup()
+    }
+
 
 
     df
@@ -271,8 +282,11 @@ semiaggregate <- function(df) {
     df[w4,'sector'] <- 'trn_pass_road_LDV'
     df[w4,'subsector'] <- '4W'
 
-    adv_tech <- grepl('adv', tolower(df$technology))
-    df <- df[!adv_tech, ]
+    if('technology' %in% names(df)) {
+        adv_tech <- grepl('adv', tolower(df$technology))
+        df <- df[!adv_tech, ]
+    }
+
     df
 }
 
