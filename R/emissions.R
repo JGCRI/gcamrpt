@@ -59,18 +59,49 @@ module.pm_emissions <- function(mode, allqueries, aggkeys, aggfn, years,
     if(mode == GETQ) {
         # Return titles of necessary queries
         # For more complex variables, will return multiple query titles in vector
-        'Final energy'
+        c('Service output', 'Load factors')
     }
     else {
-        message('Function for processing variable: CO2 emissions')
-        energy <- allqueries$'Final energy'
+        message('Function for processing variable: PM emissions')
+        serviceOutput <- allqueries$'Service output'
+        ldfctr <- allqueries$'Load factors'
         # sometimes appears in query. useless info
-        if ('rundate' %in% names(energy)) {energy <- dplyr::select(energy, -rundate)}
+        if ('rundate' %in% names(serviceOutput)) {serviceOutput <- dplyr::select(serviceOutput, -rundate)}
+        if ('rundate' %in% names(ldfctr)) {ldfctr <- dplyr::select(ldfctr, -rundate)}
+        # query output includes NA column
+        ldfctr <- ldfctr[, !(names(ldfctr) %in% c('load-factor'))]
 
-        energy <- vint_tech_split(energy)
-        energy <- parse_sector(energy, hasvintage=TRUE, hasfuel=FALSE, hastechnology=TRUE)
-        # calculation?? see Page script
-        pm <- energy
+        # data prep
+        serviceOutput <- vint_tech_split(serviceOutput)
+        serviceOutput <- parse_sector(serviceOutput, hasvintage=TRUE, hasfuel=FALSE, hastechnology=TRUE)
+        serviceOutput <- serviceOutput %>% # sum over vintage/technology
+            dplyr::group_by(Units, scenario, region, service, mode, submode, year) %>%
+            dplyr::summarise(value=sum(value)) %>%
+            dplyr::ungroup()
+
+        ldfctr <- semiaggregate(ldfctr)
+        ldfctr <- parse_sector(ldfctr, hasvintage=FALSE, hasfuel=FALSE, hastechnology=TRUE)
+        ldfctr <- ldfctr %>% # average over technology (same for all submodes, so really just collapsing technology column)
+            dplyr::group_by(Units, scenario, region, service, mode, submode, year) %>%
+            dplyr::summarise(value=sum(value)) %>%
+            dplyr::ungroup()
+
+        # calculation
+        vkm <- serviceOutput %>%
+            dplyr::inner_join(ldfctr,
+                              by = c('scenario', 'region', 'service', 'mode', 'submode', 'year')) %>%
+            dplyr::rename(pkm=value.x, lf=value.y) %>%
+            dplyr::mutate(vkm = pkm/lf, Units='million vehicle-km') %>%
+            # relying on native units of 'million pass-km'/'million ton-km'
+            dplyr::select(-pkm, -Units.x, -lf, -Units.y)  # depending on units of pm coefficients, need to convert million vehicle-km
+
+        pm <- pm_emissions_factors %>% #sysdata
+            dplyr::rename(pmfac=value) %>%
+            dplyr::inner_join(vkm,
+                              by = c('service', 'mode', 'submode', 'year')) %>%
+            dplyr::mutate(pm_emissions = vkm*pmfac, Units='g') %>%
+            dplyr::select(-pmfac, -Units.x, -vkm, -Units.y) %>%
+            dplyr::rename(value=pm_emissions)
 
         pm <- filter(pm, years, filters)
         pm <- aggregate(pm, aggfn, aggkeys)
