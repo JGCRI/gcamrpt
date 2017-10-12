@@ -184,7 +184,8 @@ generate <- function(scenctl,
     ## Collect the queries that we will need to run.
     q2run <-
         sapply(gcvars, function(v) {runModule(v, GETQ)}) %>%
-            unlist %>%
+            unlist() %>%
+            as.vector() %>%
             unique
 
     ## process the scenarios, one by one
