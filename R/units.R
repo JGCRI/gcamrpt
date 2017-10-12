@@ -10,11 +10,64 @@
 #' @keywords internal
 unitconv_counts <- function(module_data, ounit)
 {
-    #Needs work
-    message("Counts unit conversion function not yet implemented. Data returned unmodified")
+    if(is.null(ounit) || is.na(ounit)) {
+        return(module_data)
+    }
+    assert_that(length(ounit) == 1)
+    assert_that(is.character(ounit))
+    iunit <- module_data$Units[1]
+
+    compIunit <- compsplt(iunit, countconv)
+    # check if compsplt() found match in countconv
+    if (length(compIunit) == 0) {
+        warning("Input unit ", iunit,
+                " not recognized as a count unit.  Unit conversion will be skipped.")
+        return(module_data)
+    }
+
+    compOunit <- compsplt(ounit, countconv)
+    # check if compsplt() found match in countconv
+    if (length(compOunit) == 0) {
+        warning("Output unit ", ounit,
+                " not recognized as a count unit.  Unit conversion will be skipped.")
+        return(module_data)
+    }
+
+    cfac <- countconv[compIunit, compOunit]
+
+    module_data[['value']] <- module_data[['value']] * cfac
+
+    ## Update the units
+    module_data[['Units']] <- ounit
+
     module_data
 }
 
+#' Load factor
+#'
+#' GCAM outputs this variable as load/veh, whether Passenger or Freight.
+#' Passenger is usually reported as 'persons/vehicle' and Freight as 'tonnes/vehicle
+#' Unit conversion functions are called after filtering and aggregation, meaning module_data
+#' is a simple time series stripped of information identifying the type of variable reported (ie Passenger vs Freight)
+#' Ounit must be specified correctly in the variable control file.
+#' iunit is replaced with ounit silently
+#'
+#' @param ounit Desired output unit.  If omitted, results will be returned with
+#' no unit conversion.
+#' @keywords internal
+unitconv_ldfctr <- function(module_data, ounit)
+{
+    if(is.null(ounit) || is.na(ounit)) {
+        return(module_data)
+    }
+    assert_that(length(ounit) == 1)
+    assert_that(is.character(ounit))
+
+    ## Update the units -- no numerical conversion
+    module_data[['Units']] <- ounit
+
+    module_data
+}
 
 #' Energy
 #'
@@ -40,19 +93,23 @@ unitconv_energy <- function(module_data, ounit)
     }
     iunit <- module_data$Units[1]
 
-
-    if(!iunit %in% row.names(energyconv)) {
+    compIunit <-compsplt(iunit, energyconv)
+    # check if compsplt() found a match in energyconv
+    if(length(compIunit) == 0) {
         warning("Input unit ", iunit,
                 " not recognized as an energy unit.  Unit conversion will be skipped.")
         return(module_data)
     }
-    if(!ounit %in% colnames(energyconv)) {
+
+
+    compOunit <- compsplt(ounit, energyconv)
+    if (length(compOunit) == 0) {
         warning("Output unit ", ounit,
                 " not recognized as an energy unit.  Unit conversion will be skipped.")
         return(module_data)
     }
 
-    cfac <- energyconv[iunit, ounit]
+    cfac <- energyconv[compIunit, compOunit]
 
     module_data[['value']] <- module_data[['value']] * cfac
 
@@ -167,8 +224,32 @@ clamp <- function(x, xlo, xhi)
     pmax(x,xlo) %>% pmin(xhi)
 }
 
+#' Split composite units
+#'
+#' Split composite units (EJ/yr, billion pass-km, etc.), and find canonical version of unit stored
+#' in the corresponding conversion matrix.
+#' All units in these matrices needed to be lower case.
+#' These matrices need to be symmetric for this function to work for both input and output units
+#'
+#' @param unit Either iunit or ounit (see modules above)
+#' @param convmat Conversion matrices stored in sysdata
+compsplt <- function(unit, convmat) {
+    unitsplt <- unlist(strsplit(unit, '[ -/]')) %>% tolower()
 
-#' Weight conversion
+    for(i in seq(1, length(unitsplt))) { # for each component in unit
+        # as long as row.names() = colnames(conv), this function can be used for input & output
+        compare <- grepl(unitsplt[i], row.names(convmat))
+        # is there a matching entry in convmat?\
+        if (any(compare)) {
+            compunit <- row.names(convmat)[compare]
+            # pick out the matching entry in convmat
+        }
+    }
+
+    compunit
+}
+
+#' co2 emissions weight conversion
 #'
 #' This function converts weight
 #'
@@ -177,7 +258,75 @@ clamp <- function(x, xlo, xhi)
 #' @keywords internal
 unitconv_co2 <- function(module_data, ounit)
 {
-    #Needs work
-    message("Emissions weight unit conversion function not yet implemented. Data returned unmodified")
+    if(is.null(ounit) || is.na(ounit)) {
+        return(module_data)
+    }
+    assert_that(length(ounit) == 1)
+    assert_that(is.character(ounit))
+    iunit <- module_data$Units[1]
+
+    # is iunit always MTC? include this section just in case
+    compIunit <- tolower(iunit)
+    if(!compIunit %in% row.names(emissionsconv)) {
+        warning("Input unit ", iunit,
+                " not recognized as an emissions unit.  Unit conversion will be skipped.")
+        return(module_data)
+    }
+
+    compOunit <- compsplt(ounit, emissionsconv)
+    # check if compsplt() found match in emissionsconv
+    if(length(compOunit) == 0) {
+        warning("Output unit ", ounit,
+                " not recognized as an emissions unit.  Unit conversion will be skipped.")
+        return(module_data)
+    }
+
+    cfac <- emissionsconv[compIunit, compOunit]
+    module_data[['value']] <- module_data[['value']] * cfac
+    ## Update the units
+    module_data[['Units']] <- ounit
+
     module_data
 }
+
+#' weight conversion
+#'
+#' This function converts weight
+#'
+#' @param ounit Desired output unit.  If omitted, results will be returned with
+#' no unit conversion.
+#' @keywords internal
+unitconv_weight <- function(module_data, ounit)
+{
+    if(is.null(ounit) || is.na(ounit)) {
+        return(module_data)
+    }
+    assert_that(length(ounit) == 1)
+    assert_that(is.character(ounit))
+    iunit <- module_data$Units[1]
+
+    if(!iunit %in% row.names(weightconv)) {
+        warning("Input unit ", iunit,
+                " not recognized as a weight unit.  Unit conversion will be skipped.")
+        return(module_data)
+    }
+
+
+    compOunit <- compsplt(ounit, weightconv)
+    # check if compsplt() found match in weightconv
+    if(length(compOunit) == 0) {
+        warning("Output unit ", ounit,
+                " not recognized as a weight unit.  Unit conversion will be skipped.")
+        return(module_data)
+    }
+
+    cfac <- weightconv[iunit, compOunit]
+
+    module_data[['value']] <- module_data[['value']] * cfac
+
+    ## Update the units
+    module_data[['Units']] <- ounit
+
+    module_data
+}
+
