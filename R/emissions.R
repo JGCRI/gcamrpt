@@ -83,7 +83,7 @@ module.pm_emissions <- function(mode, allqueries, aggkeys, aggfn, years,
         ldfctr <- parse_sector(ldfctr, hasvintage=FALSE, hasfuel=FALSE, hastechnology=TRUE)
         ldfctr <- ldfctr %>% # average over technology (same for all submodes, so really just collapsing technology column)
             dplyr::group_by(Units, scenario, region, service, mode, submode, year) %>%
-            dplyr::summarise(value=sum(value)) %>%
+            dplyr::summarise(value=mean(value)) %>%
             dplyr::ungroup()
 
         # calculation
