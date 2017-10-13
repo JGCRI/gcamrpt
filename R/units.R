@@ -175,6 +175,36 @@ unitconv_usdollar <- function(module_data, ounit)
     module_data
 }
 
+#' Unit conversion for USD into Rupee
+#'
+#' Convert to 2010 Rupees from USD1990
+#'
+#' @param ounit Desired output unit.  If omitted, results will be returned with
+#' no unit conversion.
+#' @importFrom assertthat assert_that
+#' @keywords internal
+
+unitconv_rupee <- function(module_data, ounit) {
+    if(is.null(ounit) || is.na(ounit)) {
+        return(module_data)
+    }
+    assert_that(length(ounit) == 1)
+    assert_that(is.character(ounit))
+
+    cfac <- 1.67*45 / 1000
+    # native gcam output ~ Million1990US$
+    # this cfac true only for ounit ~ billion 2010 Rupee/yr
+    # would rather call unitconv_counts() to convert million to billion
+    # this is temporary solution
+
+    module_data[['value']] <- module_data[['value']] * cfac
+
+    ## Update the units
+    module_data[['Units']] <- ounit
+
+    module_data
+}
+
 #' Parse year values out of a string
 #'
 #' We don't know whether we will be getting two or 4 digit years, so we try to
