@@ -40,6 +40,7 @@ module.service_output <- function(mode, allqueries, aggkeys, aggfn, years,
         serviceOutput
     }
 }
+
 #' Energy Data Module
 #'
 #' Produce final energy by technology and vintage
@@ -79,13 +80,11 @@ module.final_energy <- function(mode, allqueries, aggkeys, aggfn, years,
         energy <- mapfuel(energy, refining) #removes input and technology, replaces with fuel and liquid_type
         energy <- semiaggregate(energy)
         energy <- parse_sector(energy, hasvintage=TRUE, hasfuel=TRUE, hastechnology=FALSE) # must go after mapfuel() because group_by call in this func'n uses 'fuel' and 'liquid_type'
+        energy <- unitconv_energy(energy, ounit)
 
         energy <- filter(energy, years, filters)
         energy <- aggregate(energy, aggfn, aggkeys)
         # units example: EJ/yr
-        energy <- unitconv_energy(energy, ounit)
-
-
         energy
 
     }
@@ -212,6 +211,80 @@ module.service_intensity <- function(mode, allqueries, aggkeys, aggfn, years,
     }
 }
 
+#' Sales Data Module
+#'
+#' Produce sales
+#'
+#' The raw table used by this module has columns:
+#' \itemize{
+#'   \item{scenario}
+#'   \item{region}
+#'   \item{year}
+#'   \item{value}
+#'   \item{Units}
+#' }
+#'
+#' @keywords internal
+
+module.sales <- function(mode, allqueries, aggkeys, aggfn, years,
+                                  filters, ounit)
+{
+    if(mode == GETQ) {
+        # Return titles of necessary queries
+        # For more complex variables, will return multiple query titles in vector
+        c('Service output', 'Load factors')
+    }
+    else {
+        message('Function for processing variable: Service output')
+
+        serviceOutput <- allqueries$'Service output'
+        ldfctr <- allqueries$'Load factors'
+        # sometimes appears in query. useless info
+        if ('rundate' %in% names(serviceOutput)) {serviceOutput <- dplyr::select(serviceOutput, -rundate)}
+        if ('rundate' %in% names(ldfctr)) {ldfctr <- dplyr::select(ldfctr, -rundate)}
+        # query output includes NA column
+        ldfctr <- ldfctr[, !(names(ldfctr) %in% c('load-factor'))]
+
+        # data prep
+        serviceOutput <- vint_tech_split(serviceOutput)
+        serviceOutput <- parse_sector(serviceOutput, hasvintage=TRUE, hasfuel=FALSE, hastechnology=TRUE)
+        serviceOutput <- serviceOutput %>% # sum over technology
+            dplyr::group_by(Units, scenario, region, service, mode, submode, vintage, year) %>%
+            dplyr::summarise(value=sum(value)) %>%
+            dplyr::ungroup() %>%
+            dplyr::filter(year==vintage) %>%
+            dplyr::select(-vintage)
+
+        ldfctr <- semiaggregate(ldfctr)
+        ldfctr <- parse_sector(ldfctr, hasvintage=FALSE, hasfuel=FALSE, hastechnology=TRUE)
+        ldfctr <- ldfctr %>% # average over technology (same for all submodes, so really just collapsing technology column)
+            dplyr::group_by(Units, scenario, region, service, mode, submode, year) %>%
+            dplyr::summarise(value=mean(value)) %>%
+            dplyr::ungroup()
+
+        # calculation
+        sales <- serviceOutput %>%
+            dplyr::inner_join(ldfctr,
+                              by = c('scenario', 'region', 'service', 'mode', 'submode', 'year')) %>%
+            dplyr::rename(pkm=value.x, lf=value.y) %>%
+            dplyr::mutate(vkm = pkm/lf, Units='million vehicle-km') %>%
+            # relying on native units of 'million pass-km'/'million ton-km'
+            dplyr::select(-pkm, -Units.x, -lf, -Units.y)  %>%
+            dplyr::inner_join(annual_mileage, #sysdata
+                              by = c('service', 'mode', 'submode', 'year')) %>%
+            dplyr::rename(mileage=value) %>%
+            dplyr::mutate(sales = vkm/mileage) %>%
+            dplyr::select(-vkm, -Units.x, -mileage, -Units.y) %>%
+            dplyr::rename(value=sales) %>%
+            dplyr::mutate(Units = 'million vehicles')
+
+        sales <- filter(sales, years, filters)
+        sales <- aggregate(sales, aggfn, aggkeys)
+        # units example: million p-km
+        sales <- unitconv_counts(sales, ounit)
+        sales
+    }
+}
 
 #' Split technology into technology and vintage cols
 #'

@@ -9,6 +9,9 @@ gdpdef <- calc.gdpdef('data-raw/GDPDEF.csv')
 source('data-raw/pm_emissions_factors.R')
 pm_emissions_factors <- calc.pm_emissions_factors('data-raw/pm_emissions_factors.csv')
 
+source('data-raw/annual_mileage.R')
+annual_mileage <- calc.annual_mileage('data-raw/annual_mileage.csv')
+
 source('data-raw/energyconv.R')
 energyconv <- prep.energyconv()
 
