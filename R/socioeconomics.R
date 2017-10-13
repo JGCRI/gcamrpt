@@ -62,7 +62,9 @@ module.gdp_mer_ <- function(mode, allqueries, aggkeys, aggfn, years,
         gdp_mer <- allqueries$'GDP(MER)'
         gdp_mer <- filter(gdp_mer, years, filters)
         gdp_mer <- aggregate(gdp_mer, aggfn, aggkeys)
-        gdp_mer <- unitconv_usdollar(gdp_mer, ounit)
+        if(grepl('US', ounit)) {gdp_mer <- unitconv_usdollar(gdp_mer, ounit)}
+        else if (grepl('Rupee', ounit)) {gdp_mer <- unitconv_rupee(gdp_mer, ounit)}
+
         gdp_mer
     }
 }
