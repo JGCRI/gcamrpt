@@ -274,6 +274,7 @@ compsplt <- function(unit, convmat) {
             compunit <- row.names(convmat)[compare]
             # pick out the matching entry in convmat
         }
+        else {compunit <- character()} # return empty string
     }
 
     compunit

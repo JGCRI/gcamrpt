@@ -10,7 +10,7 @@ test_that('Default queries are read.', {
     expect_identical(gdpquery$title, 'GDP(MER)')
     expect_identical(gdpquery$regions, character(0))
     expect_identical(gdpquery$query,
-                     "<gdpQueryBuilder title=\"GDP(MER)\">\n  <axis1 name=\"region\">region</axis1>\n  <axis2 name=\"Year\">gdp-mer</axis2>\n  <xPath buildList=\"true\" dataName=\"gdp-mer\" group=\"false\" sumAll=\"false\">GDP/gdp-mer/text()</xPath>\n  <comments/>\n</gdpQueryBuilder>")
+                     "<gdpQueryBuilder title=\"GDP(MER)\">\n  <axis1 name=\"region\">region</axis1>\n  <axis2 name=\"year\">gdp-mer</axis2>\n  <xPath buildList=\"true\" dataName=\"gdp-mer\" group=\"false\" sumAll=\"false\">GDP/gdp-mer/text()</xPath>\n  <comments/>\n</gdpQueryBuilder>")
 })
 
 test_that('We can parse a new query.', {

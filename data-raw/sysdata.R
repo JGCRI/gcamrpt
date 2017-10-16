@@ -24,7 +24,7 @@ emissionsconv <- prep.emissionsconv()
 source('data-raw/weightconv.R')
 weightconv <- prep.weightconv()
 
-devtools::use_data(gdpdef, pm_emissions_factors,
+devtools::use_data(gdpdef, pm_emissions_factors, annual_mileage,
                    energyconv, countconv, emissionsconv, weightconv,
                    internal=TRUE, overwrite=TRUE,
                    compress='xz')

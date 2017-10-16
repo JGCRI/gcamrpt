@@ -66,14 +66,14 @@ test_that('Energy unit conversion works.', {
 
 
 test_that('Energy unit conversion warns on bad unit strings.', {
-    df <- tibble::tibble(value=1, Units='MJ')
+    df <- tibble::tibble(value=1, Units='GJ')
     expect_warning({convdf <- unitconv_energy(df, 'MWh')},
-                   'Input unit *MJ *not recognized')
+                   'Input unit *GJ *not recognized')
     expect_identical(df, convdf)
 
     df$Units <- 'EJ'
-    expect_warning({convdf <- unitconv_energy(df, 'MJ')},
-                   'Output unit *MJ *not recognized')
+    expect_warning({convdf <- unitconv_energy(df, 'GJ')},
+                   'Output unit *GJ *not recognized')
     expect_identical(df, convdf)
 
     ## check multiple unit strings while we're at it.
