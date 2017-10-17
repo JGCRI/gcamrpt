@@ -145,15 +145,22 @@ module.service_intensity <- function(mode, allqueries, aggkeys, aggfn, years,
     else {
         message('Function for processing variable: Service intensity')
 
+        #data prep
         serviceOutput <- allqueries$'Service output'
+        serviceOutput <- normalize(serviceOutput) %>%
+            dplyr::group_by(Units, scenario, region, year, service, mode, submode) %>%
+            # remove technology bc 2W technology = 2w. weird, doesn't match energy
+            dplyr::summarise(value=sum(value)) %>%
+            dplyr::ungroup()
+
         energy <- allqueries$'Final energy'
         refining <- allqueries$'Refined liquids'
-
-        #data prep
-        serviceOutput <- mapfuel(serviceOutput) # adds blank fuel and liquid_type col -- problem for joining?
-        serviceOutput <- normalize(serviceOutput)
-        energy <- mapfuel(energy, refining) # replaces input/tech col w/ fuel  & liquid_type
-        energy <- normalize(energy)
+        energy <- mapfuel(energy, refining)
+        energy <- normalize(energy) %>%
+            dplyr::group_by(Units, scenario, region, year, fuel, liquid_type, service, mode, submode) %>%
+            # no technology, see above
+            dplyr::summarise(value=sum(value)) %>%
+            dplyr::ungroup()
 
         # calculation
         intensity <- energy %>%
@@ -294,7 +301,7 @@ mapfuel <- function(en, ref = NULL) {
         nonliq <- en %>%
             dplyr::filter(fuel != 'Liquids') %>%
             dplyr::mutate(liquid_type='') %>%
-            dplyr::select(-rundate)
+            dplyr::select(Units, scenario, region, sector, subsector, technology, input, year, value, fuel, liquid_type)
         en <- rbind(liq, nonliq)
         en
     } else {
@@ -319,12 +326,15 @@ mapfuel <- function(en, ref = NULL) {
 #' @keywords internal
 normalize <- function(queryData) {
     if ('rundate' %in% names(queryData)) {queryData <- dplyr::select(queryData, -rundate)} # remove rundate
-    if ('load-factor' %in% names(queryData)) {queryData <- queryData[,!(names(queryData) %in% c("load-factor"))]}
-    # query always includes col of NA's
+    if ('load-factor' %in% names(queryData)) {queryData <- queryData[,!(names(queryData) %in% c("load-factor"))]} # query always includes col of NA's
+    if ('sector' %in% names(queryData)) {
+        queryData$sector <- tolower(queryData$sector)
+        } else {queryData$sector <- ''}
+    if ('subsector' %in% names(queryData)) {
+        queryData$subsector <- tolower(queryData$subsector)
+        queryData$subsector <- gsub('[()]', '', queryData$subsector)
+    } else {queryData$subsector <- ''}
 
-    queryData$sector <- tolower(queryData$sector)
-    queryData$subsector <- tolower(queryData$subsector)
-    queryData$subsector <- gsub('[()]', '', queryData$subsector)
 
     # include tech + vint cols
     if('technology' %in% names(queryData)) {
@@ -392,7 +402,9 @@ normalize <- function(queryData) {
         dplyr::mutate(submode = dplyr::if_else(subsector %in% lhdt, 'LHDT', submode)) %>%
         dplyr::mutate(submode = dplyr::if_else(subsector=='truck 5-9t', 'MHDT', submode)) %>%
         dplyr::mutate(submode = dplyr::if_else(subsector=='truck 9-16t', 'HHDT', submode)) %>%
-        dplyr::filter( service != '' & mode != '' & submode != '' )
+        dplyr::filter( service != '' & mode != '' & submode != '' ) %>%
+        dplyr::arrange(scenario, region, service, mode, submode, value, Units)
+
 
     queryData
 }
