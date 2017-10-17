@@ -277,7 +277,7 @@ compsplt <- function(unit, convmat) {
         }
         else {compunit <- character()} # return empty string
     }
-
+    assert_that(length(compunit) ==1)
     compunit
 }
 
