@@ -337,7 +337,8 @@ unitconv_weight <- function(module_data, ounit)
     assert_that(is.character(ounit))
     iunit <- module_data$Units[1]
 
-    if(!iunit %in% row.names(weightconv)) {
+    compIunit <- compsplt(iunit, weightconv)
+    if(length(compIunit) == 0) {
         warning("Input unit ", iunit,
                 " not recognized as a weight unit.  Unit conversion will be skipped.")
         return(module_data)
@@ -352,7 +353,7 @@ unitconv_weight <- function(module_data, ounit)
         return(module_data)
     }
 
-    cfac <- weightconv[iunit, compOunit]
+    cfac <- weightconv[compIunit, compOunit]
 
     module_data[['value']] <- module_data[['value']] * cfac
 
