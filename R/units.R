@@ -272,6 +272,7 @@ compsplt <- function(unit, convmat) {
         # is there a matching entry in convmat?\
         if (any(compare)) {
             compunit <- row.names(convmat)[compare]
+            break
             # pick out the matching entry in convmat
         }
         else {compunit <- character()} # return empty string

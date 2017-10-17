@@ -328,13 +328,9 @@ normalize <- function(queryData) {
 
     # include tech + vint cols
     if('technology' %in% names(queryData)) {
-        queryData$technology <- tolower(queryData$technology)
-        # only appears in load factors query
-        queryData <- dplyr::filter(queryData, ! grepl('adv', technology))
-
+        queryData <- dplyr::filter(queryData, ! grepl('Adv', technology))# only appears in load factors query
         if(grepl(',year=', queryData$technology[1])) { # split vint/tech
             queryData <- tidyr::separate(queryData, technology, c("technology", "vintage"), ",year=")
-            queryData$vintage <- tolower(queryData$vintage)
         } else {queryData$vintage <- ''} # include vint col if not incl'd in tech
     } else { # if neither, add both
         queryData$technology <- ''
