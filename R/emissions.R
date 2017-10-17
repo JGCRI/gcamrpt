@@ -87,7 +87,7 @@ module.pm_emissions <- function(mode, allqueries, aggkeys, aggfn, years,
             dplyr::rename(pmfac=value) %>%
             dplyr::inner_join(vkm,
                               by = c('service', 'mode', 'submode', 'year')) %>%
-            dplyr::mutate(pm_emissions = vkm*pmfac, Units='g') %>%
+            dplyr::mutate(pm_emissions = vkm*pmfac, Units='Mg') %>%
             dplyr::select(-pmfac, -Units.x, -vkm, -Units.y) %>%
             dplyr::rename(value=pm_emissions)
 
