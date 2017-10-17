@@ -3,48 +3,24 @@ load('test-data/service_outputq.rda')
 load('test-data/load_factorsq.rda')
 load('test-data/final_energyq.rda')
 load('test-data/refined_liquidsq.rda')
+load('test-data/transp_normalized.rda')
 
-queries <- list(service_outputq, load_factorsq, final_energyq)
-queries <- stats::setNames(queries, c("Service output", "Load factors", "Final energy"))
+service_norm <- transp_normalized[[1]]
+load_norm <- transp_normalized[[2]]
+energy_norm <- transp_normalized[[3]]
+intensity_norm <- transp_normalized[[4]]
+pm_norm <- transp_normalized[[5]]
+
+queries <- list(service_outputq, load_factorsq, final_energyq, refined_liquidsq)
+queries <- stats::setNames(queries, c("Service output", "Load factors", "Final energy", "Refined liquids"))
 
 test_that('GETQ Mode returns correct query titles', {
     expect_match(module.service_output(iamrpt:::GETQ), 'Service output')
     expect_match(module.load_factors(iamrpt:::GETQ), 'Load factors')
     expect_equal(module.final_energy(iamrpt:::GETQ), c("Final energy", "Refined liquids"))
     expect_equal(module.service_intensity(iamrpt:::GETQ), c("Final energy", "Refined liquids", "Service output"))
-})
-
-test_that('Transportation models return correct service/mode/submode factors', {
-    serviceopts <- c("Freight", "Passenger")
-    expect_equal(levels(factor(queries$`Service output`$service)),
-                     serviceopts)
-    expect_equal(levels(factor(queries$`Load factors`$service)),
-                     serviceopts)
-    expect_equal(levels(factor(queries$`Final energy`$service)),
-                     serviceopts)
-    expect_equal(levels(factor(queries$`Final energy`$service)),
-                     serviceopts)
-
-    modeopts <- c("Aviation", "Rail", "Road", "Shipping")
-    expect_equal(levels(factor(queries$`Service output`$mode)),
-                     modeopts)
-    expect_equal(levels(factor(queries$`Load factors`$mode)),
-                     modeopts)
-    expect_equal(levels(factor(queries$`Final energy`$mode)),
-                     modeopts)
-    expect_equal(levels(factor(queries$`Final energy`$mode)),
-                     modeopts)
-
-    submodeopts <- c("2W", "3W", "4W", "Bus", "Domestic", "Freight Rail", "HHDT", "International", "LHDT", "MHDT", "Passenger Rail")
-    expect_equal(levels(factor(queries$`Service output`$submode)),
-                     submodeopts)
-    expect_equal(levels(factor(queries$`Load factors`$submode)),
-                     submodeopts)
-    expect_equal(levels(factor(queries$`Final energy`$submode)),
-                     submodeopts)
-    expect_equal(levels(factor(queries$`Final energy`$submode)),
-                     submodeopts)
-})
+    expect_equal(module.pm_emissions(iamrpt:::GETQ), c("Service output", "Load factors"))
+    })
 
 test_that('Transportation models return transportation data', {
     aggkeys <- NA
@@ -52,35 +28,35 @@ test_that('Transportation models return transportation data', {
     years <- '2000:2050'
     filters <- NA
     ounit <- NA
-    expect_identical(module.service_output(iamrpt:::RUN, queries , aggkeys, aggfn, years, filters, ounit),
-                     dplyr::filter(queries$`Service output`, year>=2000, year<=2050))
+    expect_identical(iamrpt:::module.service_output(iamrpt:::RUN, queries , aggkeys, aggfn, years, filters, ounit),
+                     dplyr::filter(service_norm, year>=2000, year<=2050))
     expect_identical(module.load_factors(iamrpt:::RUN, queries , aggkeys, aggfn, years, filters, ounit),
-                     dplyr::filter(queries$`Load factors`, year>=2000, year<=2050))
+                     dplyr::filter(load_norm, year>=2000, year<=2050))
     expect_identical(module.final_energy(iamrpt:::RUN, queries , aggkeys, aggfn, years, filters, ounit),
-                     dplyr::filter(queries$`Final energy`, year>=2000, year<=2050))
+                     dplyr::filter(energy_norm, year>=2000, year<=2050))
     expect_identical(module.service_intensity(iamrpt:::RUN, queries , aggkeys, aggfn, years, filters, ounit),
-                     dplyr::filter(queries$`Service intensity`, year>=2000, year<=2050))
+                     dplyr::filter(intensity_norm, year>=2000, year<=2050))
+    expect_identical(module.pm_emissions(iamrpt:::RUN, queries, aggkeys, aggfn, years, filters, ounit),
+                     dplyr::filter(pm_norm, year>=2000, year<=2050))
 
     years <- NA
     filters <- '(==; region;India), (==; service;Freight), (==;mode;Road), (==;submode;LHDT)'
     expect_identical(module.service_output(iamrpt:::RUN, queries , aggkeys, aggfn, years, filters, ounit),
-                     dplyr::filter(queries$`Service output`, service=='Freight', mode=='Road', submode=='LHDT'))
+                     dplyr::filter(service_norm, service=='Freight', mode=='Road', submode=='LHDT'))
     expect_identical(module.load_factors(iamrpt:::RUN, queries , aggkeys, aggfn, years, filters, ounit),
-                     dplyr::filter(queries$`Load factors`, service=='Freight', mode=='Road', submode=='LHDT'))
+                     dplyr::filter(load_norm, service=='Freight', mode=='Road', submode=='LHDT'))
     expect_identical(module.final_energy(iamrpt:::RUN, queries , aggkeys, aggfn, years, filters, ounit),
-                     dplyr::filter(queries$`Final energy`, service=='Freight', mode=='Road', submode=='LHDT'))
+                     dplyr::filter(energy_norm, service=='Freight', mode=='Road', submode=='LHDT'))
     expect_identical(module.service_intensity(iamrpt:::RUN, queries , aggkeys, aggfn, years, filters, ounit),
-                     dplyr::filter(queries$`Service intensity`, service=='Freight', mode=='Road', submode=='LHDT'))
+                     dplyr::filter(intensity_norm, service=='Freight', mode=='Road', submode=='LHDT'))
+    expect_identical(module.pm_emissions(iamrpt:::RUN, queries, aggkeys, aggfn, years, filters, ounit),
+                     dplyr::filter(pm_norm, service=='Freight', mode=='Road', submode=='LHDT'))
 
     filters <- '(==; region;India), (==;service;Passenger), (==;mode;Road), (==;submode;4W), (==;fuel;Electricity)'
-    expect_identical(module.service_output(iamrpt:::RUN, queries , aggkeys, aggfn, years, filters, ounit),
-                     dplyr::filter(queries$`Service output`, service=='Passenger', mode=='Road', submode=='4W', fuel=='Electricity'))
-    expect_identical(module.load_factors(iamrpt:::RUN, queries , aggkeys, aggfn, years, filters, ounit),
-                     dplyr::filter(queries$`Load factors`, service=='Passenger', mode=='Road', submode=='4W', fuel=='Electricity'))
     expect_identical(module.final_energy(iamrpt:::RUN, queries , aggkeys, aggfn, years, filters, ounit),
-                     dplyr::filter(queries$`Final energy`, service=='Passenger', mode=='Road', submode=='4W', fuel=='Electricity'))
+                     dplyr::filter(energy_norm, service=='Passenger', mode=='Road', submode=='4W', fuel=='Electricity'))
     expect_identical(module.service_intensity(iamrpt:::RUN, queries , aggkeys, aggfn, years, filters, ounit),
-                     dplyr::filter(queries$`Service intensity`, service=='Passenger', mode=='Road', submode=='4W', fuel=='Electricity'))
+                     dplyr::filter(intensity_norm, service=='Passenger', mode=='Road', submode=='4W', fuel=='Electricity'))
 })
 
 
