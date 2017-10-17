@@ -26,8 +26,10 @@ module.service_output <- function(mode, allqueries, aggkeys, aggfn, years,
     else {
         message('Function for processing variable: Service output')
         serviceOutput <- allqueries$'Service output'
-        serviceOutput <- mapfuel(serviceOutput) # adds fuel and liquid_type cols
-        serviceOutput <- normalize(serviceOutput)
+        serviceOutput <- normalize(serviceOutput) %>%
+            dplyr::group_by(Units, scenario, region, year, technology, vintage, service, mode, submode) %>%
+            dplyr::summarise(value=sum(value)) %>%
+            dplyr::ungroup()
         serviceOutput <- filter(serviceOutput, years, filters)
         serviceOutput <- aggregate(serviceOutput, aggfn, aggkeys)
         # units example: million p-km
@@ -65,7 +67,10 @@ module.final_energy <- function(mode, allqueries, aggkeys, aggfn, years,
         energy <- allqueries$'Final energy'
         refining <- allqueries$'Refined liquids'
         energy <- mapfuel(energy, refining) #replaces input/technology with fuel & liquid_type
-        energy <- normalize(energy)
+        energy <- normalize(energy) %>%
+            dplyr::group_by(Units, scenario, region, year, technology, vintage, fuel, liquid_type, service, mode, submode) %>%
+            dplyr::summarise(value=sum(value)) %>%
+            dplyr::ungroup()
         energy <- unitconv_energy(energy, ounit)
         energy <- filter(energy, years, filters)
         energy <- aggregate(energy, aggfn, aggkeys)
@@ -101,8 +106,10 @@ module.load_factors <- function(mode, allqueries, aggkeys, aggfn, years,
         message('Function for processing variable: Load factors')
 
         ldfctr <- allqueries$'Load factors'
-        ldfctr <- mapfuel(ldfctr) # adds empty fuel/liquid_type cols
-        ldfctr <- normalize(ldfctr)
+        ldfctr <- normalize(ldfctr) %>%
+            dplyr::group_by(Units, scenario, region, year, technology, service, mode, submode) %>% # average over LHDT
+            dplyr::summarise(value=mean(value)) %>%
+            dplyr::ungroup()
         ldfctr <- filter(ldfctr, years, filters)
         ldfctr <- aggregate(ldfctr, aggfn, aggkeys)
         ldfctr <- unitconv_ldfctr(ldfctr, ounit)
@@ -273,18 +280,21 @@ mapfuel <- function(en, ref = NULL) {
             dplyr::mutate(liquid_type = 'biomass') %>%
             dplyr::inner_join(bio_refining, by=c("scenario", "region", "year")) %>%
             dplyr::mutate(value=value*share) %>%
-            dplyr::select(-share)
+            dplyr::select(-share) %>%
+            dplyr::select(Units, scenario, region, sector, subsector, technology, input, year, value, fuel, liquid_type)
         nonbioliq <- liq %>%
             dplyr::mutate(liquid_type='traditional') %>%
             dplyr::inner_join(bio_refining, by=c("scenario", "region", "year")) %>%
             dplyr::mutate(value=value*(1-share)) %>% # subtract biomass liquids
-            dplyr::select(-share) # drop original liquids and biomass value col
+            dplyr::select(-share) %>%
+            dplyr::select(Units, scenario, region, sector, subsector, technology, input, year, value, fuel, liquid_type)
 
         # replace rows where fuel==liquids
         liq <- rbind(bioliq, nonbioliq)
         nonliq <- en %>%
             dplyr::filter(fuel != 'Liquids') %>%
-            dplyr::mutate(liquid_type='')
+            dplyr::mutate(liquid_type='') %>%
+            dplyr::select(-rundate)
         en <- rbind(liq, nonliq)
         en
     } else {
@@ -320,12 +330,11 @@ normalize <- function(queryData) {
     if('technology' %in% names(queryData)) {
         queryData$technology <- tolower(queryData$technology)
         # only appears in load factors query
-        queryData <- dplyr::filter(queryData, grepl('adv', technology))
+        queryData <- dplyr::filter(queryData, ! grepl('adv', technology))
 
-        if(grepl(',year=', queryData$technology[1])) {
+        if(grepl(',year=', queryData$technology[1])) { # split vint/tech
             queryData <- tidyr::separate(queryData, technology, c("technology", "vintage"), ",year=")
             queryData$vintage <- tolower(queryData$vintage)
-            # split vint/tech
         } else {queryData$vintage <- ''} # include vint col if not incl'd in tech
     } else { # if neither, add both
         queryData$technology <- ''
@@ -387,9 +396,6 @@ normalize <- function(queryData) {
         dplyr::mutate(submode = dplyr::if_else(subsector %in% lhdt, 'LHDT', submode)) %>%
         dplyr::mutate(submode = dplyr::if_else(subsector=='truck 5-9t', 'MHDT', submode)) %>%
         dplyr::mutate(submode = dplyr::if_else(subsector=='truck 9-16t', 'HHDT', submode)) %>%
-        dplyr::group_by(Units, scenario, region, year, service, mode, submode, fuel, liquid_type) %>% # aggregate over LHDT
-        dplyr::summarise(value=sum(value)) %>% # aggregate over LHDT
-        dplyr::ungroup() %>% # aggregate over LHDT
         dplyr::filter( service != '' & mode != '' & submode != '' )
 
     queryData
