@@ -145,38 +145,35 @@ module.service_intensity <- function(mode, allqueries, aggkeys, aggfn, years,
     else {
         message('Function for processing variable: Service intensity')
 
-        #data prep
+        # run filters and agg on component queries, then calculate final variable
         serviceOutput <- allqueries$'Service output'
         serviceOutput <- normalize(serviceOutput) %>%
             dplyr::group_by(Units, scenario, region, year, service, mode, submode) %>%
-            # remove technology bc 2W technology = 2w. weird, doesn't match energy
             dplyr::summarise(value=sum(value)) %>%
             dplyr::ungroup()
+        serviceOutput <- filter(serviceOutput, years, filters)
+        serviceOutput <- aggregate(serviceOutput, aggfn, aggkeys) # million pkm
 
         energy <- allqueries$'Final energy'
         refining <- allqueries$'Refined liquids'
-        energy <- mapfuel(energy, refining)
+        energy <- mapfuel(energy, refining) #replaces input/technology with fuel & liquid_type
         energy <- normalize(energy) %>%
-            dplyr::group_by(Units, scenario, region, year, fuel, liquid_type, service, mode, submode) %>%
-            # no technology, see above
+            dplyr::group_by(Units, scenario, region, year, service, mode, submode) %>%
             dplyr::summarise(value=sum(value)) %>%
             dplyr::ungroup()
+        energy <- filter(energy, years, filters)
+        energy <- aggregate(energy, aggfn, aggkeys) #EJ
 
         # calculation
         intensity <- energy %>%
             dplyr::inner_join(serviceOutput,
-                              by = c('scenario', 'region', 'year', 'service', 'mode', 'submode')) %>%
+                              by = c('scenario', 'region', 'year')) %>%
             dplyr::rename(energy=value.x, pkm=value.y) %>%
             dplyr::mutate(intensity = energy/pkm, Units='TJ') %>%
             # relying on native units of 'EJ' (10^18) and million pass-km'/'million ton-km' (10^6)
             dplyr::select(-pkm, -Units.x, -energy, -Units.y)  %>%
             dplyr::rename(value=intensity)
-
-        # after calculation
-        intensity <- filter(intensity, years, filters)
-        intensity <- aggregate(intensity, aggfn, aggkeys)
         intensity <- unitconv_energy(intensity, ounit)
-
         intensity
 
     }
