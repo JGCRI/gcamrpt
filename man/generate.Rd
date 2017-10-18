@@ -5,7 +5,7 @@
 \title{Generate a report for a GCAM experiment}
 \usage{
 generate(scenctl, varctl, dbloc, outputdir = getwd(), model = "GCAM",
-  fileformat = getOption("iamrpt.fileformat", "CSV"),
+  template = NULL, fileformat = getOption("iamrpt.fileformat", "CSV"),
   scenmerge = getOption("iamrpt.scenmerge", TRUE),
   dataformat = getOption("iamrpt.dataformat", "tabs"),
   wideformat = getOption("iamrpt.wideformat", TRUE))
@@ -22,6 +22,10 @@ working directory.}
 
 \item{model}{Name of the model (e.g., \code{'GCAM'}).  This is required for
 the IIASA data format.  It is ignored for all other formats.}
+
+\item{template}{Name of a csv file containing an IIASA template.  This is
+only useful in the IIASA format.  See \code{\link{complete_iiasa_template}}
+for instructions on how to use a template}
 
 \item{fileformat}{Desired format for output files.}
 

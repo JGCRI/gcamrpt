@@ -139,6 +139,9 @@
 #' working directory.
 #' @param model Name of the model (e.g., \code{'GCAM'}).  This is required for
 #' the IIASA data format.  It is ignored for all other formats.
+#' @param template Name of a csv file containing an IIASA template.  This is
+#' only useful in the IIASA format.  See \code{\link{complete_iiasa_template}}
+#' for instructions on how to use a template
 #' @param fileformat Desired format for output files.
 #' @param scenmerge Flag: if true, merge scenarios; otherwise, leave scenarios
 #' as separate tables.
@@ -155,6 +158,7 @@ generate <- function(scenctl,
                      dbloc,
                      outputdir = getwd(),
                      model = 'GCAM',
+                     template = NULL,
                      fileformat = getOption('iamrpt.fileformat', 'CSV'),
                      scenmerge = getOption('iamrpt.scenmerge', TRUE),
                      dataformat = getOption('iamrpt.dataformat', 'tabs'),
@@ -207,6 +211,8 @@ generate <- function(scenctl,
         ## single file.
         . <- NULL    # suppress notes
 
+        tdata <- read_iiasa_template(template)
+
         if(scenmerge) {
             # replace empty dfs with null
             vars <- names(rslts)
@@ -219,6 +225,7 @@ generate <- function(scenctl,
 
             rslts <- iiasafy(rslts) %>%
                 dplyr::mutate(Model=model) %>%
+                complete_iiasa_template(tdata) %>%
                 iiasa_sortcols() %>%
                 list(allscen=.)
             dataformat <- 'merged'
@@ -243,7 +250,8 @@ generate <- function(scenctl,
             rslts <- lapply(rslts, iiasafy) %>%
               lapply(function(df) {
                   dplyr::mutate(df, Model=model) %>%
-                      iiasa_sortcols()
+                    complete_iiasa_template(tdata) %>%
+                    iiasa_sortcols()
               })
             dataformat <- 'tabs'
         }
