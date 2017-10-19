@@ -283,6 +283,7 @@ complete_iiasa_template <- function(df, template)
         df
     }
     else {
+        template <- tidyr::crossing(template, Model=unique(df$Model), Scenario=unique(df$Scenario))
         dplyr::full_join(template, df, by=names(template))
     }
 }

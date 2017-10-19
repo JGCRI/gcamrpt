@@ -243,7 +243,9 @@ test_that('IIASA template fills in missing rows for single table.', {
     filled.rgn <- dplyr::filter(popiia, Region=='Wakanda')
     expect_equal(filled.rgn$Variable, c('Floorspace', 'Population'))
     expect_true(all(is.na(filled.rgn[['2010']])))
-
+    expect_false(any(is.na(popiia$Model)))
+    expect_false(any(is.na(popiia$Scenario)))
+    expect_false(any(is.na(popiia$Region)))
 })
 
 test_that('IIASA template fills in missing rows for list of tables.', {
@@ -267,7 +269,9 @@ test_that('IIASA template fills in missing rows for list of tables.', {
 
     ## The template has floorspace ahead of population, so it reverses the order.
     expect_identical(unique(iitbl$Variable), c('Floorspace', 'Population'))
-
+    expect_false(any(is.na(iitbl$Model)))
+    expect_false(any(is.na(iitbl$Scenario)))
+    expect_false(any(is.na(iitbl$Region)))
 })
 
 test_that('xlsx output works for separate tabs mode.', {
