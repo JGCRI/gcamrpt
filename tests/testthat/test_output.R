@@ -13,6 +13,7 @@ expt2 <- list(population=dplyr::mutate(popq, scenario='Experiment 2'),
 rslt <- list(Reference=ref, 'Experiment 1'=expt1, 'Experiment 2'=expt2)
 rsltmrg <- merge_scenarios(rslt)
 
+
 test_that('merge_scenarios produces the correct format', {
     ## all of these tests run on the rsltmrg object that we created above.
     expect_true(is.list(rsltmrg))
@@ -193,6 +194,7 @@ test_that('Single table can be converted to iiasa format.', {
     pop <- dplyr::filter(popq, year >= 2005, year <= 2020)
     popiia <- proc_var_iiasa(pop) %>%
       dplyr:::mutate(Variable='Population', Model='GCAM') %>%
+      complete_iiasa_template(NULL) %>% # should be a no-op with no template.
       iiasa_sortcols()
 
     expect_equal(nrow(popiia), length(unique(pop$region)))
@@ -211,6 +213,7 @@ test_that('List of tables can be converted to iiasa format.', {
 
     iitbl <- iiasafy(allvar) %>%
       dplyr::mutate(Model='GCAM') %>%
+      complete_iiasa_template(NULL) %>%
       iiasa_sortcols()
 
     expect_true(is.data.frame(iitbl))
@@ -222,6 +225,54 @@ test_that('List of tables can be converted to iiasa format.', {
 
 })
 
+
+test_that('IIASA template fills in missing rows for single table.', {
+    tdata <- read_iiasa_template('test-data/iiasa-template.csv')
+    pop <- dplyr::filter(popq, year >= 2005, year <= 2020)
+    popiia <- proc_var_iiasa(pop) %>%
+      dplyr:::mutate(Variable='Population', Model='GCAM') %>%
+      complete_iiasa_template(tdata) %>%
+      iiasa_sortcols()
+
+    expect_equal(nrow(popiia), 2 * (1 + length(unique(pop$region))))
+    expect_identical(names(popiia), c('Model', 'Scenario', 'Region', 'Variable',
+                                      'Unit', as.character(seq(2005,2020,5))))
+    expect_equal(popiia[ !is.na(popiia[['2010']]), ][['2010']],
+                 dplyr::filter(pop, year==2010)[['value']])
+
+    filled.rgn <- dplyr::filter(popiia, Region=='Wakanda')
+    expect_equal(filled.rgn$Variable, c('Floorspace', 'Population'))
+    expect_true(all(is.na(filled.rgn[['2010']])))
+    expect_false(any(is.na(popiia$Model)))
+    expect_false(any(is.na(popiia$Scenario)))
+    expect_false(any(is.na(popiia$Region)))
+})
+
+test_that('IIASA template fills in missing rows for list of tables.', {
+    tdata <- read_iiasa_template('test-data/iiasa-template.csv')
+    pop <- dplyr::filter(popq, year >= 2005, year <= 2020)
+    flrspc <-
+        dplyr::filter(flrspcq, year >= 2005, year <= 2020) %>%
+          aggregate('sum', 'scenario, region')
+
+    allvar <- list(Population=pop, Floorspace=flrspc)
+
+    iitbl <- iiasafy(allvar) %>%
+      dplyr::mutate(Model='GCAM') %>%
+      complete_iiasa_template(tdata) %>%
+      iiasa_sortcols()
+
+    expect_true(is.data.frame(iitbl))
+    expect_equal(nrow(iitbl), 2*(1+length(unique(pop$region))))
+    expect_identical(names(iitbl), c('Model', 'Scenario', 'Region', 'Variable',
+                                     'Unit', as.character(seq(2005,2020,5))))
+
+    ## The template has floorspace ahead of population, so it reverses the order.
+    expect_identical(unique(iitbl$Variable), c('Floorspace', 'Population'))
+    expect_false(any(is.na(iitbl$Model)))
+    expect_false(any(is.na(iitbl$Scenario)))
+    expect_false(any(is.na(iitbl$Region)))
+})
 
 test_that('xlsx output works for separate tabs mode.', {
     ## unmerged scenarios version

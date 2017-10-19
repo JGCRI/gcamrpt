@@ -229,3 +229,61 @@ iiasa_sortcols <- function(df)
     cols <- unique(c('Model', 'Scenario', 'Region', 'Variable', 'Unit', names(df)))
     dplyr::select(df, dplyr::one_of(cols))
 }
+
+
+#' @describeIn complete_iiasa_template Read an IIASA template from a file
+#' @param filename The name of the file containing the template
+#' @keywords internal
+read_iiasa_template <- function(filename)
+{
+    if(is.null(filename)) {
+        NULL
+    }
+    else {
+        ## Read the template and drop any columns that are empty.  These are
+        ## columns that must be filled in from the data.  The remaining columns
+        ## will be matched to the data to figure out what data goes where.
+        td <- readr::read_csv(filename) %>%
+          dplyr::select_if(function(c) {!all(is.na(c))})
+    }
+}
+
+
+#' Complete a table from an IIASA template
+#'
+#' The IIASA template contains a series of rows that are meant to be filled in
+#' with model data.  Occasionally there is a category that is not produced by
+#' GCAM.  Because we are constructing the output from the data produced by GCAM,
+#' such rows will be absent from the output.  This function will fill them in
+#' with missing data.
+#'
+#' The template supplied should have a series of columns giving the ID variables
+#' for the column (i.e., the variables that describe what is supposed to go in
+#' the row).  Empty columns will be removed from the template (likely to be
+#' added back from the data).
+#'
+#' For example, a template might have the following columns (columns marked with
+#' a * are empty):
+#'
+#' Model (*), Scenario (*), Region, Variable, Unit, 2005 (*), 2010 (*), ...
+#'
+#' The Region, Variable, and Unit columns would be kept, ensuring that
+#' \emph{something} will be filled in for each combination of those three
+#' identifiers.  If there is a match for a combination of identifiers, it will
+#' be filled in from the GCAM results.  Otherwise, it will be filled with NA.
+#'
+#' Result rows that are not present in the template will be silently kept.
+#'
+#' @param df A data frame that will become one page of the IIASA results
+#' @param template An IIASA template, as described below.
+#' @keywords internal
+complete_iiasa_template <- function(df, template)
+{
+    if(is.null(template)) {
+        df
+    }
+    else {
+        template <- tidyr::crossing(template, Model=unique(df$Model), Scenario=unique(df$Scenario))
+        dplyr::full_join(template, df, by=names(template))
+    }
+}
