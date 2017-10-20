@@ -2,7 +2,7 @@
 % Please edit documentation in R/transportation.R
 \name{normalize}
 \alias{normalize}
-\title{Normalize query dataframes}
+\title{Normalize transportation query dataframes}
 \usage{
 normalize(queryData)
 }

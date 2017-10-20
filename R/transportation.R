@@ -15,25 +15,32 @@
 #'
 #' @keywords internal
 
-module.service_output <- function(mode, allqueries, aggkeys, aggfn, years,
+module.transportation_service_output <- function(mode, allqueries, aggkeys, aggfn, years,
                               filters, ounit)
 {
     if(mode == GETQ) {
         # Return titles of necessary queries
         # For more complex variables, will return multiple query titles in vector
-        'Service output'
+        'Transportation Service Output'
     }
     else {
-        message('Function for processing variable: Service output')
-        serviceOutput <- allqueries$'Service output'
+        message('Function for processing variable: Transportation service output')
+        serviceOutput <- allqueries$'Transportation Service Output'
         serviceOutput <- normalize(serviceOutput) %>%
             dplyr::group_by(Units, scenario, region, year, technology, vintage, service, mode, submode) %>%
             dplyr::summarise(value=sum(value)) %>%
             dplyr::ungroup()
         serviceOutput <- filter(serviceOutput, years, filters)
         serviceOutput <- aggregate(serviceOutput, aggfn, aggkeys)
-        # units example: million p-km
-        serviceOutput <- unitconv_counts(serviceOutput, ounit)
+
+        ## units example: million p-km
+        if(!is.na(ounit)) {
+            cf <- unitconv_counts(serviceOutput$Units[1], ounit)
+            if(!is.na(cf)) {
+                serviceOutput <- dplyr::mutate(serviceOutput, value=value*cf,
+                                               Units=ounit)
+            }
+        }
         serviceOutput
     }
 }
@@ -53,30 +60,34 @@ module.service_output <- function(mode, allqueries, aggkeys, aggfn, years,
 #'
 #' @keywords internal
 
-module.final_energy <- function(mode, allqueries, aggkeys, aggfn, years,
+module.transportation_final_energy <- function(mode, allqueries, aggkeys, aggfn, years,
                                 filters, ounit)
 {
     if(mode == GETQ) {
         # Return titles of necessary queries
         # For more complex variables, will return multiple query titles in vector
-        c('Final energy', 'Refined liquids')
+        c('Transportation Final Energy', 'Transportation Refined Liquids')
     }
     else {
         message('Function for processing variable: Final energy')
 
-        energy <- allqueries$'Final energy'
-        refining <- allqueries$'Refined liquids'
+        energy <- allqueries$'Transportation Final Energy'
+        refining <- allqueries$'Transportation Refined Liquids'
         energy <- mapfuel(energy, refining) #replaces input/technology with fuel & liquid_type
         energy <- normalize(energy) %>%
             dplyr::group_by(Units, scenario, region, year, technology, vintage, fuel, liquid_type, service, mode, submode) %>%
             dplyr::summarise(value=sum(value)) %>%
             dplyr::ungroup()
-        energy <- unitconv_energy(energy, ounit)
         energy <- filter(energy, years, filters)
         energy <- aggregate(energy, aggfn, aggkeys)
-        # units example: EJ/yr
+        ## units example: EJ/yr
+        if(!is.na(ounit)) {
+            cf <- unitconv_energy(energy$Units[1], ounit)
+            if(!is.na(cf)) {
+                energy <- dplyr::mutate(energy, value=value*cf, Units=ounit)
+            }
+        }
         energy
-
     }
 }
 #' Load Factors Data Module
@@ -100,12 +111,12 @@ module.load_factors <- function(mode, allqueries, aggkeys, aggfn, years,
     if(mode == GETQ) {
         # Return titles of necessary queries
         # For more complex variables, will return multiple query titles in vector
-        'Load factors'
+        'Load Factors'
     }
     else {
         message('Function for processing variable: Load factors')
 
-        ldfctr <- allqueries$'Load factors'
+        ldfctr <- allqueries$'Load Factors'
         ldfctr <- normalize(ldfctr) %>%
             dplyr::group_by(Units, scenario, region, year, technology, service, mode, submode) %>% # average over LHDT
             dplyr::summarise(value=mean(value)) %>%
@@ -132,20 +143,20 @@ module.load_factors <- function(mode, allqueries, aggkeys, aggfn, years,
 #' }
 #'
 #' @keywords internal
-
-module.service_intensity <- function(mode, allqueries, aggkeys, aggfn, years,
+module.transportation_service_intensity <- function(mode, allqueries, aggkeys, aggfn, years,
                                 filters, ounit)
 {
     if(mode == GETQ) {
         # Return titles of necessary queries
         # For more complex variables, will return multiple query titles in vector
-        c('Final energy', 'Refined liquids', 'Service output')
+        c('Transportation Final Energy', 'Transportation Refined Liquids',
+          'Transportation Service Output')
     }
     else {
-        message('Function for processing variable: Service intensity')
+        message('Function for processing variable: Transportation service intensity')
 
         # run filters and agg on component queries, then calculate final variable
-        serviceOutput <- allqueries$'Service output'
+        serviceOutput <- allqueries$'Transportation Service Output'
         serviceOutput <- normalize(serviceOutput) %>%
             dplyr::group_by(Units, scenario, region, year, service, mode, submode) %>%
             dplyr::summarise(value=sum(value)) %>%
@@ -153,8 +164,8 @@ module.service_intensity <- function(mode, allqueries, aggkeys, aggfn, years,
         serviceOutput <- filter(serviceOutput, years, filters)
         serviceOutput <- aggregate(serviceOutput, aggfn, aggkeys) # million pkm
 
-        energy <- allqueries$'Final energy'
-        refining <- allqueries$'Refined liquids'
+        energy <- allqueries$'Transportation Final Energy'
+        refining <- allqueries$'Transportation Refined Liquids'
         energy <- mapfuel(energy, refining) #replaces input/technology with fuel & liquid_type
         energy <- normalize(energy) %>%
             dplyr::group_by(Units, scenario, region, year, service, mode, submode) %>%
@@ -166,15 +177,20 @@ module.service_intensity <- function(mode, allqueries, aggkeys, aggfn, years,
         # calculation
         intensity <- energy %>%
             dplyr::inner_join(serviceOutput,
-                              by = c('scenario', 'region', 'year')) %>%
+                              by = c('scenario', 'region', 'year', 'service', 'mode', 'submode')) %>%
             dplyr::rename(energy=value.x, pkm=value.y) %>%
             dplyr::mutate(intensity = energy/pkm, Units='TJ') %>%
             # relying on native units of 'EJ' (10^18) and million pass-km'/'million ton-km' (10^6)
             dplyr::select(-pkm, -Units.x, -energy, -Units.y)  %>%
             dplyr::rename(value=intensity)
-        intensity <- unitconv_energy(intensity, ounit)
+        if(!is.na(ounit)) {
+            cf <- unitconv_energy(intensity$Units[1], ounit)
+            if(!is.na(cf)) {
+                intensity <- dplyr::mutate(intensity, value=value*cf,
+                                           Units=ounit)
+            }
+        }
         intensity
-
     }
 }
 
@@ -199,13 +215,13 @@ module.sales <- function(mode, allqueries, aggkeys, aggfn, years,
     if(mode == GETQ) {
         # Return titles of necessary queries
         # For more complex variables, will return multiple query titles in vector
-        c('Service output', 'Load factors')
+        c('Transportation Service Output', 'Transportation Load Factors')
     }
     else {
         message('Sales processing module: work in progress. Data returned')
         return(NULL)
 
-        serviceOutput <- allqueries$'Service output' %>%
+        serviceOutput <- allqueries$'Transportation Service Output' %>%
             normalize(serviceOutput) %>%
             dplyr::filter(year==vintage) # vintage aggregated over in normalize()
             # need to aggregate over fuel because don't have that info for ldfctr
@@ -235,8 +251,13 @@ module.sales <- function(mode, allqueries, aggkeys, aggfn, years,
 
         sales <- filter(sales, years, filters)
         sales <- aggregate(sales, aggfn, aggkeys)
-        # units example: million p-km
-        sales <- unitconv_counts(sales, ounit)
+        ## units example: million p-km
+        if(!is.na(ounit)) {
+            cf <- unitconv_counts(sales$Units[1], ounit)
+            if(!is.na(cf)) {
+                sales <- dplyr::mutate(sales, value=value*cf, Units=ounit)
+            }
+        }
         sales
     }
 }
@@ -307,7 +328,67 @@ mapfuel <- function(en, ref = NULL) {
         }
 }
 
-#' Normalize query dataframes
+#' Produce particulate matter emissions from transportation
+#'
+#' Convert service output in passenger-km or tonne-km to vehicle-km using the
+#' load factor table.  Then apply a table of emissions coefficients to get
+#' emissions.  Note this doesn't actually use any emissions generated from
+#' GCAM.
+#'
+#' @keywords internal
+module.transportation_pm_emissions <- function(mode, allqueries, aggkeys, aggfn, years,
+                                               filters, ounit)
+{
+    if(mode == GETQ) {
+        # Return titles of necessary queries
+        # For more complex variables, will return multiple query titles in vector
+        c('Transportation Service Output', 'Load Factors')
+    }
+    else {
+        message('Function for processing variable: PM emissions')
+        # data prep
+        serviceOutput <- allqueries$'Service output'
+        serviceOutput <- normalize(serviceOutput) %>%
+            dplyr::group_by(Units, scenario, region, year, service, mode, submode) %>%
+            dplyr::summarise(value=sum(value)) %>%
+            dplyr::ungroup()
+        ldfctr <- allqueries$'Load factors'
+        ldfctr <- normalize(ldfctr) %>%
+            dplyr::group_by(Units, scenario, region, year, service, mode, submode) %>% # average over LHDT
+            dplyr::summarise(value=mean(value)) %>%
+            dplyr::ungroup()
+
+        # calculation
+        vkm <- serviceOutput %>%
+            dplyr::inner_join(ldfctr,
+                              by = c('scenario', 'region', 'service', 'mode', 'submode', 'year')) %>%
+            dplyr::rename(pkm=value.x, lf=value.y) %>%
+            dplyr::mutate(vkm = pkm/lf, Units='million vehicle-km') %>%
+            # relying on native units of 'million pass-km'/'million ton-km'
+            dplyr::select(-pkm, -Units.x, -lf, -Units.y)  # depending on units of pm coefficients, need to convert million vehicle-km
+
+        pm <- pm_emissions_factors %>% #sysdata
+            dplyr::rename(pmfac=value) %>%
+            dplyr::inner_join(vkm,
+                              by = c('service', 'mode', 'submode', 'year')) %>%
+            dplyr::mutate(pm_emissions = vkm*pmfac, Units='Mg') %>%
+            dplyr::select(-pmfac, -Units.x, -vkm, -Units.y) %>%
+            dplyr::rename(value=pm_emissions)
+
+        pm <- filter(pm, years, filters)
+        pm <- aggregate(pm, aggfn, aggkeys)
+        if(!is.na(ounit)) {
+            cf <- unitconv_weight(pm$Units[1], ounit)
+            if(!is.na(cf)) {
+                pm <- dplyr::mutate(pm, value=value*cf, Units=ounit)
+            }
+        }
+        pm
+    }
+}
+
+
+#' Normalize transportation query dataframes
 #'
 #' Columns removed (no mapping): rundate, load-factor
 #' Columns removed (after mapping) : sector, subsector

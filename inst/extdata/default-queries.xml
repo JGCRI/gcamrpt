@@ -42,7 +42,7 @@
 
       <aQuery>
 		<all-regions/>
-		<supplyDemandQuery title="Service output">
+		<supplyDemandQuery title="Transportation Service Output">
 			<axis1 name="technology">technology</axis1>
 			<axis2 name="year">physical-output[@vintage]</axis2>
 			<xPath buildList="true" dataName="output" group="false" sumAll="false">*[@type = 'sector' and (@name='transportation' or (exists(child::keyword[@final-energy='transportation'])))]/*[@type = 'subsector']/*[@type = 'technology']/*[@type='output' (:collapse:) and not(@name='CAFEcredit')]/physical-output/node()</xPath>
@@ -54,7 +54,7 @@
 
 	     <aQuery>
 		<all-regions/>
-		<supplyDemandQuery title="Load factors">
+		<supplyDemandQuery title="Load Factors">
 			<axis1 name="technology">technology</axis1>
 			<axis2 name="year">technology</axis2>
 			<xPath buildList="true" dataName="output" group="false" sumAll="false">*[@type = 'sector' and (@name='transportation' or (exists(child::keyword[@final-energy='transportation'])))]/*[@type = 'subsector']/*[@type = 'technology']//load-factor/node()</xPath>
@@ -64,7 +64,7 @@
 
       <aQuery>
 		<all-regions/>
-		<supplyDemandQuery title="Final energy">
+		<supplyDemandQuery title="Transportation Final Energy">
 			<axis1 name="technology">technology</axis1>
 			<axis2 name="year">demand-physical[@vintage]</axis2>
 			<xPath buildList="true" dataName="input" group="false" sumAll="false">*[@type = 'sector' and (@name='transportation' or (exists(child::keyword[@final-energy='transportation'])))]/*[@type = 'subsector']/*[@type = 'technology']/*[@type='input' and not (@name='renewable')]/demand-physical[@unit='EJ']/node()</xPath>
@@ -75,7 +75,7 @@
 
 	<aQuery>
 		<all-regions/>
-		<supplyDemandQuery title="Refined liquids">
+		<supplyDemandQuery title="Transportation Refined Liquids">
 			<axis1 name="subsector">subsector</axis1>
 			<axis2 name="year">physical-output[@vintage]</axis2>
 			<xPath buildList="true" dataName="output" group="false" sumAll="false">*[@type = 'sector' (:collapse:) and ((@name='refining'))]/*[@type = 'subsector']//*[@type='output' (:collapse:)]/physical-output/node()</xPath>
