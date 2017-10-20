@@ -205,6 +205,11 @@ generate <- function(scenctl,
     if(scenmerge)
         rslts <- merge_scenarios(rslts)
 
+    if(! dataformat %in% c('tabs', 'merged', 'IIASA')) {
+        warning('Unrecognized data format: ', dataformat, '.  Using "tabs".')
+        dataformat <- 'tabs'
+    }
+
     if(dataformat == 'IIASA') {
         ## convert results to IIASA format.  If we didn't merge scenarios, write
         ## each one to a separate file named for the scenario; otherwise write a
