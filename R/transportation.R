@@ -112,10 +112,9 @@ module.load_factors <- function(mode, allqueries, aggkeys, aggfn, years,
             dplyr::ungroup()
         ldfctr <- filter(ldfctr, years, filters)
         ldfctr <- aggregate(ldfctr, aggfn, aggkeys)
-        ldfctr <- unitconv_ldfctr(ldfctr, ounit)
+        ldfctr$Units <- ounit
 
         ldfctr
-
     }
 }
 

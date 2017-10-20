@@ -9,12 +9,12 @@
 prep.energyconv <- function()
 {
 
-    fromEJ <-  c(1          , 1e6    , 1e12  , 2.78e8     ) #1e18 J
-    fromTJ <-  c(1e-6       , 1      , 1e6   , 1/(3.6e-3) ) #1e12 J
-    fromMJ <-  c(1e-12      , 1e-6   , 1     , 1/(3.6e3)  ) #1e6 J
-    fromMWh <- c(1/(2.78e8) , 3.6e-3 , 3.6e3 , 1          )
+    fromEJ <-  c(1          , 1e6    , 1e12  , 1/3.6e-9  ) #1e18 J
+    fromTJ <-  c(1e-6       , 1      , 1e6   , 1/3.6e-3  ) #1e12 J
+    fromMJ <-  c(1e-12      , 1e-6   , 1     , 1/3.6e3   ) #1e6 J
+    fromMWh <- c(3.6e-9     , 3.6e-3 , 3.6e3 , 1         )
     cm <- matrix(c(fromEJ, fromTJ, fromMJ, fromMWh), nrow=4, byrow=TRUE)
-    colnames(cm) <- c('ej', 'tj', 'mj', 'mwh')
+    colnames(cm) <- c('EJ', 'TJ', 'MJ', 'MWh')
     row.names(cm) <- colnames(cm)
 
     cm
