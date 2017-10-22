@@ -19,7 +19,7 @@ dividing val(b)/val(a).  Note that an empty input string is treated as ones
 (i.e., if you don't specify a count, it's assumed to be ones).
 }
 \details{
-If we can't identify a unit, then we issue a warning and return NULL.  This
+If we can't identify a unit, then we issue a warning and return NA.  This
 will cause \code{\link{unitconv_counts}} to abort the unit conversion.
 
 Right now we cover all of the units I've seen in the GCAM output, plus a few

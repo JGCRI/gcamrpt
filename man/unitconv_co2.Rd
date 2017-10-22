@@ -4,7 +4,7 @@
 \alias{unitconv_co2}
 \title{co2 emissions weight conversion}
 \usage{
-unitconv_co2(module_data, ounit)
+unitconv_co2(iunit, ounit)
 }
 \arguments{
 \item{ounit}{Desired output unit.  If omitted, results will be returned with

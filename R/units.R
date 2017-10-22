@@ -382,8 +382,10 @@ unitasserts <- function(iunit, ounit)
 extractunit <- function(unitlist, unitstr, type)
 {
     ## If we get a match, this should return a single '1'.  The names
-    unit <- lapply(unitlist, function(p){grep(p, unitstr, value=TRUE)}) %>%
+    unit <- lapply(unitlist, function(p){stringr::str_match(unitstr, p)}) %>%
       unlist(use.names=FALSE)
+
+    unit <- unit[!is.na(unit)]
 
     if(length(unit) == 0) {
         warning('String ', unitstr, ' is not recognized as a unit for ', type)

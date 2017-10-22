@@ -54,7 +54,7 @@
 
 	     <aQuery>
 		<all-regions/>
-		<supplyDemandQuery title="Load Factors">
+		<supplyDemandQuery title="Transportation Load Factors">
 			<axis1 name="technology">technology</axis1>
 			<axis2 name="year">technology</axis2>
 			<xPath buildList="true" dataName="output" group="false" sumAll="false">*[@type = 'sector' and (@name='transportation' or (exists(child::keyword[@final-energy='transportation'])))]/*[@type = 'subsector']/*[@type = 'technology']//load-factor/node()</xPath>
@@ -75,7 +75,7 @@
 
 	<aQuery>
 		<all-regions/>
-		<supplyDemandQuery title="Transportation Refined Liquids">
+		<supplyDemandQuery title="Refined Liquids">
 			<axis1 name="subsector">subsector</axis1>
 			<axis2 name="year">physical-output[@vintage]</axis2>
 			<xPath buildList="true" dataName="output" group="false" sumAll="false">*[@type = 'sector' (:collapse:) and ((@name='refining'))]/*[@type = 'subsector']//*[@type='output' (:collapse:)]/physical-output/node()</xPath>
