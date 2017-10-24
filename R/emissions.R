@@ -24,9 +24,13 @@ module.co2_emissions <- function(mode, allqueries, aggkeys, aggfn, years,
         'CO2 emissions'
     }
     else {
+        ## silence notes on package check
+        Units <- scenario <- region <- year <- service <- submode <- value <-
+            NULL
+        warning('The CO2 emissions module appears not to have been tested.')
         message('Function for processing variable: CO2 emissions')
         co2 <- allqueries$'CO2 emissions'
-        co2 <- normalize(co2) %>% # function stored in transp modules group
+        co2 <- trans_standardize(co2) %>% # function stored in transp modules group
             dplyr::group_by(Units, scenario, region, year, service, mode, submode) %>%
             dplyr::summarise(value=sum(value)) %>%
             dplyr::ungroup()

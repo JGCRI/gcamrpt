@@ -4,7 +4,7 @@
 \alias{unitconv_mass}
 \title{weight conversion}
 \usage{
-unitconv_mass(iunit, ounit)
+unitconv_mass(iunit, ounit, inverse = FALSE)
 }
 \arguments{
 \item{ounit}{Desired output unit.  If omitted, results will be returned with

@@ -102,6 +102,9 @@ module.pass_trans_service_intensity <- function(mode, allqueries, aggkeys, aggfn
         queries
     }
     else {
+        ## silence notes on package check
+        value <- NULL
+
         ## Refined liquids isn't a transportation-specific query, and so can't
         ## be filtered by service
         transqueries <- trans_filter_svc(allqueries[queries[1:2]], TRUE)
@@ -180,6 +183,9 @@ module.frgt_trans_service_intensity <- function(mode, allqueries, aggkeys, aggfn
         queries
     }
     else {
+        ## silence notes on package check
+        value <- NULL
+
         ## Refined liquids isn't a transportation-specific query, and so can't
         ## be filtered by service
         transqueries <- trans_filter_svc(allqueries[queries[1:2]], FALSE)
@@ -224,57 +230,6 @@ module.frgt_trans_service_intensity <- function(mode, allqueries, aggkeys, aggfn
     }
 }
 
-
-#' @describeIn trans_modules Worker function for transportation service output modules
-process.tr_svc_output <- function(allqueries, aggkeys, aggfn, years,
-                                  filters, ounit)
-{
-    message('Function for processing variable: Transportation service output')
-    serviceOutput <- allqueries$'Transportation Service Output'
-    serviceOutput <- trans_standardize(serviceOutput) %>%
-      dplyr::group_by(Units, scenario, region, year, technology, vintage, service, mode, submode) %>%
-      dplyr::summarise(value=sum(value)) %>%
-      dplyr::ungroup()
-    serviceOutput <- filter(serviceOutput, years, filters)
-    serviceOutput <- aggregate(serviceOutput, aggfn, aggkeys)
-
-    ## units example: million p-km
-    if(!is.na(ounit)) {
-        cf <- unitconv_counts(serviceOutput$Units[1], ounit)
-        if(!is.na(cf)) {
-            serviceOutput <- dplyr::mutate(serviceOutput, value=value*cf,
-                                           Units=ounit)
-        }
-    }
-    serviceOutput
-}
-
-#' @describeIn trans_modules Worker function for service output modules
-process.tr_fe_output <- function(allqueries, aggkeys, aggfn, years,
-                                 filters, ounit)
-{
-    message('Function for processing variable: Final energy')
-
-    energy <- allqueries$'Transportation Final Energy'
-    refining <- allqueries$'Refined Liquids'
-    energy <- mapfuel(energy, refining) #replaces input/technology with fuel & liquid_type
-    energy <- trans_standardize(energy) %>%
-      dplyr::group_by(Units, scenario, region, year, technology, vintage, fuel, liquid_type, service, mode, submode) %>%
-      dplyr::summarise(value=sum(value)) %>%
-      dplyr::ungroup()
-    energy <- filter(energy, years, filters)
-    energy <- aggregate(energy, aggfn, aggkeys)
-    ## units example: EJ/yr
-    if(!is.na(ounit)) {
-        cf <- unitconv_energy(energy$Units[1], ounit)
-        if(!is.na(cf)) {
-            energy <- dplyr::mutate(energy, value=value*cf, Units=ounit)
-        }
-    }
-    energy
-}
-
-
 #' @describeIn trans_modules Passenger transportation load factor data module
 module.pass_trans_load_factor <- function(mode, allqueries, aggkeys, aggfn, years,
                                            filters, ounit)
@@ -305,6 +260,9 @@ module.frgt_trans_load_factor <- function(mode, allqueries, aggkeys, aggfn, year
         queries
     }
     else {
+        ## silence notes on package check
+        value <- NULL
+
         allqueries <- trans_filter_svc(allqueries[queries], FALSE)
         ## GCAM reports the units for both passenger and freight transportation
         ## as "load / veh", but "load" actually has some kind of unit, probably
@@ -322,10 +280,73 @@ module.frgt_trans_load_factor <- function(mode, allqueries, aggkeys, aggfn, year
     }
 }
 
+
+#' @describeIn trans_modules Worker function for transportation service output modules
+process.tr_svc_output <- function(allqueries, aggkeys, aggfn, years,
+                                  filters, ounit)
+{
+    ## silence notes on package check
+    Units <- scenario <- region <- year <- technology <- vintage <- service <-
+        submode <- value <- NULL
+
+    message('Function for processing variable: Transportation service output')
+    serviceOutput <- allqueries$'Transportation Service Output'
+    serviceOutput <- trans_standardize(serviceOutput) %>%
+      dplyr::group_by(Units, scenario, region, year, technology, vintage, service, mode, submode) %>%
+      dplyr::summarise(value=sum(value)) %>%
+      dplyr::ungroup()
+    serviceOutput <- filter(serviceOutput, years, filters)
+    serviceOutput <- aggregate(serviceOutput, aggfn, aggkeys)
+
+    ## units example: million p-km
+    if(!is.na(ounit)) {
+        cf <- unitconv_counts(serviceOutput$Units[1], ounit)
+        if(!is.na(cf)) {
+            serviceOutput <- dplyr::mutate(serviceOutput, value=value*cf,
+                                           Units=ounit)
+        }
+    }
+    serviceOutput
+}
+
+#' @describeIn trans_modules Worker function for service output modules
+process.tr_fe_output <- function(allqueries, aggkeys, aggfn, years,
+                                 filters, ounit)
+{
+    ## silence notes on package checks
+    Units <- scenario <- region <- year <- technology <- vintage <- fuel <-
+        liquid_type <- service <- submode <- value <- NULL
+
+    message('Function for processing variable: Final energy')
+
+    energy <- allqueries$'Transportation Final Energy'
+    refining <- allqueries$'Refined Liquids'
+    energy <- mapfuel(energy, refining) #replaces input/technology with fuel & liquid_type
+    energy <- trans_standardize(energy) %>%
+      dplyr::group_by(Units, scenario, region, year, technology, vintage, fuel, liquid_type, service, mode, submode) %>%
+      dplyr::summarise(value=sum(value)) %>%
+      dplyr::ungroup()
+    energy <- filter(energy, years, filters)
+    energy <- aggregate(energy, aggfn, aggkeys)
+    ## units example: EJ/yr
+    if(!is.na(ounit)) {
+        cf <- unitconv_energy(energy$Units[1], ounit)
+        if(!is.na(cf)) {
+            energy <- dplyr::mutate(energy, value=value*cf, Units=ounit)
+        }
+    }
+    energy
+}
+
+
 #' @describeIn trans_modules Worker function for load factor modules
 process.trans_load_factors <- function(allqueries, aggkeys, aggfn, years,
                                        filters, ounit)
 {
+    ## silence notes on package check
+    Units <- scenario <- region <- year <- technology <- service <- submode <-
+        value <- NULL
+
     message('Function for processing variable: Load factors')
 
     ldfctr <- allqueries$'Transportation Load Factors'
@@ -345,6 +366,10 @@ process.trans_load_factors <- function(allqueries, aggkeys, aggfn, years,
 process.tr_svc_intensity <- function(allqueries, aggkeys, aggfn, years,
                                      filters, ounit, nativeunit)
 {
+    ## silence notes on package check
+    Units <- scenario <- region <- year <- service <- submode <- value <-
+        fuel <- liquid_type <- value.x <- value.y <- svc <- Units.x <-
+            Units.y <- intensity <- NULL
 
     message('Function for processing variable: Transportation service intensity')
 
@@ -395,6 +420,11 @@ module.sales <- function(mode, allqueries, aggkeys, aggfn, years,
         queries
     }
     else {
+        ## silence notes on package check
+        value <- year <- vintage <- Units <- scenario <- region <- service <-
+            submode <- value.x <- value.y <- pkm <- lf <- Units.x <- Units.y <-
+                vkm <- mileage <- NULL
+
         warning('Vehicle sales processing module: not yet implemented.')
         return(NULL)
 
@@ -450,6 +480,12 @@ module.sales <- function(mode, allqueries, aggkeys, aggfn, years,
 #' @param ref Data returned for refined liquids query
 #' @keywords internal
 mapfuel <- function(en, ref = NULL) {
+    ## silence notes on package checks.
+    input <- fuel <- scenario <- region <- year <- value <- total <-
+        subsector <- Units <- share <- sector <- technology <- liquid_type <-
+            NULL
+
+
     # replace input col with fuel col, else add blank fuel col
     if ('input' %in% names(en)) {
         en$input <- tolower(en$input)
@@ -522,6 +558,11 @@ module.transportation_pm_emissions <- function(mode, allqueries, aggkeys, aggfn,
         c('Transportation Service Output', 'Transportation Load Factors')
     }
     else {
+        ## silence notes on package check
+        Units <- scenario <- region <- year <- service <- submode <- value <-
+            value.x <- value.y <- pkm <- lf <- Units.x <- Units.y <- pmfac <-
+                pm_emissions <- NULL
+
         warning('Function for processing variable: vehicle PM emissions is not yet implemented.')
         return(NULL)
         ## everything that follows is a work in progress.
@@ -557,7 +598,7 @@ module.transportation_pm_emissions <- function(mode, allqueries, aggkeys, aggfn,
         pm <- filter(pm, years, filters)
         pm <- aggregate(pm, aggfn, aggkeys)
         if(!is.na(ounit)) {
-            cf <- unitconv_weight(pm$Units[1], ounit)
+            cf <- unitconv_mass(pm$Units[1], ounit)
             if(!is.na(cf)) {
                 pm <- dplyr::mutate(pm, value=value*cf, Units=ounit)
             }
@@ -616,6 +657,10 @@ trans_filter_svc <- function(qlist, passenger=TRUE)
 #' @param queryData Data returned for one variable query
 #' @keywords internal
 trans_standardize <- function(queryData) {
+    ## silence notes on package check
+    rundate <- technology <- sector <- subsector <- service <- submode <-
+        scenario <- region <- value <- Units <- NULL
+
     if ('rundate' %in% names(queryData)) {queryData <- dplyr::select(queryData, -rundate)} # remove rundate
     if ('load-factor' %in% names(queryData)) {queryData <- queryData[,!(names(queryData) %in% c("load-factor"))]} # query always includes col of NA's
     if ('sector' %in% names(queryData)) {

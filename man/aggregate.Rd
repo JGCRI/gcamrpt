@@ -4,7 +4,7 @@
 \alias{aggregate}
 \title{Aggregate a table by specified keys}
 \usage{
-aggregate(tbl, aggfn, aggkeys)
+aggregate(tbl, aggfn, aggkeys, multiple = FALSE)
 }
 \arguments{
 \item{tbl}{Table to aggregate}
@@ -14,9 +14,21 @@ aggregate(tbl, aggfn, aggkeys)
 
 \item{aggkeys}{String giving a list of aggregation keys.  If missing, return
 the table unmodified.}
+
+\item{multiple}{If \code{TRUE}, aggregate multiple columns.  For now, all of
+these columns must match the regex 'value' (e.g., 'value.x' and 'value.y')}
 }
 \description{
 Aggregate the input table using the specified aggregation function,
 using the specified columns as keys.
+}
+\details{
+The \code{multiple} argument is used for cases where we need to perform the
+same aggregation on multiple values.  Usually this occurs when we have joined
+two tables, so for now the aggregation operates only on columns matching the
+regular expression \code{'value'}, which would catch the \code{'value.x'} and
+\code{'value.y'} created by a join.  In future versions we may allow
+specifying arbitrary columns, but until we are fully upgraded to dplyr 0.7
+that is too much of a hassle.
 }
 \keyword{internal}

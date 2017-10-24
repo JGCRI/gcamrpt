@@ -44,7 +44,7 @@ test_that('Socioeconomics models produce data', {
               popqmil <- dplyr::filter(queries$Population, year>=2000,
                                        year<=2050)
               popqmil <- dplyr::mutate(popqmil, value = 1e-3*value)
-              expect_identical(select(popmil, -Units), select(popqmil,-Units))
+              expect_identical(dplyr::select(popmil, -Units), dplyr::select(popqmil,-Units))
 })
 
 

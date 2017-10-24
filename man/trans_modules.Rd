@@ -8,10 +8,10 @@
 \alias{module.frgt_trans_final_energy}
 \alias{module.pass_trans_service_intensity}
 \alias{module.frgt_trans_service_intensity}
-\alias{process.tr_svc_output}
-\alias{process.tr_fe_output}
 \alias{module.pass_trans_load_factor}
 \alias{module.frgt_trans_load_factor}
+\alias{process.tr_svc_output}
+\alias{process.tr_fe_output}
 \alias{process.trans_load_factors}
 \alias{process.tr_svc_intensity}
 \alias{module.sales}
@@ -35,15 +35,15 @@ module.pass_trans_service_intensity(mode, allqueries, aggkeys, aggfn, years,
 module.frgt_trans_service_intensity(mode, allqueries, aggkeys, aggfn, years,
   filters, ounit)
 
-process.tr_svc_output(allqueries, aggkeys, aggfn, years, filters, ounit)
-
-process.tr_fe_output(allqueries, aggkeys, aggfn, years, filters, ounit)
-
 module.pass_trans_load_factor(mode, allqueries, aggkeys, aggfn, years, filters,
   ounit)
 
 module.frgt_trans_load_factor(mode, allqueries, aggkeys, aggfn, years, filters,
   ounit)
+
+process.tr_svc_output(allqueries, aggkeys, aggfn, years, filters, ounit)
+
+process.tr_fe_output(allqueries, aggkeys, aggfn, years, filters, ounit)
 
 process.trans_load_factors(allqueries, aggkeys, aggfn, years, filters, ounit)
 
@@ -110,13 +110,13 @@ factored into a single worker function that is called by both variants
 
 \item \code{module.frgt_trans_service_intensity}: Passenger transportation service intensity module
 
-\item \code{process.tr_svc_output}: Worker function for transportation service output modules
-
-\item \code{process.tr_fe_output}: Worker function for service output modules
-
 \item \code{module.pass_trans_load_factor}: Passenger transportation load factor data module
 
 \item \code{module.frgt_trans_load_factor}: Freight transportation load factor data module
+
+\item \code{process.tr_svc_output}: Worker function for transportation service output modules
+
+\item \code{process.tr_fe_output}: Worker function for service output modules
 
 \item \code{process.trans_load_factors}: Worker function for load factor modules
 

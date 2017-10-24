@@ -75,7 +75,7 @@ unitconv_counts <- function(iunit, ounit, inverse=FALSE)
 #'   unit we expect to see written out (instead of denoted with a metric prefix).}
 #' }
 #'
-#' @param unitstr The counting unit to convert.
+#' @param unit The counting unit to convert.
 parsecounts <- function(unit)
 {
     unit <- stringr::str_trim(unit)
@@ -138,21 +138,21 @@ unitconv_energy <- function(iunit, ounit, inverse=FALSE)
 #'
 #' Convert US dollar units from one dollar year to another using the GDP
 #' deflator obtained from the Federal Reserve's FRED database.
-unitconv_usdollar <- function(iunits, ounit, inverse=FALSE)
+unitconv_usdollar <- function(iunit, ounit, inverse=FALSE)
 {
     ## Unlike many of the other conversion functions, this one actually handles
     ## multiple input units.  It's not clear this is a capability we need, but
     ## since we've got it, we'll leave it in place.
-    assert_that(is.character(iunits))
+    assert_that(is.character(iunit))
     assert_that(is.character(ounit))
 
-    if (length(unique(iunits)) > 1) {
+    if (length(unique(iunit)) > 1) {
         ## We'll accommodate this case as best we can, but there is something
         ## squirrelly about this data.
         warning("Avast! This variable be reported in multiple units.  Arrr!")
     }
 
-    conv.tbl <- data.frame(inyr=yrparse(iunits),
+    conv.tbl <- data.frame(inyr=yrparse(iunit),
                            outyr=yrparse(ounit))
 
     minyr <- min(gdpdef$year)

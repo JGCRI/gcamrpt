@@ -1,6 +1,5 @@
 context('Transportation modules')
-library(magrittr)
-library(testthat)
+library(magrittr, warn.conflicts=FALSE)
 
 load('test-data/service_outputq.rda')
 load('test-data/load_factorsq.rda')

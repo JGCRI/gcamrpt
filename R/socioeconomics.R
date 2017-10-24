@@ -64,6 +64,9 @@ module.gdp_mer_ <- function(mode, allqueries, aggkeys, aggfn, years,
         'GDP(MER)'
     }
     else {
+        ## silence notes on package check
+        value <- NULL
+
         message('Function for processing variable: GDP MER')
 
         gdp_mer <- allqueries$'GDP(MER)'
@@ -105,6 +108,9 @@ module.pcgdp_ppp_ <- function(mode, allqueries, aggkeys, aggfn, years,
         'pcGDP(PPP)'
     }
     else {
+        ## silence notes on package check
+        value <- NULL
+
         message('Function for processing variable: Per capita GDP PPP')
 
         gdp_ppp <- allqueries$'pcGDP(PPP)'

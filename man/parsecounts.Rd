@@ -7,7 +7,7 @@
 parsecounts(unit)
 }
 \arguments{
-\item{unitstr}{The counting unit to convert.}
+\item{unit}{The counting unit to convert.}
 }
 \description{
 Counting units tend to get treated as words rather than symbols, and thus

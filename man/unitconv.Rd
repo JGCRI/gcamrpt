@@ -11,7 +11,7 @@ unitconv_counts(iunit, ounit, inverse = FALSE)
 
 unitconv_energy(iunit, ounit, inverse = FALSE)
 
-unitconv_usdollar(iunits, ounit, inverse = FALSE)
+unitconv_usdollar(iunit, ounit, inverse = FALSE)
 }
 \arguments{
 \item{iunit}{Units for the input data}
