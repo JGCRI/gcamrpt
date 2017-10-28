@@ -6,9 +6,26 @@
 source('data-raw/gdpdef.R')
 gdpdef <- calc.gdpdef('data-raw/GDPDEF.csv')
 
+source('data-raw/pm_emissions_factors.R')
+pm_emissions_factors <- calc.pm_emissions_factors('data-raw/pm_emissions_factors.csv')
+
+source('data-raw/annual_mileage.R')
+annual_mileage <- calc.annual_mileage('data-raw/annual_mileage.csv')
+
 source('data-raw/energyconv.R')
 energyconv <- prep.energyconv()
 
-devtools::use_data(gdpdef, energyconv, internal=TRUE, overwrite=TRUE,
+source('data-raw/countconv.R')
+countconv <- prep.countconv()
+
+source('data-raw/emissionsconv.R')
+emissionsconv <- prep.emissionsconv()
+
+source('data-raw/weightconv.R')
+massconv <- prep.weightconv()
+
+devtools::use_data(gdpdef, pm_emissions_factors, annual_mileage,
+                   energyconv, countconv, emissionsconv, massconv,
+                   internal=TRUE, overwrite=TRUE,
                    compress='xz')
 

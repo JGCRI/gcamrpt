@@ -1,6 +1,6 @@
 Package: iamrpt
 Title: Convert GCAM results to the format required by various IAM experiment databases
-Version: 0.2.0-9020
+Version: 0.2.0-9030
 Authors@R: c(
     person("Robert", "Link", email = "robert.link@pnnl.gov", role = c("aut", "cre")),
     person("Xavier", "Gutierrez", email = "xavier.gutierrez@pnnl.gov", role = c("aut"))
@@ -17,7 +17,7 @@ LazyData: true
 Imports:
     rgcam (>= 0.4.2),
     readr (>= 1.1.1),
-    dplyr (>= 0.5),
+    dplyr (>= 0.7.4),
     tidyr (>= 0.6),
     stringr (>= 1.2.0),
     assertthat (>= 0.2.0),

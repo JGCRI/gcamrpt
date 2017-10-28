@@ -188,7 +188,9 @@ generate <- function(scenctl,
     ## Collect the queries that we will need to run.
     q2run <-
         sapply(gcvars, function(v) {runModule(v, GETQ)}) %>%
-          unique
+            unlist() %>%
+            as.vector() %>%
+            unique
 
     ## process the scenarios, one by one
     rslts <- Map(function(scen, dbname) {
@@ -217,6 +219,15 @@ generate <- function(scenctl,
         tdata <- read_iiasa_template(template)
 
         if(scenmerge) {
+            # replace empty dfs with null
+            vars <- names(rslts)
+            for(i in seq(1,length(vars))) {
+                var <- vars[i]
+                vardf <- rslts[var]
+                if(nrow(vardf) == 0 )
+                    rslts[var] <- NULL
+            }
+
             rslts <- iiasafy(rslts) %>%
                 dplyr::mutate(Model=model) %>%
                 complete_iiasa_template(tdata) %>%
@@ -224,7 +235,23 @@ generate <- function(scenctl,
                 list(allscen=.)
             dataformat <- 'merged'
         }
+
         else {
+            # replace empty df's with null
+            scens <- names(rslts)
+            for(i in seq(1,length(scens))) {
+                scen <- scens[i]
+                vars <- names(rslts[[scen]])
+                for(j in seq(1,length(vars))) {
+                    var <- vars[j]
+                    vardf <- rslts[[scen]][[var]]
+                    if(nrow(vardf) == 0 ) {
+                        warning('Scenario ', scen, ' , Variable ', var, ' returned empty')
+                        rslts[[scen]][[var]] <- NULL
+                    }
+                }
+            }
+
             rslts <- lapply(rslts, iiasafy) %>%
               lapply(function(df) {
                   dplyr::mutate(df, Model=model) %>%
@@ -234,9 +261,28 @@ generate <- function(scenctl,
             dataformat <- 'tabs'
         }
     }
-    else if(wideformat) {
-        rslts <- lapply(rslts, function(df) {tidyr::spread(df, year, value)})
-    }
+
+    # need to replace handling of empty dfs with method used in IIASA
+    else if (wideformat) {
+            if (scenmerge) {
+
+                # year col must be char
+                # handle emtpty df by filling with empty row first
+                rslts <- lapply(rslts, function(df) {
+                    if (nrow(df) ==0) {
+                        df[1,] <- rep(0, ncol(df))
+
+                    }
+                    df$year <- unlist(lapply(df$year, toString))
+                    df
+                })
+
+                rslts <- lapply(rslts, function(df) {tidyr::spread(df, year, value)})
+            }
+            else {
+                rslts<- lapply(rslts, function(df) {lapply(df, tidyr::spread, year,value)})
+            }
+        }
 
     output(rslts, dataformat, fileformat, outputdir)
 

@@ -5,13 +5,23 @@
 #' Aggregate the input table using the specified aggregation function,
 #' using the specified columns as keys.
 #'
+#' The \code{multiple} argument is used for cases where we need to perform the
+#' same aggregation on multiple values.  Usually this occurs when we have joined
+#' two tables, so for now the aggregation operates only on columns matching the
+#' regular expression \code{'value'}, which would catch the \code{'value.x'} and
+#' \code{'value.y'} created by a join.  In future versions we may allow
+#' specifying arbitrary columns, but until we are fully upgraded to dplyr 0.7
+#' that is too much of a hassle.
+#'
 #' @param tbl Table to aggregate
 #' @param aggfn String giving the aggregation function.  If missing, use
 #' \code{\link[base]{sum}}.
 #' @param aggkeys String giving a list of aggregation keys.  If missing, return
 #' the table unmodified.
+#' @param multiple If \code{TRUE}, aggregate multiple columns.  For now, all of
+#' these columns must match the regex 'value' (e.g., 'value.x' and 'value.y')
 #' @keywords internal
-aggregate <- function(tbl, aggfn, aggkeys)
+aggregate <- function(tbl, aggfn, aggkeys, multiple=FALSE)
 {
     if(is.null(aggkeys) || is.na(aggkeys)) {
         return(tbl)
@@ -40,11 +50,16 @@ aggregate <- function(tbl, aggfn, aggkeys)
 
     dots <- c('Units', 'scenario', 'year', aggkeys)
 
-    tbl <- dplyr::group_by_(tbl, .dots=dots) %>%
-        dplyr::summarise(value=aggfn(value)) %>%
-        dplyr::ungroup()
-
-    tbl
+    if(multiple) {
+        dplyr::group_by_(tbl, .dots=dots) %>%
+          dplyr::summarise_at(dplyr::vars(dplyr::matches('value')), aggfn) %>%
+          dplyr::ungroup()
+    }
+    else {
+        dplyr::group_by_(tbl, .dots=dots) %>%
+          dplyr::summarise(value=aggfn(value)) %>%
+          dplyr::ungroup()
+    }
 }
 
 #' Table of allowable aggregation functions

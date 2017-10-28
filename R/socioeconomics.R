@@ -29,7 +29,14 @@ module.population <- function(mode, allqueries, aggkeys, aggfn, years,
         population <- allqueries$'Population'
         population <- filter(population, years, filters)
         population <- aggregate(population, aggfn, aggkeys)
-        population <- unitconv_counts(population, ounit)
+
+        if(!is.na(ounit)) {
+            cfac <- unitconv_counts(population$Units[1], ounit)
+            if(!is.na(cfac)) {
+                population$value <- population$value *cfac
+                population$Units <- ounit
+            }
+        }
         population
     }
 }
@@ -57,12 +64,23 @@ module.gdp_mer_ <- function(mode, allqueries, aggkeys, aggfn, years,
         'GDP(MER)'
     }
     else {
+        ## silence notes on package check
+        value <- NULL
+
         message('Function for processing variable: GDP MER')
 
         gdp_mer <- allqueries$'GDP(MER)'
         gdp_mer <- filter(gdp_mer, years, filters)
         gdp_mer <- aggregate(gdp_mer, aggfn, aggkeys)
-        gdp_mer <- unitconv_usdollar(gdp_mer, ounit)
+        if(grepl('US', ounit)) {
+            cf <- unitconv_usdollar(gdp_mer$Units, ounit)
+            gdp_mer <- dplyr::mutate(gdp_mer, value=value*cf, Units=ounit)
+        }
+        else if (grepl('Rupee', ounit)) {
+            ## This is hacked together and needs to be fixed.
+            gdp_mer <- unitconv_rupee(gdp_mer, ounit)
+        }
+
         gdp_mer
     }
 }
@@ -90,12 +108,20 @@ module.pcgdp_ppp_ <- function(mode, allqueries, aggkeys, aggfn, years,
         'pcGDP(PPP)'
     }
     else {
+        ## silence notes on package check
+        value <- NULL
+
         message('Function for processing variable: Per capita GDP PPP')
 
         gdp_ppp <- allqueries$'pcGDP(PPP)'
         gdp_ppp <- filter(gdp_ppp, years, filters)
         gdp_ppp <- aggregate(gdp_ppp, aggfn, aggkeys)
-        gdp_ppp <- unitconv_usdollar(gdp_ppp, ounit)
+        if(!is.na(ounit)) {
+            cf <- unitconv_usdollar(gdp_ppp$Units, ounit)
+            if(!any(is.na(cf))) {
+                gdp_ppp <- dplyr::mutate(gdp_ppp, value=value*cf, Units=ounit)
+            }
+        }
         gdp_ppp
     }
 }

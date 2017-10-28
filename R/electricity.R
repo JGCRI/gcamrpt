@@ -32,7 +32,15 @@ module.electricity <- function(mode, allqueries, aggkeys, aggfn, years,
         electricity <- allqueries$'Electricity'
         electricity <- filter(electricity, years, filters)
         electricity <- aggregate(electricity, aggfn, aggkeys)
-        electricity <- unitconv_energy(electricity, ounit)
+
+        if(!is.na(ounit)) {
+            ## skip unit conversion if output unit not specified.
+            cfac <- unitconv_energy(electricity$Units[1], ounit)
+            if(!is.na(cfac)) {
+                electricity$value <- electricity$value * cfac
+                electricity$Units <- ounit
+            }
+        }
         electricity
     }
 }
