@@ -4,17 +4,16 @@
 \alias{mapfuel}
 \title{Fuel}
 \usage{
-mapfuel(en, ref)
+mapfuel(en, ref = NULL)
 }
 \arguments{
 \item{en}{Data returned for final energy query}
 
-\item{en}{Data returned for refined liquids query}
+\item{ref}{Data returned for refined liquids query}
 }
 \description{
-Service, mode, and submode can be parsed from sector and subsector cols of
-query data. Some sectors are disaggregated versions of other sectors, making
-the data redundant. This is handled by filling service, mode, and submode cols
-only for those observations that meet present demands of reporting templates.
+Using input col of energy query, create fuel col. Remove input col.
+Using bio share of total liquids refining, calculate liquids energy from biomass vs traditional.
+All other fuel sources remain unchanged.
 }
 \keyword{internal}

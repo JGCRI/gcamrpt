@@ -2,7 +2,7 @@
 % Please edit documentation in R/emissions.R
 \name{module.pm_emissions}
 \alias{module.pm_emissions}
-\title{CO2 emissions Data Module}
+\title{PM emissions Data Module}
 \usage{
 module.pm_emissions(mode, allqueries, aggkeys, aggfn, years, filters, ounit)
 }
