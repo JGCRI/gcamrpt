@@ -21,7 +21,7 @@ unitconv_counts <- function(module_data, ounit)
     # check if compsplt() found match in countconv
     if (length(compIunit) == 0) {
         compIunit <- 'unity'
-        warning("Input unit", iunit, "converted from unity")
+        message("Input unit ", iunit, "converted from unity")
 
     }
 
@@ -29,7 +29,7 @@ unitconv_counts <- function(module_data, ounit)
     # check if compsplt() found match in countconv
     if (length(compOunit) == 0) {
         compOunit <- 'unity'
-        warning("Output unit", ounit, "converted to unity")
+        message("Output unit ", ounit, "converted to unity")
     }
 
 
