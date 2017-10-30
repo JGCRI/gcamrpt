@@ -84,3 +84,19 @@ test_that('Energy unit conversion warns on bad unit strings.', {
     convdfq <- unitconv_energy(dfq, 'MWh')
     expect_identical(convdf, convdfq)
 })
+
+test_that('Count conversion works on unity', {
+    # output unity
+  df <- tibble::tibble(value=1, Units='billion pass-km')
+  ounit <- 'pass-km'
+  convdf <- unitconv_counts(df, ounit)
+  output <- tibble::tibble(value=1e9, Units=ounit)
+  expect_identical(convdf, output)
+
+  # input unity
+  df <- tibble::tibble(value=1e9, Units = 'pass-km')
+  ounit <- 'billion pass-km'
+  convdf <- unitconv_counts(df, ounit)
+  output <- tibble::tibble(value=1, Units=ounit)
+  expect_identical(convdf, output)
+})

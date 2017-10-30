@@ -32,7 +32,6 @@ module.service_output <- function(mode, allqueries, aggkeys, aggfn, years,
             dplyr::ungroup()
         serviceOutput <- filter(serviceOutput, years, filters)
         serviceOutput <- aggregate(serviceOutput, aggfn, aggkeys)
-        # units example: million p-km
         serviceOutput <- unitconv_counts(serviceOutput, ounit)
         serviceOutput
     }

@@ -20,18 +20,19 @@ unitconv_counts <- function(module_data, ounit)
     compIunit <- compsplt(iunit, countconv)
     # check if compsplt() found match in countconv
     if (length(compIunit) == 0) {
-        warning("Input unit ", iunit,
-                " not recognized as a count unit.  Unit conversion will be skipped.")
-        return(module_data)
+        compIunit <- 'unity'
+        warning("Input unit", iunit, "converted from unity")
+
     }
 
     compOunit <- compsplt(ounit, countconv)
     # check if compsplt() found match in countconv
     if (length(compOunit) == 0) {
-        warning("Output unit ", ounit,
-                " not recognized as a count unit.  Unit conversion will be skipped.")
-        return(module_data)
+        compOunit <- 'unity'
+        warning("Output unit", ounit, "converted to unity")
     }
+
+
 
     cfac <- countconv[compIunit, compOunit]
 
@@ -277,7 +278,7 @@ compsplt <- function(unit, convmat) {
         }
         else {compunit <- character()} # return empty string
     }
-    assert_that(length(compunit) ==1)
+    assert_that(length(compunit) <= 1) # zero allowed for unity count conversion
     compunit
 }
 
