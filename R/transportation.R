@@ -166,11 +166,11 @@ module.service_intensity <- function(mode, allqueries, aggkeys, aggfn, years,
         # calculation
         intensity <- energy %>%
             dplyr::inner_join(serviceOutput,
-                              by = c('scenario', 'region', 'year', 'service', 'mode', 'submode')) %>%
+                              by = c('scenario', 'year', 'region')) %>%
             dplyr::rename(energy=value.x, pkm=value.y) %>%
             dplyr::mutate(intensity = energy/pkm, Units='TJ') %>%
             # relying on native units of 'EJ' (10^18) and million pass-km'/'million ton-km' (10^6)
-            dplyr::select(-pkm, -Units.x, -energy, -Units.y)  %>%
+            dplyr::select(-pkm, -Units.y, -energy, -Units.x)  %>%
             dplyr::rename(value=intensity)
         intensity <- unitconv_energy(intensity, ounit)
         intensity
