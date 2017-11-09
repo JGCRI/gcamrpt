@@ -1,0 +1,95 @@
+region,service,mode,submode,size.class,Units,2005,2020,2035,2050,2065,2080,2095
+Africa,Passenger,Road,LDV_2W,Motorcycle (50-250cc),vkt/veh/yr,8478,8478,8478,8478,8478,8478,8478
+Africa,Passenger,Road,LDV_3W,Three-Wheeler,vkt/veh/yr,8478,8478,8478,8478,8478,8478,8478
+Africa,Passenger,Road,LDV_4W,Mini Car,vkt/veh/yr,10391,10391,10391,10391,10391,10391,10391
+Africa,Passenger,Road,LDV_4W,Subcompact Car,vkt/veh/yr,10391,10391,10391,10391,10391,10391,10391
+Africa,Passenger,Road,LDV_4W,Compact Car,vkt/veh/yr,10391,10391,10391,10391,10391,10391,10391
+Africa,Passenger,Road,LDV_4W,Multipurpose Vehicle,vkt/veh/yr,10391,10391,10391,10391,10391,10391,10391
+Australia_NZ,Passenger,Road,LDV_2W,Motorcycle (>250cc),vkt/veh/yr,3438,3438,3438,3438,3438,3438,3438
+Australia_NZ,Passenger,Road,LDV_4W,Compact Car,vkt/veh/yr,11081,11081,11081,11081,11081,11081,11081
+Australia_NZ,Passenger,Road,LDV_4W,Midsize Car,vkt/veh/yr,11081,11081,11081,11081,11081,11081,11081
+Australia_NZ,Passenger,Road,LDV_4W,Large Car,vkt/veh/yr,13543,13543,13543,13543,13543,13543,13543
+Australia_NZ,Passenger,Road,LDV_4W,Light Truck and SUV,vkt/veh/yr,13543,13543,13543,13543,13543,13543,13543
+Canada,Passenger,Road,LDV_2W,Motorcycle (>250cc),vkt/veh/yr,4000,4000,4000,4000,4000,4000,4000
+Canada,Passenger,Road,LDV_4W,Midsize Car,vkt/veh/yr,14638,14638,14638,14638,14638,14638,14638
+Canada,Passenger,Road,LDV_4W,Van,vkt/veh/yr,16800,16800,16800,16800,16800,16800,16800
+Canada,Passenger,Road,LDV_4W,Light Truck and SUV,vkt/veh/yr,17480,17480,17480,17480,17480,17480,17480
+China,Passenger,Road,LDV_2W,Motorcycle (50-250cc),vkt/veh/yr,9145,9145,9145,9145,9145,9145,9145
+China,Passenger,Road,LDV_3W,Three-Wheeler,vkt/veh/yr,21932,21932,21932,21932,21932,21932,21932
+China,Passenger,Road,LDV_4W,Mini Car,vkt/veh/yr,21932,21932,21932,21932,21932,21932,21932
+China,Passenger,Road,LDV_4W,Subcompact Car,vkt/veh/yr,21632,21632,21632,21632,21632,21632,21632
+China,Passenger,Road,LDV_4W,Compact Car,vkt/veh/yr,19486,19486,19486,19486,19486,19486,19486
+China,Passenger,Road,LDV_4W,Large Car and SUV,vkt/veh/yr,19650,19650,19650,19650,19650,19650,19650
+Eastern Europe,Passenger,Road,LDV_2W,Moped,vkt/veh/yr,9690,9690,9690,9690,9690,9690,9690
+Eastern Europe,Passenger,Road,LDV_2W,Motorcycle (50-250cc),vkt/veh/yr,9690,9690,9690,9690,9690,9690,9690
+Eastern Europe,Passenger,Road,LDV_2W,Motorcycle (>250cc),vkt/veh/yr,9690,9690,9690,9690,9690,9690,9690
+Eastern Europe,Passenger,Road,LDV_4W,Subcompact Car,vkt/veh/yr,8962,8962,8962,8962,8962,8962,8962
+Eastern Europe,Passenger,Road,LDV_4W,Compact Car,vkt/veh/yr,8962,8962,8962,8962,8962,8962,8962
+Eastern Europe,Passenger,Road,LDV_4W,Van,vkt/veh/yr,8962,8962,8962,8962,8962,8962,8962
+Eastern Europe,Passenger,Road,LDV_4W,Large Car and SUV,vkt/veh/yr,8962,8962,8962,8962,8962,8962,8962
+Former Soviet Union,Passenger,Road,LDV_2W,Moped,vkt/veh/yr,7829,7829,7829,7829,7829,7829,7829
+Former Soviet Union,Passenger,Road,LDV_2W,Motorcycle (50-250cc),vkt/veh/yr,7829,7829,7829,7829,7829,7829,7829
+Former Soviet Union,Passenger,Road,LDV_2W,Motorcycle (>250cc),vkt/veh/yr,7829,7829,7829,7829,7829,7829,7829
+Former Soviet Union,Passenger,Road,LDV_4W,Subcompact Car,vkt/veh/yr,11482,11482,11482,11482,11482,11482,11482
+Former Soviet Union,Passenger,Road,LDV_4W,Compact Car,vkt/veh/yr,11482,11482,11482,11482,11482,11482,11482
+Former Soviet Union,Passenger,Road,LDV_4W,Midsize Car,vkt/veh/yr,11482,11482,11482,11482,11482,11482,11482
+Former Soviet Union,Passenger,Road,LDV_4W,Large Car and SUV,vkt/veh/yr,11482,11482,11482,11482,11482,11482,11482
+India,Passenger,Road,LDV_2W,Moped,vkt/veh/yr,8478,8478,8478,8478,8478,8478,8478
+India,Passenger,Road,LDV_2W,Scooter,vkt/veh/yr,8478,8478,8478,8478,8478,8478,8478
+India,Passenger,Road,LDV_2W,Motorcycle (50-250cc),vkt/veh/yr,8478,8478,8478,8478,8478,8478,8478
+India,Passenger,Road,LDV_3W,Three-Wheeler,vkt/veh/yr,8478,8478,8478,8478,8478,8478,8478
+India,Passenger,Road,LDV_4W,Mini Car,vkt/veh/yr,10391,10391,10391,10391,10391,10391,10391
+India,Passenger,Road,LDV_4W,Subcompact Car,vkt/veh/yr,10392,10392,10392,10392,10392,10392,10392
+India,Passenger,Road,LDV_4W,Compact Car,vkt/veh/yr,10401,10401,10401,10401,10401,10401,10401
+India,Passenger,Road,LDV_4W,Multipurpose Vehicle,vkt/veh/yr,9466,9466,9466,9466,9466,9466,9466
+Japan,Passenger,Road,LDV_2W,Moped,vkt/veh/yr,3674,3674,3674,3674,3674,3674,3674
+Japan,Passenger,Road,LDV_2W,Motorcycle (50-250cc),vkt/veh/yr,3674,3674,3674,3674,3674,3674,3674
+Japan,Passenger,Road,LDV_2W,Motorcycle (>250cc),vkt/veh/yr,3674,3674,3674,3674,3674,3674,3674
+Japan,Passenger,Road,LDV_4W,Mini Car,vkt/veh/yr,9424,9424,9424,9424,9424,9424,9424
+Japan,Passenger,Road,LDV_4W,Subcompact Car,vkt/veh/yr,9164,9164,9164,9164,9164,9164,9164
+Japan,Passenger,Road,LDV_4W,Compact Car,vkt/veh/yr,10925,10925,10925,10925,10925,10925,10925
+Japan,Passenger,Road,LDV_4W,Large Car and SUV,vkt/veh/yr,8710,8710,8710,8710,8710,8710,8710
+Korea,Passenger,Road,LDV_2W,Motorcycle (50-250cc),vkt/veh/yr,3674,3674,3674,3674,3674,3674,3674
+Korea,Passenger,Road,LDV_4W,Subcompact Car,vkt/veh/yr,15353,15353,15353,15353,15353,15353,15353
+Korea,Passenger,Road,LDV_4W,Compact Car,vkt/veh/yr,15353,15353,15353,15353,15353,15353,15353
+Korea,Passenger,Road,LDV_4W,Large Car,vkt/veh/yr,15353,15353,15353,15353,15353,15353,15353
+Korea,Passenger,Road,LDV_4W,Light Truck and SUV,vkt/veh/yr,15353,15353,15353,15353,15353,15353,15353
+Latin America,Passenger,Road,LDV_2W,Moped,vkt/veh/yr,4500,4500,4500,4500,4500,4500,4500
+Latin America,Passenger,Road,LDV_2W,Motorcycle (50-250cc),vkt/veh/yr,6000,6000,6000,6000,6000,6000,6000
+Latin America,Passenger,Road,LDV_2W,Motorcycle (>250cc),vkt/veh/yr,6000,6000,6000,6000,6000,6000,6000
+Latin America,Passenger,Road,LDV_4W,Mini Car,vkt/veh/yr,14000,14000,14000,14000,14000,14000,14000
+Latin America,Passenger,Road,LDV_4W,Subcompact Car,vkt/veh/yr,14000,14000,14000,14000,14000,14000,14000
+Latin America,Passenger,Road,LDV_4W,Compact Car,vkt/veh/yr,14000,14000,14000,14000,14000,14000,14000
+Latin America,Passenger,Road,LDV_4W,Large Car and SUV,vkt/veh/yr,14000,14000,14000,14000,14000,14000,14000
+Middle East,Passenger,Road,LDV_2W,Motorcycle (50-250cc),vkt/veh/yr,5000,5000,5000,5000,5000,5000,5000
+Middle East,Passenger,Road,LDV_4W,Mini Car,vkt/veh/yr,10000,10000,10000,10000,10000,10000,10000
+Middle East,Passenger,Road,LDV_4W,Subcompact Car,vkt/veh/yr,14000,14000,14000,14000,14000,14000,14000
+Middle East,Passenger,Road,LDV_4W,Compact Car,vkt/veh/yr,14000,14000,14000,14000,14000,14000,14000
+Middle East,Passenger,Road,LDV_4W,Large Car and SUV,vkt/veh/yr,14000,14000,14000,14000,14000,14000,14000
+Southeast Asia,Passenger,Road,LDV_2W,Moped,vkt/veh/yr,8478,8478,8478,8478,8478,8478,8478
+Southeast Asia,Passenger,Road,LDV_2W,Scooter,vkt/veh/yr,8478,8478,8478,8478,8478,8478,8478
+Southeast Asia,Passenger,Road,LDV_2W,Motorcycle (50-250cc),vkt/veh/yr,8478,8478,8478,8478,8478,8478,8478
+Southeast Asia,Passenger,Road,LDV_3W,Three-Wheeler,vkt/veh/yr,8478,8478,8478,8478,8478,8478,8478
+Southeast Asia,Passenger,Road,LDV_4W,Mini Car,vkt/veh/yr,10391,10391,10391,10391,10391,10391,10391
+Southeast Asia,Passenger,Road,LDV_4W,Subcompact Car,vkt/veh/yr,10392,10392,10392,10392,10392,10392,10392
+Southeast Asia,Passenger,Road,LDV_4W,Compact Car,vkt/veh/yr,10401,10401,10401,10401,10401,10401,10401
+Southeast Asia,Passenger,Road,LDV_4W,Multipurpose Vehicle,vkt/veh/yr,9466,9466,9466,9466,9466,9466,9466
+USA,Passenger,Road,LDV_2W,Motorcycle (>250cc),vkt/veh/yr,3438,3438,3438,3438,3438,3438,3438
+USA,Passenger,Road,LDV_4W,Compact Car,vkt/veh/yr,19204,19204,19204,19204,19204,19204,19204
+USA,Passenger,Road,LDV_4W,Midsize Car,vkt/veh/yr,19204,19204,19204,19204,19204,19204,19204
+USA,Passenger,Road,LDV_4W,Large Car,vkt/veh/yr,19204,19204,19204,19204,19204,19204,19204
+USA,Passenger,Road,LDV_4W,Light Truck and SUV,vkt/veh/yr,16587,16587,16587,16587,16587,16587,16587
+Western Europe,Passenger,Road,LDV_2W,Moped,vkt/veh/yr,3606,3606,3606,3606,3606,3606,3606
+Western Europe,Passenger,Road,LDV_2W,Motorcycle (50-250cc),vkt/veh/yr,4377,4377,4377,4377,4377,4377,4377
+Western Europe,Passenger,Road,LDV_2W,Motorcycle (>250cc),vkt/veh/yr,4327,4327,4327,4327,4327,4327,4327
+Western Europe,Passenger,Road,LDV_4W,Subcompact Car,vkt/veh/yr,11646,11646,11646,11646,11646,11646,11646
+Western Europe,Passenger,Road,LDV_4W,Compact Car,vkt/veh/yr,11646,11646,11646,11646,11646,11646,11646
+Western Europe,Passenger,Road,LDV_4W,Van,vkt/veh/yr,11646,11646,11646,11646,11646,11646,11646
+Western Europe,Passenger,Road,LDV_4W,Large Car and SUV,vkt/veh/yr,11646,11646,11646,11646,11646,11646,11646
+Brazil,Passenger,Road,LDV_2W,Moped,vkt/veh/yr,6793.775974,6793.775974,6793.775974,6793.775974,6793.775974,6793.775974,6793.775974
+Brazil,Passenger,Road,LDV_2W,Motorcycle (50-250cc),vkt/veh/yr,9058.367965,9058.367965,9058.367965,9058.367965,9058.367965,9058.367965,9058.367965
+Brazil,Passenger,Road,LDV_2W,Motorcycle (>250cc),vkt/veh/yr,9058.367965,9058.367965,9058.367965,9058.367965,9058.367965,9058.367965,9058.367965
+Brazil,Passenger,Road,LDV_4W,Mini Car,vkt/veh/yr,15213.76028,15213.76028,15213.76028,15213.76028,15213.76028,15213.76028,15213.76028
+Brazil,Passenger,Road,LDV_4W,Subcompact Car,vkt/veh/yr,15213.76028,15213.76028,15213.76028,15213.76028,15213.76028,15213.76028,15213.76028
+Brazil,Passenger,Road,LDV_4W,Compact Car,vkt/veh/yr,15213.76028,15213.76028,15213.76028,15213.76028,15213.76028,15213.76028,15213.76028
+Brazil,Passenger,Road,LDV_4W,Large Car and SUV,vkt/veh/yr,34089.58789,34089.58789,34089.58789,34089.58789,34089.58789,34089.58789,34089.58789

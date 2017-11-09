@@ -8,13 +8,13 @@ calc.annual_mileage <- function(filename) {
     annual_mileage <- tidyr::gather(annual_mileage,
                                           key=year ,
                                           value=value,
-                                          -service, -mode, -submode, -car_type, -Units)
+                                          -region, -service, -mode, -submode, -size.class, -Units)
     annual_mileage <- annual_mileage %>%
         dplyr::group_by(service, mode, submode, year, Units) %>%
         dplyr::summarise(value=sum(value)) %>%
-        dplyr::ungroup()
-    annual_mileage$year <- as.integer(annual_mileage$year) # in order to join with other df's
-
+        dplyr::ungroup() %>% 
+        dplyr::mutate(year = as.integer(year)) %>%
+        dplyr::mutate(submode = gsub("LDV_", "", submode))
+    
     annual_mileage
-
 }
