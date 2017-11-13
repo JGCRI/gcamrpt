@@ -344,6 +344,41 @@ unitconv_mass <- function(iunit, ounit, inverse=FALSE)
 
 }
 
+#' area conversion
+#'
+#' This function converts area
+#'
+#' @param ounit Desired output unit.  If omitted, results will be returned with
+#' no unit conversion.
+#' @keywords internal
+unitconv_area <- function(iunit, ounit, inverse=FALSE)
+{
+    unitasserts(iunit, ounit)
+
+    # Remove ^ symbol. Ex. m^2 becomes m2
+    iunit <- gsub('\\^', '', iunit)
+    ounit <- gsub('\\^', '', ounit)
+
+    # Replace m2 with meter2 (because of how extractunit works)
+    iunit <- gsub(' m2|^m2', ' meter2', iunit)
+    ounit <- gsub(' m2|^m2', ' meter2', ounit)
+
+    # Conversion based on count. Gets count unit from first word.
+    iunit_count <- if(stringr::str_count(iunit, '\\S+') == 1) '' else iunit
+    ounit_count <- if(stringr::str_count(ounit, '\\S+') == 1) '' else ounit
+
+    count_conv <- unitconv_counts(iunit_count, ounit_count)
+
+    iunit <- extractunit(rownames(areaconv), iunit, 'area')
+    ounit <- extractunit(colnames(areaconv), ounit, 'area')
+
+    if(inverse)
+        areaconv[ounit, iunit] * count_conv
+    else
+        areaconv[iunit, ounit] * count_conv
+
+}
+
 #' Common assertions on unit string inputs
 #'
 #' All of the unit conversion functions are looking for a length-1 character

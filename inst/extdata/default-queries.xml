@@ -37,7 +37,7 @@
             <axis2 name="year">physical-output[@vintage]</axis2>
             <xPath buildList="true" dataName="output" group="false" sumAll="false">*[@type = 'sector' and ((@name='electricity' or @name='elect_td_bld' or @name='industrial energy use'))]//*[@type = 'subsector']//*[@type = 'technology' and not (@name='elect_td_bld')]/*[@type='output' (:collapse:)  and (@name='electricity' or @name='elect_td_bld')]/physical-output/node()</xPath>
             <comments/>
-	  </supplyDemandQuery> 
+	  </supplyDemandQuery>
 	</aQuery>
 
       <aQuery>
@@ -92,5 +92,14 @@
          <comments/>
       </emissionsQueryBuilder>
       </aQuery>
+
+	<aQuery>
+		<all-regions/>
+			<query title="Land Cover">
+				 <axis1 name="land_allocation">LandLeaf</axis1>
+				 <axis2 name="Year">land-allocation[@year]</axis2>
+				 <xPath buildList="true" dataName="land-allocation" group="false" sumAll="false"><![CDATA[/LandNode[@name='root' or @type='LandNode' (: collapse :)]//land-allocation/text()]]></xPath>
+			</query>
+		</aQuery>
 
 </queries>

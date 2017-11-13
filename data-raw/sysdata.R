@@ -1,7 +1,7 @@
 ## Generate the internal data for the package
 ## This must be sourced as a script because of the way devtools::use_data works.
 ## Source it from the top level of a development copy of the package.
-
+library(magrittr)
 
 source('data-raw/gdpdef.R')
 gdpdef <- calc.gdpdef('data-raw/GDPDEF.csv')
@@ -11,6 +11,9 @@ pm_emissions_factors <- calc.pm_emissions_factors('data-raw/pm_emissions_factors
 
 source('data-raw/annual_mileage.R')
 annual_mileage <- calc.annual_mileage('data-raw/annual_mileage.csv')
+
+source('data-raw/areaconv.R')
+areaconv <- prep.areaconv()
 
 source('data-raw/energyconv.R')
 energyconv <- prep.energyconv()
@@ -24,7 +27,7 @@ emissionsconv <- prep.emissionsconv()
 source('data-raw/weightconv.R')
 massconv <- prep.weightconv()
 
-devtools::use_data(gdpdef, pm_emissions_factors, annual_mileage,
+devtools::use_data(gdpdef, pm_emissions_factors, annual_mileage, areaconv,
                    energyconv, countconv, emissionsconv, massconv,
                    internal=TRUE, overwrite=TRUE,
                    compress='xz')
