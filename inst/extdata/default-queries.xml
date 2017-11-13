@@ -57,9 +57,10 @@
 		<supplyDemandQuery title="Load factors">
 			<axis1 name="technology">technology</axis1>
 			<axis2 name="year">technology</axis2>
-			<xPath buildList="true" dataName="output" group="false" sumAll="false"><![CDATA[*[@type = 'sector' and (@name='transportation' or (exists(child::keyword[@final-energy='transportation'])))]/*[@type = 'subsector']/*[@type = 'technology']//load-factor/node()]]></xPath>
+			<xPath buildList="true" dataName="output" group="false" sumAll="false"><![CDATA[*[@type = 'sector' and (@name='transportation' or (exists(child::keyword[@final-energy='transportation'])))]/*[@type = 'subsector']/*[@type = 'technology']//load-factor[true() or @type='load-factor' (: collapse :)]/node()]]></xPath>
 			<comments/>
 		</supplyDemandQuery>
+
       </aQuery>
 
       <aQuery>
