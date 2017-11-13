@@ -85,7 +85,7 @@
 
 	<aQuery>
 		<all-regions/>
- 		<emissionsQueryBuilder title="CO2 emissions">
+ 		<emissionsQueryBuilder title="CO2 Emissions">
          <axis1 name="subsector">subsector</axis1>
          <axis2 name="Year">emissions</axis2>
          <xPath buildList="true" dataName="emissions" group="false" sumAll="false">*[@type = 'sector' ]/*[@type='subsector']//CO2/emissions/node()</xPath>
@@ -95,11 +95,41 @@
 
 	<aQuery>
 		<all-regions/>
-			<query title="Land Cover">
-				 <axis1 name="land_allocation">LandLeaf</axis1>
-				 <axis2 name="Year">land-allocation[@year]</axis2>
-				 <xPath buildList="true" dataName="land-allocation" group="false" sumAll="false"><![CDATA[/LandNode[@name='root' or @type='LandNode' (: collapse :)]//land-allocation/text()]]></xPath>
-			</query>
-		</aQuery>
+		<query title="Land Cover">
+			 <axis1 name="land_allocation">LandLeaf</axis1>
+			 <axis2 name="Year">land-allocation[@year]</axis2>
+			 <xPath buildList="true" dataName="land-allocation" group="false" sumAll="false"><![CDATA[/LandNode[@name='root' or @type='LandNode' (: collapse :)]//land-allocation/text()]]></xPath>
+		</query>
+	</aQuery>
+
+	<aQuery>
+		<all-regions/>
+		<supplyDemandQuery title="Ag Production">
+			<axis1 name="sector">sector[@name]</axis1>
+			<axis2 name="Year">physical-output[@vintage]</axis2>
+			<xPath buildList="true" dataName="output" group="false" sumAll="false">*[@type='sector' and (exists(child::keyword/@supplysector) or local-name() = 'AgSupplySector' or @name='NonFoodDemand_Forest')]//*[@type='output']/physical-output/node()</xPath>
+			<comments/>
+	 </supplyDemandQuery>
+	</aQuery>
+
+	<aQuery>
+		<all-regions/>
+		<supplyDemandQuery title="Crop Consumption">
+			 <axis1 name="technology">technology</axis1>
+			 <axis2 name="Year">physical-output[@vintage]</axis2>
+			 <xPath buildList="true" dataName="output" group="false" sumAll="false">*[@type = 'sector' and (@name='FoodDemand_Crops' or @name='FoodDemand_Meat')]//*[@type = 'technology']/*[@type='output']/physical-output/node()</xPath>
+			 <comments/>
+		</supplyDemandQuery>
+	</aQuery>
+
+	<aQuery>
+		<all-regions/>
+		<supplyDemandQuery title="Water Withdrawals">
+			 <axis1 name="sector">sector</axis1>
+			 <axis2 name="Year">demand-physical[@vintage]</axis2>
+			 <xPath buildList="true" dataName="input" group="false" sumAll="false">*[@type='sector']//*[@type='input' and (@name='water withdrawals')]/demand-physical/node()</xPath>
+			 <comments>Supply sectors only.</comments>
+		</supplyDemandQuery>
+	</aQuery>
 
 </queries>

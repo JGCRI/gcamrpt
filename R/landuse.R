@@ -38,14 +38,17 @@ module.land_cover <- function(mode, allqueries, aggkeys, aggfn, years,
         land_cover <- allqueries$'Land Cover' %>%
                       filter(years, filters) %>%
                       dplyr::mutate(land_allocation = sub('AEZ\\d{2}', '', land_allocation),
+                                    land_allocation = sub('Protected', '', land_allocation),
+                                    land_allocation = sub('Unmanaged', '', land_allocation),
                                     Units = ounit) %>%
                       dplyr::group_by(Units, scenario, region, year, land_allocation) %>%
                       dplyr::summarise(value = sum(value)) %>%
                       aggregate(aggfn, aggkeys)
 
-        cf <- unitconv_area(land_cover$Units[1], ounit)
-
-        land_cover <- dplyr::mutate(land_cover, value=value*cf)
+        if(!is.na(ounit)) {
+            cf <- unitconv_area(land_cover$Units[1], ounit)
+            land_cover <- dplyr::mutate(land_cover, value=value*cf)
+        }
 
         land_cover
     }
