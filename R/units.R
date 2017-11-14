@@ -379,6 +379,26 @@ unitconv_area <- function(iunit, ounit, inverse=FALSE)
 
 }
 
+#' volume conversion
+#'
+#' This function converts volume
+#'
+#' @param ounit Desired output unit.  If omitted, results will be returned with
+#' no unit conversion.
+#' @keywords internal
+unitconv_vol <- function(iunit, ounit, inverse=FALSE)
+{
+
+    # TODO: Make this a real function
+    unitasserts(iunit, ounit)
+
+    if(!(iunit %in% 'km^3' || iunit %in% 'billion m^3' ||
+         ounit %in% 'km^3' || ounit %in% 'billion m^3' ))
+        stop("Unsupported units for volume.")
+
+    1
+}
+
 #' Common assertions on unit string inputs
 #'
 #' All of the unit conversion functions are looking for a length-1 character
