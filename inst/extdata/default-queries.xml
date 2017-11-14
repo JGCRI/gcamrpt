@@ -133,6 +133,15 @@
 	</aQuery>
 
 	<aQuery>
+		<supplyDemandQuery title="Biomass Consumption">
+			 <axis1 name="sector">sector</axis1>
+			 <axis2 name="Year">demand-physical[@vintage]</axis2>
+			 <xPath buildList="false" dataName="production" group="false" sumAll="false">*[@type='sector' and (@name='regional biomass')]//*[@type='input']/demand-physical/node()</xPath>
+			 <comments/>
+		</supplyDemandQuery>
+	</aQuery>
+
+	<aQuery>
 		<all-regions/>
 		<supplyDemandQuery title="Water Withdrawals">
 			 <axis1 name="sector">sector</axis1>
