@@ -9,7 +9,7 @@
 #'   \item{scenario}
 #'   \item{region}
 #'   \item{output}
-#'   \item{technology}
+#'   \item{sector}
 #'   \item{year}
 #'   \item{value}
 #'   \item{Units}
@@ -17,7 +17,7 @@
 #'
 #' @keywords internal
 
-module.agriculture <- function(mode, allqueries, aggkeys, aggfn, years,
+module.crop_production <- function(mode, allqueries, aggkeys, aggfn, years,
                               filters, ounit)
 {
     if(mode == GETQ) {
@@ -26,24 +26,17 @@ module.agriculture <- function(mode, allqueries, aggkeys, aggfn, years,
         'Ag Production'
     }
     else {
-        message('Function for processing variable: Agricultural Production')
+        message('Function for processing variable: Crop Production')
 
-        agproduction <- allqueries$'Ag Production'
-        agproduction <- filter(agproduction, years, filters)
-        agproduction <- aggregate(agproduction, aggfn, aggkeys)
+        noncrops <- c('biomass', 'NonFoodDemand_Forest', 'Forest', 'UnmanagedLand')
+
+        agproduction <- allqueries$'Ag Production' %>%
+                        dplyr::filter(!output %in% noncrops) %>%
+                        filter(years, filters) %>%
+                        aggregate(aggfn, aggkeys) %>%
+                        dplyr::select(-output)
 
         if(!is.na(ounit)) {
-            # Only try to convert units if the input units are all the same
-            if(length(unique(agproduction$Units)) != 1) {
-                if("Mt" %in% agproduction$Units)
-                    ounit <- "MT"
-                else
-                    ounit <- agproduction$Units[1]
-                warning(paste("Input units are not all the same, removing values
-                              not in", ounit))
-                agproduction <- dplyr::filter(agproduction, Units == ounit)
-            }
-
             cfac <- unitconv_mass(agproduction$Units[1], ounit)
             agproduction$value <- agproduction$value * cfac
             agproduction$Units <- ounit
@@ -54,14 +47,15 @@ module.agriculture <- function(mode, allqueries, aggkeys, aggfn, years,
 }
 
 
-#' Agriculture Production Data Module
+#' Produce food consumption by type
 #'
-#' Produce agricultural production by crop type
+#' Unlike Crop Consumption, this module also includes meat demand
 #'
 #' The raw table used by this module has columns:
 #' \itemize{
 #'   \item{scenario}
 #'   \item{region}
+#'   \item{sector}
 #'   \item{output}
 #'   \item{technology}
 #'   \item{year}
@@ -95,3 +89,84 @@ module.crop_consumption <- function(mode, allqueries, aggkeys, aggfn, years,
     }
 }
 
+#' Produce biomass production by crop type
+#'
+#' The raw table used by this module has columns:
+#' \itemize{
+#'   \item{scenario}
+#'   \item{region}
+#'   \item{sector}
+#'   \item{year}
+#'   \item{value}
+#'   \item{Units}
+#' }
+#'
+#' @keywords internal
+
+module.biomass_production <- function(mode, allqueries, aggkeys, aggfn, years,
+                                       filters, ounit)
+{
+    if(mode == GETQ) {
+        # Return titles of necessary queries
+        # For more complex variables, will return multiple query titles.
+        'Biomass Production'
+    }
+    else {
+        message('Function for processing variable: Biomass Production')
+
+        bioProduction <- allqueries$'Biomass Production' %>%
+                         filter(years, filters) %>%
+                         aggregate(aggfn, aggkeys)
+
+        if(!is.na(ounit)) {
+            cfac <- unitconv_energy(bioProduction$Units[1], ounit)
+            bioProduction$value <- bioProduction$value * cfac
+            bioProduction$Units <- ounit
+        }
+
+        bioProduction
+    }
+}
+
+#' Produce biomass production by crop type
+#'
+#' The raw table used by this module has columns:
+#' \itemize{
+#'   \item{scenario}
+#'   \item{region}
+#'   \item{sector}
+#'   \item{output}
+#'   \item{technology}
+#'   \item{year}
+#'   \item{value}
+#'   \item{Units}
+#' }
+#'
+#' @keywords internal
+
+module.biomass_consumption <- function(mode, allqueries, aggkeys, aggfn, years,
+                                       filters, ounit)
+{
+    if(mode == GETQ) {
+        # Return titles of necessary queries
+        # For more complex variables, will return multiple query titles.
+        'Crop Consumption'
+    }
+    else {
+        message('Function for processing variable: Biomass Consumption')
+
+        bioConsumption <- allqueries$'Crop Consumption' %>%
+                          dplyr::filter(output == 'biomass') %>%
+                          filter(years, filters) %>%
+                          aggregate(aggfn, aggkeys) %>%
+                          dplyr::select(-output)
+
+        if(!is.na(ounit)) {
+            cfac <- unitconv_energy(bioConsumption$Units[1], ounit)
+            bioConsumption$value <- bioConsumption$value * cfac
+            bioConsumption$Units <- ounit
+        }
+
+        bioConsumption
+    }
+}
