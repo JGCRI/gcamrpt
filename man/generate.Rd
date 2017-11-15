@@ -39,8 +39,8 @@ as separate tables.}
 otherwise, leave in long format.}
 }
 \value{
-NULL; the report will be written to output files as described in the
-Output section.
+NULL, unless \code{fileformat} is set to \code{"none"}; the report
+will be written to output files as described in the Output section.
 }
 \description{
 Read the user control files (see details below) and run the report generation.
@@ -99,7 +99,8 @@ arugments to the system, or set as R options.  The names of the options and
 their functions are:
 \describe{
     \item{\code{iamrpt.fileformat}}{File format for output.  Options are
-\code{"CSV"} and \code{"XLSX"}}
+\code{"none"}, \code{"CSV"}, and \code{"XLSX"}}. If \code{"none"}, no output
+file will be written and the results will be function's the return value.
     \item{\code{iamrpt.scenmerge}}{If \code{TRUE}, for each variable merge the
 results for all scenarios into a single table (distinguished by the value of
 the scenario column).  Otherwise, create a separate table for each

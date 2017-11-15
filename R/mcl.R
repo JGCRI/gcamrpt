@@ -56,7 +56,8 @@
 #' their functions are:
 #' \describe{
 #'     \item{\code{iamrpt.fileformat}}{File format for output.  Options are
-#' \code{"CSV"} and \code{"XLSX"}}
+#' \code{"none"}, \code{"CSV"}, and \code{"XLSX"}}. If \code{"none"}, no output
+#' file will be written and the results will be function's the return value.
 #'     \item{\code{iamrpt.scenmerge}}{If \code{TRUE}, for each variable merge the
 #' results for all scenarios into a single table (distinguished by the value of
 #' the scenario column).  Otherwise, create a separate table for each
@@ -149,8 +150,8 @@
 #' \code{'tabs'}, \code{'merged'}, or \code{'IIASA'}
 #' @param wideformat Flag: if true, convert data to wide format before output;
 #' otherwise, leave in long format.
-#' @return NULL; the report will be written to output files as described in the
-#' Output section.
+#' @return NULL, unless \code{fileformat} is set to \code{"none"}; the report
+#' will be written to output files as described in the Output section.
 #' @importFrom magrittr %>%
 #' @export
 generate <- function(scenctl,
@@ -284,10 +285,13 @@ generate <- function(scenctl,
             }
         }
 
-    output(rslts, dataformat, fileformat, outputdir)
-
-    message('FIN.')
-    invisible(NULL)
+    if(fileformat == 'R') {
+        rslts
+    } else {
+        output(rslts, dataformat, fileformat, outputdir)
+        message('FIN.')
+        invisible(NULL)
+    }
 }
 
 
