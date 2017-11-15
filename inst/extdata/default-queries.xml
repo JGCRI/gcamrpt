@@ -98,7 +98,7 @@
 		<query title="Land Cover">
 			 <axis1 name="land_allocation">LandLeaf</axis1>
 			 <axis2 name="Year">land-allocation[@year]</axis2>
-			 <xPath buildList="true" dataName="land-allocation" group="false" sumAll="false"><![CDATA[/LandNode[@name='root' or @type='LandNode' (: collapse :)]//land-allocation/text()]]></xPath>
+			 <xPath buildList="true" dataName="land-allocation" group="false" sumAll="false">/LandNode[@name='root' or @type='LandNode']//land-allocation/text()</xPath>
 		</query>
 	</aQuery>
 
