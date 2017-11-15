@@ -2,7 +2,8 @@
 
 #' Crop Production Data Module
 #'
-#' Produce agricultural production (in mass) by crop type
+#' Produce agricultural production (in mass) by crop type. Exclude forest and
+#' crops grown for biomass, as they are in different units.
 #'
 #' The raw table used by this module has columns:
 #' \itemize{
