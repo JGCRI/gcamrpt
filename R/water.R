@@ -2,6 +2,11 @@
 
 #' Water Withdrawals Module
 #'
+#' Produce water withdrawals by region, supersector, sector, subsector, or
+#' technology. The column supersector is created by further aggregating sectors
+#' into one of Biomass, Primary Energy, Irrigation, Manufacturing, Electricity,
+#' Municipal, or Livestock.
+#'
 #' The raw table used by this module has columns:
 #' \itemize{
 #'   \item{scenario}
@@ -34,9 +39,10 @@ module.water_withdrawals <- function(mode, allqueries, aggkeys, aggfn, years,
                                           sector = sub('regional *', '', sector),
                                           sector = sub('unconventional oil.*', 'oil', sector),
                                           subsector = sub('AEZ\\d{2}', '', subsector),
-                                          technology = sub('AEZ\\d{2}', '', technology)) %>%
-                            dplyr::group_by(Units, scenario, region, year, sector, subsector, technology) %>%
+                                          supersector = groupSectors(sector)) %>%
+                            dplyr::group_by(Units, scenario, region, year, supersector, sector, subsector, technology) %>%
                             dplyr::summarise(value = sum(value)) %>%
+                            dplyr::ungroup() %>%
                             aggregate(aggfn, aggkeys)
 
         if(!is.na(ounit)) {
@@ -78,9 +84,17 @@ module.water_consumption <- function(mode, allqueries, aggkeys, aggfn, years,
     else {
         message('Function for processing variable: Water Consumption')
 
-        waterCnsmptn <- allqueries$'Water Consumption'
-        waterCnsmptn <- filter(waterCnsmptn, years, filters)
-        waterCnsmptn <- aggregate(waterCnsmptn, aggfn, aggkeys)
+        waterCnsmptn <- allqueries$'Water Consumption' %>%
+                        filter(years, filters) %>%
+                        dplyr::mutate(sector = sub('nuclear.*', 'uranium', sector),
+                                      sector = sub('regional *', '', sector),
+                                      sector = sub('unconventional oil.*', 'oil', sector),
+                                      subsector = sub('AEZ\\d{2}', '', subsector),
+                                      supersector = groupSectors(sector)) %>%
+                        dplyr::group_by(Units, scenario, region, year, supersector, sector, subsector, technology) %>%
+                        dplyr::summarise(value = sum(value)) %>%
+                        dplyr::ungroup() %>%
+                        aggregate(aggfn, aggkeys)
 
         if(!is.na(ounit)) {
             cf <- unitconv_vol(waterCnsmptn$Units[1], ounit)
@@ -88,7 +102,6 @@ module.water_consumption <- function(mode, allqueries, aggkeys, aggfn, years,
             waterCnsmptn$Units <- ounit
         }
 
-        waterCnsmptn$output <- NULL
         waterCnsmptn
         }
 }
@@ -179,4 +192,36 @@ module.water_electricity <- function(mode, allqueries, aggkeys, aggfn, years,
         waterElct$output <- NULL
         waterElct
         }
+}
+
+groupSectors <- function(sector) {
+    groups <- c(
+        'biomass' = 'Biomass',
+        'coal' = 'Primary Energy',
+        'natural gas' = 'Primary Energy',
+        'oil' = 'Primary Energy',
+        'uranium' = 'Primary Energy',
+        'Corn' = 'Irrigation',
+        'FiberCrop' = 'Irrigation',
+        'FodderGrass' = 'Irrigation',
+        'FodderHerb' = 'Irrigation',
+        'MiscCrop' = 'Irrigation',
+        'OilCrop' = 'Irrigation',
+        'OtherGrain' = 'Irrigation',
+        'Rice' = 'Irrigation',
+        'Root_Tuber' = 'Irrigation',
+        'SugarCrop' = 'Irrigation',
+        'Wheat' = 'Irrigation',
+        'industry' = 'Manufacturing',
+        'electricity' = 'Electricity',
+        'domestic water' = 'Municipal',
+        'Beef' = 'Livestock',
+        'Dairy' = 'Livestock',
+        'Pork' = 'Livestock',
+        'Poultry' = 'Livestock',
+        'SheepGoat' = 'Livestock'
+    )
+    sapply(sector, function(s) {
+        if(s %in% names(groups)) groups[[s]] else s
+    })
 }
