@@ -66,15 +66,16 @@ removeAEZ <- function(landuse) {
 
 groupLand <- function(landtype) {
     categories <- c(
+        'Forest' = 'Forest',
         'UnmanagedForest' = 'Forest',
-        'Corn' = 'Forest',
+        'Corn' = 'Cropland',
         'FiberCrop' = 'Cropland',
         'FodderGrass' = 'Cropland',
         'FodderHerb' = 'Cropland',
         'MiscCrop' = 'Cropland',
         'OilCrop' = 'Cropland',
-        'OtherArableLand' = 'Cropland',
-        'OtherGrain' = 'Other Natural Land',
+        'OtherArableLand' = 'Other Natural Land',
+        'OtherGrain' = 'Cropland',
         'PalmFruit' = 'Cropland',
         'Rice' = 'Cropland',
         'Root_Tuber' = 'Cropland',
@@ -82,21 +83,20 @@ groupLand <- function(landtype) {
         'Wheat' = 'Cropland',
         'biomass' = 'Biomass',
         'Jatropha' = 'Biomass',
-        'Grassland' = 'Biomass',
+        'Grassland' = 'Other Natural Land',
         'Shrubland' = 'Other Natural Land',
-        'Pasture' = 'Other Natural Land',
+        'Pasture' = 'Pasture',
         'UnmanagedPasture' = 'Pasture',
-        'miscanthus' = 'Pasture',
+        'miscanthus' = 'Biomass',
         'eucalyptus' = 'Biomass',
         'willow' = 'Biomass',
-        'ProtectedGrassland' = 'Biomass',
+        'ProtectedGrassland' = 'Other Natural Land',
         'ProtectedShrubland' = 'Other Natural Land',
-        'ProtectedUnmanagedForest' = 'Other Natural Land',
-        'ProtectedUnmanagedPasture' = 'Forest',
+        'ProtectedUnmanagedForest' = 'Forest',
+        'ProtectedUnmanagedPasture' = 'Pasture',
         'RockIceDesert' = 'Desert',
         'Tundra' = 'Desert',
-        'UrbanLand' = 'Built-up Area',
-        'UrbanLandAE' = 'Built-up Area'
+        'UrbanLand' = 'Built-up Area'
     )
     sapply(landtype, function(lt) {
         if(lt %in% names(categories)) categories[[lt]] else lt

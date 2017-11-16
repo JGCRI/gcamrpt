@@ -108,12 +108,18 @@ module.water_consumption <- function(mode, allqueries, aggkeys, aggfn, years,
 
 #' Water Irrigation Module
 #'
+#' Take all water withdrawals used for crops. Because the subsector column for
+#' crops is identical to the technology column for crops in the raw data, remove
+#' AEZ specification from the subsector column.
+#'
 #' The raw table used by this module has columns:
 #' \itemize{
 #'   \item{scenario}
 #'   \item{region}
-#'   \item{output}
+#'   \item{sector}
+#'   \item{subsector}
 #'   \item{technology}
+#'   \item{input}
 #'   \item{year}
 #'   \item{value}
 #'   \item{Units}
@@ -138,6 +144,7 @@ module.water_irrigation <- function(mode, allqueries, aggkeys, aggfn, years,
 
         waterIrr <- allqueries$'Water Withdrawals' %>%
                     dplyr::filter(sector %in% crops) %>%
+                    dplyr::mutate(subsector = sub('AEZ\\d{2}', '', subsector)) %>%
                     filter(years,  filters) %>%
                     aggregate(aggfn, aggkeys)
 
@@ -147,7 +154,7 @@ module.water_irrigation <- function(mode, allqueries, aggkeys, aggfn, years,
             waterIrr$Units <- ounit
         }
 
-        waterIrr$output <- NULL
+        waterIrr$input <- NULL
         waterIrr
         }
 }
@@ -194,6 +201,15 @@ module.water_electricity <- function(mode, allqueries, aggkeys, aggfn, years,
         }
 }
 
+#' Group water use sectors into categories
+#'
+#' Convert the mix of energy, agriculture, and other uses of water into a more
+#' concise grouping. The six larger categories are Forest, Cropland, Biomass,
+#' Other Natural Land, Pasture, and Desert. Any unknown sector passed to this
+#' function will be returned as is.
+#'
+#' @param sector A column (generally the 'sector' column) from a query result
+#' @keywords internal
 groupSectors <- function(sector) {
     groups <- c(
         'biomass' = 'Biomass',
