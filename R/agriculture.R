@@ -67,35 +67,35 @@ module.crop_production <- function(mode, allqueries, aggkeys, aggfn, years,
 #'
 #' @keywords internal
 
-module.crop_consumption <- function(mode, allqueries, aggkeys, aggfn, years,
+module.food_consumption <- function(mode, allqueries, aggkeys, aggfn, years,
                                     filters, ounit)
 {
     if(mode == GETQ) {
         # Return titles of necessary queries
         # For more complex variables, will return multiple query titles.
-        'Crop Consumption'
+        'Food Consumption'
     }
     else {
-        message('Function for processing variable: Crop Consumption')
+        message('Function for processing variable: Food Consumption')
 
-        cropConsumption <- allqueries$'Crop Consumption' %>%
-                           filter(years, filters) %>%
-                           aggregate(aggfn, aggkeys) %>%
+        foodConsumption <- allqueries$'Food Consumption' %>%
                            dplyr::mutate(sector = sub('FoodDemand_', '', sector)) %>%
-                           dplyr::select(-output)
+                           dplyr::select(-output) %>%
+                           filter(years, filters) %>%
+                           aggregate(aggfn, aggkeys)
 
-        if('technology' %in% names(cropConsumption))
-            cropConsumption <- dplyr::rename(cropConsumption,
+        if('technology' %in% names(foodConsumption))
+            foodConsumption <- dplyr::rename(foodConsumption,
                                              type = technology)
 
         if(!is.na(ounit)) {
             # Use energy conversion because default units are Pcal
-            cfac <- unitconv_energy(cropConsumption$Units[1], ounit)
-            cropConsumption$value <- cropConsumption$value * cfac
-            cropConsumption$Units <- ounit
+            cfac <- unitconv_energy(foodConsumption$Units[1], ounit)
+            foodConsumption$value <- foodConsumption$value * cfac
+            foodConsumption$Units <- ounit
         }
 
-        cropConsumption
+        foodConsumption
     }
 }
 

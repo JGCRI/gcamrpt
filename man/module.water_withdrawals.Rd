@@ -8,8 +8,8 @@ module.water_withdrawals(mode, allqueries, aggkeys, aggfn, years, filters,
   ounit)
 }
 \description{
-Produce water withdrawals by region, supersector, sector, subsector, or
-technology. The column supersector is created by further aggregating sectors
+Produce water withdrawals by region, aggregate sector, sector, subsector, or
+technology. The column `aggregate sector` is created by further aggregating sectors
 into one of Biomass, Primary Energy, Irrigation, Manufacturing, Electricity,
 Municipal, or Livestock.
 }

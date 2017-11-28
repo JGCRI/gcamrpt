@@ -114,7 +114,7 @@
 
 	<aQuery>
 		<all-regions/>
-		<supplyDemandQuery title="Crop Consumption">
+		<supplyDemandQuery title="Food Consumption">
 			 <axis1 name="technology">technology</axis1>
 			 <axis2 name="Year">physical-output[@vintage]</axis2>
 			 <xPath buildList="true" dataName="output" group="false" sumAll="false">*[@type = 'sector' and (@name='FoodDemand_Crops' or @name='FoodDemand_Meat')]//*[@type = 'technology']/*[@type='output']/physical-output/node()</xPath>

@@ -2,8 +2,8 @@
 
 #' Water Withdrawals Module
 #'
-#' Produce water withdrawals by region, supersector, sector, subsector, or
-#' technology. The column supersector is created by further aggregating sectors
+#' Produce water withdrawals by region, aggregate sector, sector, subsector, or
+#' technology. The column `aggregate sector` is created by further aggregating sectors
 #' into one of Biomass, Primary Energy, Irrigation, Manufacturing, Electricity,
 #' Municipal, or Livestock.
 #'
@@ -39,8 +39,8 @@ module.water_withdrawals <- function(mode, allqueries, aggkeys, aggfn, years,
                                           sector = sub('regional *', '', sector),
                                           sector = sub('unconventional oil.*', 'oil', sector),
                                           subsector = sub('AEZ\\d{2}', '', subsector),
-                                          supersector = groupSectors(sector)) %>%
-                            dplyr::group_by(Units, scenario, region, year, supersector, sector, subsector, technology) %>%
+                                          `aggregate sector` = groupSectors(sector)) %>%
+                            dplyr::group_by(Units, scenario, region, year, `aggregate sector`, sector, subsector, technology) %>%
                             dplyr::summarise(value = sum(value)) %>%
                             dplyr::ungroup() %>%
                             aggregate(aggfn, aggkeys)
@@ -90,8 +90,8 @@ module.water_consumption <- function(mode, allqueries, aggkeys, aggfn, years,
                                       sector = sub('regional *', '', sector),
                                       sector = sub('unconventional oil.*', 'oil', sector),
                                       subsector = sub('AEZ\\d{2}', '', subsector),
-                                      supersector = groupSectors(sector)) %>%
-                        dplyr::group_by(Units, scenario, region, year, supersector, sector, subsector, technology) %>%
+                                      `aggregate sector` = groupSectors(sector)) %>%
+                        dplyr::group_by(Units, scenario, region, year, `aggregate sector`, sector, subsector, technology) %>%
                         dplyr::summarise(value = sum(value)) %>%
                         dplyr::ungroup() %>%
                         aggregate(aggfn, aggkeys)
