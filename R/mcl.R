@@ -200,11 +200,20 @@ generate <- function(scenctl,
                  scenctl[['GCAM scenario']],
                  scenctl[['scenario db']])
     ## rename scenarios
-    names(rslts) <- scenctl[['output scenario']]
-
+    scenarios <- scenctl[['output scenario']]
+    # list of scenarios
+    names(rslts) <- scenarios
+    # modify the scenario column of each df of each scenario
+    for (i in seq(1:length(scenarios)) ) {
+        scen <- scenarios[i]
+        rslts[[scen]] <- lapply(rslts[[scen]], function(vardf) {
+            vardf$scenario <- scen
+            vardf
+        })
+    }
 
     if(scenmerge)
-        rslts <- merge_scenarios(rslts)
+    rslts <- merge_scenarios(rslts)
 
     if(! dataformat %in% c('tabs', 'merged', 'IIASA')) {
         warning('Unrecognized data format: ', dataformat, '.  Using "tabs".')
