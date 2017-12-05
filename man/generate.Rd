@@ -99,7 +99,8 @@ arugments to the system, or set as R options.  The names of the options and
 their functions are:
 \describe{
     \item{\code{iamrpt.fileformat}}{File format for output.  Options are
-\code{"CSV"} and \code{"XLSX"}}
+\code{"R"}, \code{"rgcam"}, \code{"CSV"} and \code{"XLSX"}. If \code{"R"}, do
+not output a file at all and instead return results as an R list.}
     \item{\code{iamrpt.scenmerge}}{If \code{TRUE}, for each variable merge the
 results for all scenarios into a single table (distinguished by the value of
 the scenario column).  Otherwise, create a separate table for each
@@ -129,10 +130,11 @@ Output filenames will be chosen automatically.  For an XLSX file the filename
 will be 'iamrpt.xlsx'.  For CSV output with \code{tabs == FALSE} the result
 will be 'iamrpt.csv'.  For CSV output with \code{tabs == TRUE} the output
 files will be named with the scenario (if scenario tables are not merged) and
-variable output names, for example 'Reference-GDP.csv'.  In any of these
-cases, if a file already exists with the automatically chosen filename, the
-first unused number will be appended, e.g., iamrpt001.xlsx, iamrpt002.xlsx,
-etc.
+variable output names, for example 'Reference-GDP.csv'.  If the specified
+output is \code{"rgcam"}, the output will be an \code{\link{rgcam}}
+project data file named 'iamrpt.dat'.  In any of these cases, if a file
+already exists with the automatically chosen filename, the first unused
+number will be appended, e.g., iamrpt001.xlsx, iamrpt002.xlsx, etc.
 
 The system produces a variety of diagnostic messages as it runs.  These can
 be suppressed with \code{\link[base]{suppressMessages}}.  More serious
