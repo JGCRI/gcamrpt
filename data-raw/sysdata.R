@@ -24,8 +24,13 @@ emissionsconv <- prep.emissionsconv()
 source('data-raw/weightconv.R')
 massconv <- prep.weightconv()
 
+final_energy_fuel <- readr::read_csv('data-raw/final_energy_fuel.csv')
+final_energy_end_use_sector <- readr::read_csv('data-raw/final_energy_end_use_sector.csv')
+gwp_ar4 <- readr::read_csv('data-raw/GWP_AR4.csv')
+
 devtools::use_data(gdpdef, pm_emissions_factors, annual_mileage,
-                   energyconv, countconv, emissionsconv, massconv,
+                   energyconv, countconv, emissionsconv, massconv, final_energy_fuel,
+                   final_energy_end_use_sector, gwp_ar4,
                    internal=TRUE, overwrite=TRUE,
                    compress='xz')
 

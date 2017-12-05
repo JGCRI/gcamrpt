@@ -21,12 +21,14 @@ module.final_energy_sector_fuel <- function(mode, allqueries, aggkeys, aggfn, ye
     if(mode == GETQ) {
         # Return titles of necessary queries
         # For more complex variables, will return multiple query titles.
-        'Final energy by aggregate end-use sector and fuel'
+        'Final energy by detailed end-use sector and fuel'
     }
     else {
-        message('Function for processing variable: Final Energy by aggregate end-use sector and fuel')
+        message('Function for processing variable: Final Energy by detailed end-use sector and fuel')
 
-        final_energy <- allqueries$'Final energy by aggregate end-use sector and fuel'
+        final_energy <- allqueries$'Final energy by detailed end-use sector and fuel' %>%
+            dplyr::left_join(final_energy_fuel, by = 'input') %>%
+            dplyr::left_join(final_energy_end_use_sector, by = 'sector')
         final_energy <- filter(final_energy, years, filters)
         final_energy <- aggregate(final_energy, aggfn, aggkeys)
 
@@ -38,5 +40,46 @@ module.final_energy_sector_fuel <- function(mode, allqueries, aggkeys, aggfn, ye
             }
         }
         final_energy
+    }
+}
+
+#' Building Floorspace Module
+#'
+#' Produce building floorspace by region.
+#'
+#' The raw table used by this module has columns:
+#' \itemize{
+#'   \item{scenario}
+#'   \item{region}
+#'   \item{year}
+#'   \item{value}
+#'   \item{Units}
+#' }
+#'
+#' @keywords internal
+
+module.building_floorspace <- function(mode, allqueries, aggkeys, aggfn, years,
+                                            filters, ounit)
+{
+    if(mode == GETQ) {
+        # Return titles of necessary queries
+        # For more complex variables, will return multiple query titles.
+        'Building floorspace'
+    }
+    else {
+        message('Function for processing variable: Building floorspace')
+
+        floorspace <- allqueries$'Building floorspace' %>%
+            dplyr::select(-nodeinput, -`building-node-input`)
+        floorspace <- filter(floorspace, years, filters)
+        floorspace <- aggregate(floorspace, aggfn, aggkeys)
+        if(!is.na(ounit)) {
+            cfac <- unitconv_counts(floorspace$Units[1], ounit)
+            if(!is.na(cfac)) {
+                floorspace$value <- floorspace$value *cfac
+                floorspace$Units <- ounit
+            }
+        }
+        floorspace
     }
 }

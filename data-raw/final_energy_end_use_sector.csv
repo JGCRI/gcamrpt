@@ -1,0 +1,22 @@
+sector,end_use_sector
+industrial energy use,Industry
+trn_pass_road_LDV_4W,Transportation
+comm heating,Buildings
+comm others,Buildings
+process heat cement,Industry
+resid heating,Buildings
+resid others,Buildings
+N fertilizer,Industry
+industrial feedstocks,Industry
+trn_freight,Transportation
+comm cooling,Buildings
+resid cooling,Buildings
+trn_freight_road,Transportation
+trn_pass_road,Transportation
+trn_pass_road_LDV,Transportation
+trn_pass_road_bus,Transportation
+cement,Industry
+trn_pass,Transportation
+trn_pass_road_LDV_2W,Transportation
+trn_aviation_intl,Transportation
+trn_shipping_intl,Transportation

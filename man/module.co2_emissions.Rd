@@ -7,7 +7,7 @@
 module.co2_emissions(mode, allqueries, aggkeys, aggfn, years, filters, ounit)
 }
 \description{
-Produce service output by technology and vintage
+Produce CO2 emissions by technology and vintage
 }
 \details{
 The raw table used by this module has columns:
