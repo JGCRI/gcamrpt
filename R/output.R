@@ -32,7 +32,7 @@ output <- function(rslts, dataformat, fileformat, dirname)
     }
 
     if(fileformat == 'R') {
-        return(rslts)
+        return(NULL)
     }
     else if(fileformat == 'rgcam') {
         # Create project and add results to it
