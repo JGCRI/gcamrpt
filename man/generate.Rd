@@ -39,8 +39,10 @@ as separate tables.}
 otherwise, leave in long format.}
 }
 \value{
-NULL; the report will be written to output files as described in the
-Output section.
+A list of the tables produced.  Depending on the options chosen, this
+list could be nested up to two layers deep.  Additionally, the report will be
+written to output files as described in the Output section.  If file output
+was requested, then the results will be returned invisibly.
 }
 \description{
 Read the user control files (see details below) and run the report generation.
@@ -100,7 +102,10 @@ their functions are:
 \describe{
     \item{\code{iamrpt.fileformat}}{File format for output.  Options are
 \code{"R"}, \code{"rgcam"}, \code{"CSV"} and \code{"XLSX"}. If \code{"R"}, do
-not output a file at all and instead return results as an R list.}
+not output a file at all.  In all cases the tables produced are returned as a
+(possibly nested) list.  If file output was produced, then the results are
+returned invisibly, so they won't print to the terminal unless you
+explicitly call \code{print} on them.}
     \item{\code{iamrpt.scenmerge}}{If \code{TRUE}, for each variable merge the
 results for all scenarios into a single table (distinguished by the value of
 the scenario column).  Otherwise, create a separate table for each
