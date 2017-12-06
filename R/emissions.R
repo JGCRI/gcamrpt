@@ -41,3 +41,94 @@ module.co2_emissions <- function(mode, allqueries, aggkeys, aggfn, years,
     }
 }
 
+#' GHG Emissions Data Module
+#'
+#' Produce ghg emissions by subsector, converted to MTCO2e with AR4 GWPs
+#'
+#' The raw table used by this module has columns:
+#' \itemize{
+#'   \item{scenario}
+#'   \item{region}
+#'   \item{year}
+#'   \item{value}
+#'   \item{Units}
+#' }
+#'
+#' @keywords internal
+
+module.ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, aggfn, years,
+                                     filters, ounit)
+{
+    if(mode == GETQ) {
+        # Return titles of necessary queries
+        # For more complex variables, will return multiple query titles in vector
+        'GHG emissions by subsector'
+    }
+    else {
+        message('Function for processing variable: GHG emissions by subsector')
+
+        ghg <- allqueries$'GHG emissions by subsector'
+        ghg <- filter(ghg, years, filters) %>%
+            # Add in GWP, and remove gases without GWP
+            dplyr::right_join(gwp_ar4, by = c('ghg', 'Units')) %>%
+            # Convert to MTCO2e
+            dplyr::mutate(value = value * GWP,
+                          Units = 'MTCO2e') %>%
+            dplyr::select(-GWP)
+        ghg <- aggregate(ghg, aggfn, aggkeys)
+        if(!is.na(ounit)) {
+            cfac <- unitconv_counts(ghg$Units[1], ounit)
+            if(!is.na(cfac)) {
+                ghg$value <- ghg$value *cfac
+                ghg$Units <- ounit
+            }
+        }
+        ghg
+    }
+}
+
+#' GHG Emissions Data Module
+#'
+#' Produce ghg emissions by technology, converted to MTCO2e with AR5 GWPs
+#'
+#' The raw table used by this module has columns:
+#' \itemize{
+#'   \item{scenario}
+#'   \item{region}
+#'   \item{year}
+#'   \item{value}
+#'   \item{Units}
+#' }
+#'
+#' @keywords internal
+
+module.ghg_emissions_ar5 <- function(mode, allqueries, aggkeys, aggfn, years,
+                                     filters, ounit)
+{
+    if(mode == GETQ) {
+        # Return titles of necessary queries
+        # For more complex variables, will return multiple query titles in vector
+        'GHG emissions by technology'
+    }
+    else {
+        message('Function for processing variable: GHG emissions by technology')
+
+        ghg <- allqueries$'GHG emissions by technology'
+        ghg <- filter(ghg, years, filters) %>%
+            # Add in GWP, and remove gases without GWP
+            dplyr::right_join(gwp_ar5, by = c('ghg', 'Units')) %>%
+            # Convert to MTCO2e
+            dplyr::mutate(value = value * GWP,
+                          Units = 'MTCO2e') %>%
+            dplyr::select(-GWP)
+        ghg <- aggregate(ghg, aggfn, aggkeys)
+        if(!is.na(ounit)) {
+            cfac <- unitconv_counts(ghg$Units[1], ounit)
+            if(!is.na(cfac)) {
+                ghg$value <- ghg$value *cfac
+                ghg$Units <- ounit
+            }
+        }
+        ghg
+    }
+}
