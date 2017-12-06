@@ -67,14 +67,17 @@ module.ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, aggfn, years,
     else {
         message('Function for processing variable: GHG emissions by subsector')
 
-        ghg <- allqueries$'GHG emissions by subsector'
-        ghg <- filter(ghg, years, filters) %>%
+        ghg <- allqueries$'GHG emissions by subsector' %>%
             # Add in GWP, and remove gases without GWP
             dplyr::right_join(gwp_ar4, by = c('ghg', 'Units')) %>%
             # Convert to MTCO2e
             dplyr::mutate(value = value * GWP,
                           Units = 'MTCO2e') %>%
-            dplyr::select(-GWP)
+            dplyr::select(-GWP) %>%
+            # Add in gas type
+            dplyr::left_join(ghg_gas_type, by = 'ghg')
+
+        ghg <- filter(ghg, years, filters)
         ghg <- aggregate(ghg, aggfn, aggkeys)
         if(!is.na(ounit)) {
             cfac <- unitconv_counts(ghg$Units[1], ounit)
@@ -108,19 +111,22 @@ module.ghg_emissions_ar5 <- function(mode, allqueries, aggkeys, aggfn, years,
     if(mode == GETQ) {
         # Return titles of necessary queries
         # For more complex variables, will return multiple query titles in vector
-        'GHG emissions by technology'
+        'GHG emissions by subsector'
     }
     else {
-        message('Function for processing variable: GHG emissions by technology')
+        message('Function for processing variable: GHG emissions by subsector')
 
-        ghg <- allqueries$'GHG emissions by technology'
-        ghg <- filter(ghg, years, filters) %>%
+        ghg <- allqueries$'GHG emissions by subsector' %>%
             # Add in GWP, and remove gases without GWP
             dplyr::right_join(gwp_ar5, by = c('ghg', 'Units')) %>%
             # Convert to MTCO2e
             dplyr::mutate(value = value * GWP,
                           Units = 'MTCO2e') %>%
-            dplyr::select(-GWP)
+            dplyr::select(-GWP) %>%
+            # Add in gas type
+            dplyr::left_join(ghg_gas_type, by = 'ghg')
+
+        ghg <- filter(ghg, years, filters)
         ghg <- aggregate(ghg, aggfn, aggkeys)
         if(!is.na(ounit)) {
             cfac <- unitconv_counts(ghg$Units[1], ounit)
