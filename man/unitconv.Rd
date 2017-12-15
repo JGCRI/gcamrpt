@@ -38,7 +38,7 @@ Supported units are described in \code{\link{parsecounts}}.
 
 \item \code{unitconv_energy}: Convert energy units
 
-Supported units: EJ, TJ, MJ, MWh
+Supported units: EJ, TJ, MJ, MWh, TWh
 
 \item \code{unitconv_usdollar}: Adjust US Dollar units for inflation.
 

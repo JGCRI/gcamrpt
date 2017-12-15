@@ -112,7 +112,7 @@ parsecounts <- function(unit)
 
 #' @describeIn unitconv Convert energy units
 #'
-#' Supported units: EJ, TJ, MJ, MWh
+#' Supported units: EJ, TJ, MJ, MWh, TWh
 unitconv_energy <- function(iunit, ounit, inverse=FALSE)
 {
     unitasserts(iunit, ounit)

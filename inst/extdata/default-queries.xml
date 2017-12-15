@@ -124,72 +124,6 @@
       </supplyDemandQuery>
       </aQuery>
 
-      	<aQuery>
-		<all-regions/>
-<emissionsQueryBuilder title="GHG emissions by technology">
-         <axis1 name="technology">technology</axis1>
-         <axis2 name="Year">emissions</axis2>
-         <xPath buildList="true" dataName="emissions" group="false" sumAll="false"> 
-			 	 	 <![CDATA[declare function local:deep-copy($nodes as node()*) as node()* {
-                         for $node in $nodes
-                         return typeswitch($node)
-                         case $e as element()
-                             return element { local-name($e) } {
-                                 $e/@*,
-                                 for $c in $e/(* | text())
-                                 return local:deep-copy($c)
-                             }
-                         default return $node
-                     };
-			 	 	 declare function local:rename-resource-emiss($resources as node()*) as node()* {
-					         for $resource in $resources
-			 	 		 let $scn := $resource/ancestor::scenario,
-			 			     $rgn := $resource/ancestor::region,
-			 			     $retDoc := document { element scenario {
-									$scn/@*,
-									element region {
-										$rgn/@*,
-										element sector {
-										        attribute type { 'sector' },
-											$resource/@name,
-											element subsector {
-												attribute type { 'subsector' },
-												$resource/@name,
-												element technology {
-													attribute type { 'technology' },
-													$resource/@name,
-													local:deep-copy($resource/*[@type='GHG'])
-			 			 						}
-			 			 	  				}
-										}
-									}
-								}
-							}
-			 			 return
-						     $retDoc//text()
-			 	 	 };  
-			 	 	 declare function local:run-combine-sector-resource-emiss($scenarios as xs:string*, $regions as xs:string*, $collection as xs:string) as node()* { 	
-			 	 	 let $regionsG := if(not($regions[1] = 'Global'))
-			 	 	 		  then $regions
-			 	 	 		  else distinct-values(collection($collection)/scenario/world/*[@type='region']/@name)
-			 	 	 return
-			 	 	 for $scenario in $scenarios, 	    
-			 	 	 $region in $regionsG 	
-			 	 	 let $scenario_split := tokenize($scenario, ' '), 	    
-                     $scenario_name := string-join($scenario_split[position() < last()], ' '),
-			 	 	 $scenario_date := $scenario_split[last()],
-			 	 	 $currTree := collection($collection)/scenario[@name = $scenario_name and @date = $scenario_date]/world/*[@type = 'region' and @name=$region]
-					 return (: rename resources as a sector/subsector/tech :)
-						local:rename-resource-emiss($currTree/*[@type='resource' and exists(child::*[@type='GHG'])])
-						| (: get the sector emissions :)
-						$currTree/*[@type = 'sector' ]//*[@type='technology']/*[@type = 'GHG']/emissions/node()
-	 	 }; 
-            	 local:run-combine-sector-resource-emiss((:scenarios:), (:regions:), (:collection:))]]>
-	 </xPath>
-         <comments/>
-      </emissionsQueryBuilder>
-      </aQuery>
-
       <aQuery>
 		<all-regions/>
       <emissionsQueryBuilder title="GHG emissions by subsector">
@@ -255,4 +189,14 @@
          <comments/>
       </emissionsQueryBuilder>
       </aQuery>
+
+    <aQuery>
+	  <all-regions/>
+      <supplyDemandQuery title="Cement production by region">
+         <axis1 name="region">region</axis1>
+         <axis2 name="Year">physical-output[@vintage]</axis2>
+         <xPath buildList="true" dataName="output" group="false" sumAll="false">*[@type = 'sector' and (@name='cement')]//*[@type='output' (:collapse:)]/physical-output/node()</xPath>
+         <comments/>
+      </supplyDemandQuery>
+    </aQuery>
 </queries>

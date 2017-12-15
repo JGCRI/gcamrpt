@@ -8,7 +8,7 @@ module.ghg_emissions_ar4(mode, allqueries, aggkeys, aggfn, years, filters,
   ounit)
 }
 \description{
-Produce ghg emissions by technology, converted to MTCO2e with AR4 GWPs
+Produce ghg emissions by subsector, converted to MTCO2e with AR4 GWPs
 }
 \details{
 The raw table used by this module has columns:

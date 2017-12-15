@@ -33,7 +33,7 @@ module.final_energy_sector_fuel <- function(mode, allqueries, aggkeys, aggfn, ye
         final_energy <- aggregate(final_energy, aggfn, aggkeys)
 
         if(!is.na(ounit)) {
-            cfac <- unitconv_counts(final_energy$Units[1], ounit)
+            cfac <- unitconv_energy(final_energy$Units[1], ounit)
             if(!is.na(cfac)) {
                 final_energy$value <- final_energy$value *cfac
                 final_energy$Units <- ounit
@@ -83,3 +83,44 @@ module.building_floorspace <- function(mode, allqueries, aggkeys, aggfn, years,
         floorspace
     }
 }
+
+#' Cement Production Module
+#'
+#' Produce cement production by region.
+#'
+#' The raw table used by this module has columns:
+#' \itemize{
+#'   \item{scenario}
+#'   \item{region}
+#'   \item{year}
+#'   \item{value}
+#'   \item{Units}
+#' }
+#'
+#' @keywords internal
+
+module.cement_production <- function(mode, allqueries, aggkeys, aggfn, years,
+                                       filters, ounit)
+{
+    if(mode == GETQ) {
+        # Return titles of necessary queries
+        # For more complex variables, will return multiple query titles.
+        'Cement production by region'
+    }
+    else {
+        message('Function for processing variable: Cement production')
+
+        cement <- allqueries$'Cement production by region'
+        cement <- filter(cement, years, filters)
+        cement <- aggregate(cement, aggfn, aggkeys)
+        if(!is.na(ounit)) {
+            cfac <- unitconv_counts(cement$Units[1], ounit)
+            if(!is.na(cfac)) {
+                cement$value <- cement$value *cfac
+                cement$Units <- ounit
+            }
+        }
+        cement
+    }
+}
+
