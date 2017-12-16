@@ -2,7 +2,7 @@
 
 #' CO2 emissions Data Module
 #'
-#' Produce service output by technology and vintage
+#' Produce CO2 emissions
 #'
 #' The raw table used by this module has columns:
 #' \itemize{
@@ -37,6 +37,46 @@ module.co2_emissions <- function(mode, allqueries, aggkeys, aggfn, years,
         co2 <- filter(co2, years, filters)
         co2 <- aggregate(co2, aggfn, aggkeys)
         co2 <- unitconv_co2(co2, ounit)
+        co2
+    }
+}
+
+#' CO2 emissions by end-use sector Data Module
+#'
+#' Produce service output by technology and vintage
+#'
+#' The raw table used by this module has columns:
+#' \itemize{
+#'   \item{scenario}
+#'   \item{region}
+#'   \item{year}
+#'   \item{value}
+#'   \item{Units}
+#' }
+#'
+#' @keywords internal
+
+module.co2_emissions_end_use <- function(mode, allqueries, aggkeys, aggfn, years,
+                                 filters, ounit)
+{
+    if(mode == GETQ) {
+        # Return titles of necessary queries
+        # For more complex variables, will return multiple query titles in vector
+        'CO2 Emissions by enduse'
+    }
+    else {
+        message('Function for processing variable: CO2 Emissions by enduse')
+        co2 <- allqueries$'CO2 Emissions by enduse'
+        co2 <- filter(co2, years, filters)
+        co2 <- aggregate(co2, aggfn, aggkeys)
+
+        if(!is.na(ounit)) {
+            cfac <- unitconv_co2(co2$Units[1], ounit)
+            if(!is.na(cfac)) {
+                co2$value <- co2$value *cfac
+                co2$Units <- ounit
+            }
+        }
         co2
     }
 }
