@@ -16,8 +16,7 @@
 #' @keywords internal
 
 module.final_energy_sector_fuel <- function(mode, allqueries, aggkeys, aggfn, years,
-                              filters, ounit)
-{
+                              filters, ounit){
     if(mode == GETQ) {
         # Return titles of necessary queries
         # For more complex variables, will return multiple query titles.
@@ -123,4 +122,3 @@ module.cement_production <- function(mode, allqueries, aggkeys, aggfn, years,
         cement
     }
 }
-
