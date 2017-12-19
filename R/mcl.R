@@ -219,7 +219,7 @@ generate <- function(scenctl,
     }
 
     if(scenmerge)
-    rslts <- merge_scenarios(rslts)
+        rslts <- merge_scenarios(rslts)
 
     if(! dataformat %in% c('tabs', 'merged', 'IIASA')) {
         warning('Unrecognized data format: ', dataformat, '.  Using "tabs".')
