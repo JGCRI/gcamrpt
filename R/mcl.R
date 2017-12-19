@@ -56,7 +56,11 @@
 #' their functions are:
 #' \describe{
 #'     \item{\code{iamrpt.fileformat}}{File format for output.  Options are
-#' \code{"CSV"} and \code{"XLSX"}}
+#' \code{"R"}, \code{"rgcam"}, \code{"CSV"} and \code{"XLSX"}. If \code{"R"}, do
+#' not output a file at all.  In all cases the tables produced are returned as a
+#' (possibly nested) list.  If file output was produced, then the results are
+#' returned invisibly, so they won't print to the terminal unless you
+#' explicitly call \code{print} on them.}
 #'     \item{\code{iamrpt.scenmerge}}{If \code{TRUE}, for each variable merge the
 #' results for all scenarios into a single table (distinguished by the value of
 #' the scenario column).  Otherwise, create a separate table for each
@@ -86,10 +90,11 @@
 #' will be 'iamrpt.xlsx'.  For CSV output with \code{tabs == FALSE} the result
 #' will be 'iamrpt.csv'.  For CSV output with \code{tabs == TRUE} the output
 #' files will be named with the scenario (if scenario tables are not merged) and
-#' variable output names, for example 'Reference-GDP.csv'.  In any of these
-#' cases, if a file already exists with the automatically chosen filename, the
-#' first unused number will be appended, e.g., iamrpt001.xlsx, iamrpt002.xlsx,
-#' etc.
+#' variable output names, for example 'Reference-GDP.csv'.  If the specified
+#' output is \code{"rgcam"}, the output will be an \code{\link{rgcam}}
+#' project data file named 'iamrpt.dat'.  In any of these cases, if a file
+#' already exists with the automatically chosen filename, the first unused
+#' number will be appended, e.g., iamrpt001.xlsx, iamrpt002.xlsx, etc.
 #'
 #' The system produces a variety of diagnostic messages as it runs.  These can
 #' be suppressed with \code{\link[base]{suppressMessages}}.  More serious
@@ -149,8 +154,10 @@
 #' \code{'tabs'}, \code{'merged'}, or \code{'IIASA'}
 #' @param wideformat Flag: if true, convert data to wide format before output;
 #' otherwise, leave in long format.
-#' @return NULL; the report will be written to output files as described in the
-#' Output section.
+#' @return A list of the tables produced.  Depending on the options chosen, this
+#' list could be nested up to two layers deep.  Additionally, the report will be
+#' written to output files as described in the Output section.  If file output
+#' was requested, then the results will be returned invisibly.
 #' @importFrom magrittr %>%
 #' @export
 generate <- function(scenctl,
@@ -264,30 +271,34 @@ generate <- function(scenctl,
 
     # need to replace handling of empty dfs with method used in IIASA
     else if (wideformat) {
-            if (scenmerge) {
+        if (scenmerge) {
 
-                # year col must be char
-                # handle emtpty df by filling with empty row first
-                rslts <- lapply(rslts, function(df) {
-                    if (nrow(df) ==0) {
-                        df[1,] <- rep(0, ncol(df))
+            # year col must be char
+            # handle emtpty df by filling with empty row first
+            rslts <- lapply(rslts, function(df) {
+                if (nrow(df) ==0) {
+                    df[1,] <- rep(0, ncol(df))
 
-                    }
-                    df$year <- unlist(lapply(df$year, toString))
-                    df
-                })
+                }
+                df$year <- unlist(lapply(df$year, toString))
+                df
+            })
 
-                rslts <- lapply(rslts, function(df) {tidyr::spread(df, year, value)})
-            }
-            else {
-                rslts<- lapply(rslts, function(df) {lapply(df, tidyr::spread, year,value)})
-            }
+            rslts <- lapply(rslts, function(df) {tidyr::spread(df, year, value)})
         }
+        else {
+            rslts<- lapply(rslts, function(df) {lapply(df, tidyr::spread, year,value)})
+        }
+    }
 
-    output(rslts, dataformat, fileformat, outputdir)
+    if(fileformat == 'R') {
+        rslts
+    } else {
+        output(rslts, dataformat, fileformat, outputdir)
+        message('FIN.')
+        invisible(rslts)
+    }
 
-    message('FIN.')
-    invisible(NULL)
 }
 
 
