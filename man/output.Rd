@@ -13,7 +13,7 @@ a list of data frames or a list of lists of data frames.}
 \item{dataformat}{Indicator of data format:  If 'tabs', write to separate files; if 'merged'
 write merged results to a single file.}
 
-\item{fileformat}{File format for the output:  'CSV' or 'XLSX'}
+\item{fileformat}{File format for the output:  'R', 'rgcam', 'CSV' or 'XLSX'}
 
 \item{dirname}{Directory to write output file(s) into.}
 }
