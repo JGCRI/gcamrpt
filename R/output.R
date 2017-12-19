@@ -6,7 +6,7 @@
 #' a list of data frames or a list of lists of data frames.
 #' @param dataformat Indicator of data format:  If 'tabs', write to separate files; if 'merged'
 #' write merged results to a single file.
-#' @param fileformat File format for the output:  'CSV' or 'XLSX'
+#' @param fileformat File format for the output:  'R', 'rgcam', 'CSV' or 'XLSX'
 #' @param dirname Directory to write output file(s) into.
 #' @importFrom assertthat assert_that
 #' @keywords internal
@@ -31,7 +31,20 @@ output <- function(rslts, dataformat, fileformat, dirname)
                     msg='output_csv: Invalid results structure, lists nested > 2 deep.')
     }
 
-    if(!fileformat %in% c('CSV', 'XLSX')) {
+    if(fileformat == 'R') {
+        return(NULL)
+    }
+    else if(fileformat == 'rgcam') {
+        # Create project and add results to it
+        projname <- alternate_filename(file.path(dirname, 'iamrpt.dat'))
+        p <- rgcam::loadProject(projname)
+        for(name in names(rslts)) {
+            p <- rgcam::addQueryTable(p, rslts[[name]], name)
+        }
+        message('Writing file ', projname)
+        return(NULL)
+    }
+    else if(!fileformat %in% c('CSV', 'XLSX')) {
         warning('Unknown fileformat requested: ', fileformat, '.  Using CSV.')
         fileformat = 'CSV'
     }
