@@ -73,8 +73,9 @@ module.gdp_mer_ <- function(mode, allqueries, aggkeys, aggfn, years,
         gdp_mer <- filter(gdp_mer, years, filters)
         gdp_mer <- aggregate(gdp_mer, aggfn, aggkeys)
         if(grepl('US', ounit)) {
-            cf <- unitconv_usdollar(gdp_mer$Units, ounit)
-            gdp_mer <- dplyr::mutate(gdp_mer, value=value*cf, Units=ounit)
+            cf1 <- unitconv_counts(gdp_mer$Units[1], ounit)
+            cf2 <- unitconv_usdollar(gdp_mer$Units[1], ounit)
+            gdp_mer <- dplyr::mutate(gdp_mer, value=value*cf1*cf2, Units=ounit)
         }
         else if (grepl('Rupee', ounit)) {
             ## This is hacked together and needs to be fixed.
