@@ -21,7 +21,7 @@ module.co2_emissions <- function(mode, allqueries, aggkeys, aggfn, years,
     if(mode == GETQ) {
         # Return titles of necessary queries
         # For more complex variables, will return multiple query titles in vector
-        'CO2 emissions'
+        'CO2 Emissions'
     }
     else {
         ## silence notes on package check
