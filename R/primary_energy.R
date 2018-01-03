@@ -25,7 +25,8 @@ module.primary_energy_direct <- function(mode, allqueries, aggkeys, aggfn, years
     }
     else {
         message('Function for processing variable: Primary Energy')
-        pe <- allqueries$'Primary Energy Consumption (Direct Equivalent)'
+        pe <- allqueries$'Primary Energy Consumption (Direct Equivalent)' %>%
+              dplyr::mutate(fuel = simplify_fuels(fuel))
         pe <- filter(pe, years, filters)
         pe <- aggregate(pe, aggfn, aggkeys)
         if(!is.na(ounit)) {
@@ -38,4 +39,15 @@ module.primary_energy_direct <- function(mode, allqueries, aggkeys, aggfn, years
         }
         pe
     }
+}
+
+simplify_fuels <- function(fuel) {
+    fuel <- sub('-elect renewable', '', fuel)
+    fuel <- sub('-H2 renewable', '', fuel)
+    fuel <- sub('hydro CCS', 'hydro', fuel)
+    fuel <- sub('.* oil', 'oil', fuel)
+    fuel <- sub('.*corn.*', 'biomass', fuel)
+    fuel <- sub('.*sugar.*', 'biomass', fuel)
+    fuel <- sub('biomassOil', 'biomass', fuel)
+    fuel <- sub('regional ', '', fuel)
 }
