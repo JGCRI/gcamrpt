@@ -412,10 +412,10 @@ process.tr_svc_intensity <- function(allqueries, aggkeys, aggfn, years,
 #' @describeIn trans_modules Vehicle sales
 #'
 #' This module appears to be incomplete.
-module.sales <- function(mode, allqueries, aggkeys, aggfn, years,
+module.ldv_sales <- function(mode, allqueries, aggkeys, aggfn, years,
                          filters, ounit)
 {
-    queries <- c('Transportation Service Output', 'Transportation Load Factors')
+    queries <- 'Transportation Service Output'
     if(mode == GETQ) {
         queries
     }
@@ -425,39 +425,33 @@ module.sales <- function(mode, allqueries, aggkeys, aggfn, years,
             submode <- value.x <- value.y <- pkm <- lf <- Units.x <- Units.y <-
                 vkm <- mileage <- NULL
 
-        warning('Vehicle sales processing module: not yet implemented.')
-        return(NULL)
-
         serviceOutput <- allqueries$'Transportation Service Output' %>%
-            trans_standardize(serviceOutput) %>%
-            dplyr::filter(year==vintage) # vintage aggregated over in trans_standardize()
-            # need to aggregate over fuel because don't have that info for ldfctr
+            tidyr::separate(technology, c('technology', 'vintage'), ',year=') %>%
+            dplyr::filter(year==vintage,
+                          grepl('LDV', sector)) %>%
+            dplyr::select(-vintage, -rundate)
 
-        ldfctr <- allqueries$'Load factors' %>%
-            trans_standardize(ldfctr) %>%
-            # average over technology (same for all submodes, so really just collapsing technology column)
-            dplyr::group_by(Units, scenario, region, service, mode, submode, year) %>%
-            dplyr::summarise(value=mean(value)) %>%
-            dplyr::ungroup()
+        # load factor needs to be updated for all BEV
+        lf <- load_factor
 
-        # calculation
-        sales <- serviceOutput %>%
-            dplyr::inner_join(ldfctr,
-                              by = c('scenario', 'region', 'service', 'mode', 'submode', 'year')) %>%
-            dplyr::rename(pkm=value.x, lf=value.y) %>%
-            dplyr::mutate(vkm = pkm/lf, Units='million vehicle-km') %>%
-            # relying on native units of 'million pass-km'/'million ton-km'
-            dplyr::select(-pkm, -Units.x, -lf, -Units.y)  %>%
-            dplyr::inner_join(annual_mileage, #sysdata
-                              by = c('service', 'mode', 'submode', 'year')) %>%
-            dplyr::rename(mileage=value) %>%
-            dplyr::mutate(sales = vkm/mileage) %>%
-            dplyr::select(-vkm, -Units.x, -mileage, -Units.y) %>%
-            dplyr::rename(value=sales) %>%
-            dplyr::mutate(Units = 'million vehicles')
+        vkm <- serviceOutput %>%
+            # inner join should only get rid of pass-through categories
+            dplyr::inner_join(lf, by = c("region", "sector", "subsector", "technology", "year")) %>%
+            dplyr::mutate(vkm = value / loadFactor,
+                          Units = 'million vehicle-km') %>%
+            dplyr::select(-value, -loadFactor)
+
+        sales <- vkm %>%
+            dplyr::inner_join(annual_mileage, by = c("region", "subsector", "year")) %>%
+            dplyr::mutate(sales = vkm / value,
+                          Units = 'million vehicles') %>%
+            dplyr::select(Units, scenario, region, sector, subsector, technology, year, value = sales) %>%
+            dplyr::mutate(sector = substr(sector, nchar(sector)-1, nchar(sector)),
+                          sector = if_else(sector == 'DV', '3W', sector))
 
         sales <- filter(sales, years, filters)
         sales <- aggregate(sales, aggfn, aggkeys)
+
         ## units example: million p-km
         if(!is.na(ounit)) {
             cf <- unitconv_counts(sales$Units[1], ounit)
@@ -740,4 +734,367 @@ trans_standardize <- function(queryData) {
 
 
     queryData
+}
+
+#' @describeIn trans_modules Passenger transportation service output per capita data module
+module.pass_trans_service_output_capita <- function(mode, allqueries, aggkeys, aggfn, years,
+                                             filters, ounit)
+{
+    queries <- c('Transportation Service Output', 'Population')
+    if(mode == GETQ) {
+        queries
+    }
+    else {
+        population <- allqueries$'Population' %>%
+            dplyr::select(-rundate)
+        allqueries <- trans_filter_svc(allqueries['Transportation Service Output'], TRUE)
+        so <- process.tr_svc_output(allqueries, aggkeys, aggfn, years,
+                              filters, ounit)
+        # sum globally if needed
+        if (!('region' %in% names(so))){
+            population <- aggregate(population,'sum', 'scenario')
+        }
+
+        # Columns to join by
+        join_cats <- names(population)[!(names(population) %in% c('Units', 'value'))]
+
+        # Units are everything before division sign
+        iunit <- stringr::str_sub(so$Units[1], 1, stringr::str_locate(so$Units[1], '/')[,'start'] - 1)
+
+        so_cap <- so %>%
+            dplyr::left_join(population, by = join_cats) %>%
+            dplyr::mutate(value = value.x / value.y,
+                          Units = paste0(iunit, '/', Units.y)) %>%
+            dplyr::select(-Units.x, -Units.y, -value.x, -value.y)
+
+        if(is.na(ounit))
+            return(so_cap)
+
+        iunit <- so_cap$Units[1]
+        ## See notes above for unit conversion.  This is largely repeated from
+        ## the passenger version, but there are a couple of wrinkles, so it
+        ## would take more time than I have right now to refactor it.
+        pat <- '([^/]+) */ *(\\w+) *'
+        mmat <- stringr::str_match(c(iunit, ounit), pat)
+        mmat[is.na(mmat[,3]), 3] <- ''
+        cfac <-
+            unitconv_counts(mmat[1,2], mmat[2,2]) *
+            unitconv_counts(mmat[1,3], mmat[2,3], inverse=TRUE)
+
+        if(!is.na(cfac)) {
+            dplyr::mutate(so_cap, value=cfac*value, Units=ounit)
+        }
+        else {
+            ## If any conversions failed, the warning will already have been
+            ## issued, so just return the result unconverted.
+            so_cap
+        }
+
+    }
+}
+
+#' @describeIn trans_modules Passenger transportation fleet size data module
+module.pass_trans_fleet <- function(mode, allqueries, aggkeys, aggfn, years,
+                                             filters, ounit)
+{
+    queries <- 'Transportation Service Output'
+    if(mode == GETQ) {
+        queries
+    }
+    else {
+        allqueries <- trans_filter_svc(allqueries[queries], TRUE)
+
+        allqueries$`Transportation Service Output` <- allqueries$`Transportation Service Output` %>%
+            tidyr::separate(technology, c("technology", "vintage"), ",year=") %>%
+            dplyr::left_join(load_factor, by = c("region", "sector", "subsector", "technology", "year")) %>%
+            # Remove modes without a load factor - these should all be pass-through sectors or cycle/walk
+            dplyr::filter(!is.na(loadFactor)) %>%
+            dplyr::mutate(value = value / loadFactor,
+                          Units = 'million veh-km') %>%
+            dplyr::select(-loadFactor) %>%
+            dplyr::left_join(annual_mileage, by = c("region", "year", "subsector")) %>%
+            # Remove modes without annual mileage - should only be aviation, rail, and bus
+            dplyr::filter(!is.na(value.y)) %>%
+            dplyr::mutate(value = value.x / value.y,
+                          Units = 'million vehicles') %>%
+            dplyr::select(-value.x, -value.y, -Units.x, -Units.y)
+
+        fleet <- process.tr_svc_output(allqueries, aggkeys, aggfn, years,
+                              filters, ounit)
+
+        if(!is.na(ounit)) {
+            cfac <- unitconv_counts(fleet$Units[1], ounit)
+            if(!is.na(cfac)) {
+                fleet$value <- fleet$value *cfac
+                fleet$Units <- ounit
+            }
+        }
+        fleet
+    }
+}
+
+#' @describeIn trans_modules Passenger transportation fleet size per person data module
+module.pass_trans_fleet_per_capita <- function(mode, allqueries, aggkeys, aggfn, years,
+                                    filters, ounit)
+{
+    queries <- c('Transportation Service Output', 'Population')
+    if(mode == GETQ) {
+        queries
+    }
+    else {
+        allqueries['Transportation Service Output'] <- trans_filter_svc(allqueries['Transportation Service Output'], TRUE)
+
+        allqueries$`Transportation Service Output` <- allqueries$`Transportation Service Output` %>%
+            tidyr::separate(technology, c("technology", "vintage"), ",year=") %>%
+            dplyr::left_join(load_factor, by = c("region", "sector", "subsector", "technology", "year")) %>%
+            # Remove modes without a load factor - these should all be pass-through sectors or cycle/walk
+            dplyr::filter(!is.na(loadFactor)) %>%
+            dplyr::mutate(value = value / loadFactor,
+                          Units = 'million veh-km') %>%
+            dplyr::select(-loadFactor) %>%
+            dplyr::left_join(annual_mileage, by = c("region", "year", "subsector")) %>%
+            # Remove modes without annual mileage - should only be aviation, rail, and bus
+            dplyr::filter(!is.na(value.y)) %>%
+            dplyr::mutate(value = value.x / value.y,
+                          Units = 'million vehicles') %>%
+            dplyr::select(-value.x, -value.y, -Units.x, -Units.y)
+
+        fleet <- process.tr_svc_output(allqueries, aggkeys, aggfn, years,
+                                       filters, ounit) %>%
+            # units are not handled correctly by process.tr_svc_output, so set correctly here
+            # are there any exceptions??
+            dplyr::mutate(Units = allqueries$`Transportation Service Output`$Units[1])
+
+        pop <- allqueries$'Population' %>%
+            dplyr::select(-rundate)
+
+        # Figure out if we need to aggregate population by region
+        if (!('region' %in% names(fleet))){
+            pop <- aggregate(pop, aggfn, 'year')
+        }
+
+        # Determine columns to join by
+        join_cats <- names(pop)[!(names(pop) %in% c('Units', 'value'))]
+
+        fleet_capita <- fleet %>%
+            dplyr::left_join(pop, by = join_cats) %>%
+            dplyr::mutate(value = value.x / value.y,
+                          Units = paste0(Units.x,'/',Units.y)) %>%
+            dplyr::select(-value.x, -value.y, -Units.x, -Units.y)
+
+        if(is.na(ounit))
+            return(fleet_capita)
+
+        iunit <- fleet_capita$Units[1]
+        pat <- '(\\w+) *(\\w+)? */ *(\\w+) *(\\w+)? *'
+        mmat <- stringr::str_match(c(iunit, ounit), pat)
+        mmat[is.na(mmat[,3]), 3] <- ''
+        cfac <-
+            unitconv_counts(mmat[1,2], mmat[2,2]) *
+            unitconv_counts(mmat[1,4], mmat[2,4], inverse=TRUE)
+
+        if(!is.na(cfac)) {
+            dplyr::mutate(fleet_capita, value=cfac*value, Units=ounit)
+        }
+        else {
+            ## If any conversions failed, the warning will already have been
+            ## issued, so just return the result unconverted.
+            fleet_capita
+        }
+    }
+}
+
+#' @describeIn trans_modules Vehicle sales
+#'
+#' This module appears to be incomplete.
+module.ldv_sales_fuel_prop <- function(mode, allqueries, aggkeys, aggfn, years,
+                             filters, ounit)
+{
+    queries <- 'Transportation Service Output'
+    if(mode == GETQ) {
+        queries
+    }
+    else {
+        ## silence notes on package check
+        value <- year <- vintage <- Units <- scenario <- region <- service <-
+            submode <- value.x <- value.y <- pkm <- lf <- Units.x <- Units.y <-
+            vkm <- mileage <- NULL
+
+        serviceOutput <- allqueries$'Transportation Service Output' %>%
+            tidyr::separate(technology, c('technology', 'vintage'), ',year=') %>%
+            dplyr::filter(year==vintage,
+                          grepl('LDV', sector)) %>%
+            dplyr::select(-vintage, -rundate)
+
+        # load factor needs to be updated for all BEV
+        lf <- load_factor
+
+        vkm <- serviceOutput %>%
+            # inner join should only get rid of pass-through categories
+            dplyr::inner_join(lf, by = c("region", "sector", "subsector", "technology", "year")) %>%
+            dplyr::mutate(vkm = value / loadFactor,
+                          Units = 'million vehicle-km') %>%
+            dplyr::select(-value, -loadFactor)
+
+        sales <- vkm %>%
+            dplyr::inner_join(annual_mileage, by = c("region", "subsector", "year")) %>%
+            dplyr::mutate(sales = vkm / value,
+                          Units = 'million vehicles') %>%
+            dplyr::select(Units, scenario, region, sector, subsector, technology, year, value = sales) %>%
+            dplyr::mutate(sector = substr(sector, nchar(sector)-1, nchar(sector)),
+                          sector = if_else(sector == 'DV', '3W', sector))
+
+        sales <- filter(sales, years, filters)
+        sales <- aggregate(sales, aggfn, aggkeys)
+
+        if (!('technology' %in% names(sales))){
+            warning('Technology not in LDV Sales')
+        }
+
+        group_cats <- names(sales)[!(names(sales) %in% c('value', 'technology'))]
+
+        sales <- sales %>%
+            dplyr::group_by_(.dots = group_cats) %>%
+            dplyr::mutate(value = 100 * value / sum(value)) %>%
+            dplyr::ungroup() %>%
+            dplyr::mutate(Units = 'Percentage')
+
+        ## units example: million p-km
+        if(!is.na(ounit)) {
+            cf <- unitconv_counts(sales$Units[1], ounit)
+            if(!is.na(cf)) {
+                sales <- dplyr::mutate(sales, value=value*cf, Units=ounit)
+            }
+        }
+        sales
+    }
+}
+
+#' @describeIn trans_modules Passenger transportation service output data module
+module.pass_vkm <- function(mode, allqueries, aggkeys, aggfn, years,
+                                             filters, ounit)
+{
+    queries <- 'Transportation Service Output'
+    if(mode == GETQ) {
+        queries
+    }
+    else {
+        allqueries[['Transportation Service Output']] <- trans_filter_svc(allqueries[queries], TRUE)$'Transportation Service Output' %>%
+            tidyr::separate(technology, c('technology', 'vintage'), ',year=') %>%
+            dplyr::inner_join(load_factor, by = c("region", "sector", "subsector", "technology", "year")) %>%
+            dplyr::mutate(value = value / loadFactor,
+                          Units = 'million vehicle-km') %>%
+            dplyr::select(-loadFactor)
+
+
+        process.tr_svc_output(allqueries, aggkeys, aggfn, years,
+                              filters, ounit)
+    }
+}
+
+#' @describeIn trans_modules Freight transportation shares data module
+module.frgt_trans_shares <- function(mode, allqueries, aggkeys, aggfn, years,
+                                             filters, ounit)
+{
+    queries <- 'Transportation Service Output'
+    if(mode == GETQ) {
+        queries
+    }
+    else {
+        allqueries <- trans_filter_svc(allqueries[queries], FALSE)
+        freight <- process.tr_svc_output(allqueries, aggkeys, aggfn, years,
+                              filters, ounit)
+
+        # Aggregate over vintages if necessary
+        grp_cats <- names(freight)[!(names(freight) %in% c('vintage', 'value'))]
+
+        freight <- freight %>%
+            # Sum over vintages
+            dplyr::group_by_(.dots = grp_cats) %>%
+            dplyr::summarise(value = sum(value)) %>%
+            dplyr::ungroup()
+
+        # This will only allow us to see percentage of mode or submode in service, not submode in mode
+        grp_cats <- names(freight)[!(names(freight) %in% c('value', 'mode', 'submode', 'technology'))]
+
+        freight_shares <- freight %>%
+            dplyr::group_by_(.dots = grp_cats) %>%
+            dplyr::mutate(value = 100 * value / sum(value)) %>%
+            dplyr::ungroup() %>%
+            dplyr::mutate(Units = 'Percentage')
+
+
+    }
+}
+
+#' @describeIn trans_modules Passenger transportation shares public vs private (not including aviation) data module
+module.pass_trans_public_share <- function(mode, allqueries, aggkeys, aggfn, years,
+                                             filters, ounit)
+{
+    queries <- 'Transportation Service Output'
+    if(mode == GETQ) {
+        queries
+    }
+    else {
+        # NOTE: this module is very specific, and may not be easily manipulable via control files
+        allqueries <- trans_filter_svc(allqueries[queries], TRUE)
+        shares <- process.tr_svc_output(allqueries, aggkeys, aggfn, years,
+                              filters, ounit) %>%
+            dplyr::filter(mode != 'Aviation') %>%
+            dplyr::mutate(transit_type = if_else(mode == 'Rail' | submode == 'Bus', 'Public', 'Private')) %>%
+            dplyr::group_by(Units, scenario, region, year, service, transit_type) %>%
+            dplyr::summarise(value = sum(value)) %>%
+            dplyr::ungroup()
+
+        grp_cats <- names(shares)[!(names(shares) %in% c('value', 'transit_type'))]
+
+        shares <- shares %>%
+            dplyr::group_by_(.dots = grp_cats) %>%
+            dplyr::mutate(value = 100 * value / sum(value)) %>%
+            dplyr::ungroup() %>%
+            dplyr::mutate(Units = 'Percentage')
+
+        shares
+    }
+}
+
+#' @describeIn trans_modules Passenger transportation fleet fuel shares data module
+module.pass_trans_fleet_shares <- function(mode, allqueries, aggkeys, aggfn, years,
+                                    filters, ounit)
+{
+    queries <- 'Transportation Service Output'
+    if(mode == GETQ) {
+        queries
+    }
+    else {
+        allqueries <- trans_filter_svc(allqueries[queries], TRUE)
+
+        allqueries$`Transportation Service Output` <- allqueries$`Transportation Service Output` %>%
+            tidyr::separate(technology, c("technology", "vintage"), ",year=") %>%
+            dplyr::left_join(load_factor, by = c("region", "sector", "subsector", "technology", "year")) %>%
+            # Remove modes without a load factor - these should all be pass-through sectors or cycle/walk
+            dplyr::filter(!is.na(loadFactor)) %>%
+            dplyr::mutate(value = value / loadFactor,
+                          Units = 'million veh-km') %>%
+            dplyr::select(-loadFactor) %>%
+            dplyr::left_join(annual_mileage, by = c("region", "year", "subsector")) %>%
+            # Remove modes without annual mileage - should only be aviation, rail, and bus
+            dplyr::filter(!is.na(value.y)) %>%
+            dplyr::mutate(value = value.x / value.y,
+                          Units = 'million vehicles') %>%
+            dplyr::select(-value.x, -value.y, -Units.x, -Units.y)
+
+        fleet <- process.tr_svc_output(allqueries, aggkeys, aggfn, years,
+                                       filters, ounit)
+
+        grp_cats <- names(fleet)[!(names(fleet) %in% c('technology', 'value'))]
+
+        fleet <- fleet %>%
+            dplyr::group_by_(.dots = grp_cats) %>%
+            dplyr::mutate(value = round(100 * value / sum(value), 2)) %>%
+            dplyr::ungroup() %>%
+            dplyr::mutate(Units = 'Percentage')
+
+        fleet
+    }
 }

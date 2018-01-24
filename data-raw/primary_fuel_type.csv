@@ -1,0 +1,11 @@
+fuel,fuel_type
+Biomass,Renewable
+Coal,Fossil Fuel
+Natural Gas,Fossil Fuel
+Geothermal,Renewable
+Hydro,Renewable
+Nuclear,Renewable
+Oil,Fossil Fuel
+Traditional Biomass,Traditional Biomass
+Solar,Renewable
+Wind,Renewable

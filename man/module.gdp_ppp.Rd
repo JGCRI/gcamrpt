@@ -2,14 +2,28 @@
 % Please edit documentation in R/socioeconomics.R
 \name{module.gdp_ppp}
 \alias{module.gdp_ppp}
+\alias{module.gdp_ppp}
 \title{GDP PPP Data Module}
 \usage{
+module.gdp_ppp(mode, allqueries, aggkeys, aggfn, years, filters, ounit)
+
 module.gdp_ppp(mode, allqueries, aggkeys, aggfn, years, filters, ounit)
 }
 \description{
 Produce GDP PPP by region.
+
+Produce GDP PPP by region.
 }
 \details{
+The raw table used by this module has columns:
+\itemize{
+  \item{scenario}
+  \item{region}
+  \item{year}
+  \item{value}
+  \item{Units}
+}
+
 The raw table used by this module has columns:
 \itemize{
   \item{scenario}

@@ -1,0 +1,413 @@
+sector,subsector,end_use
+Beef,Mixed,Agriculture
+Beef,Pastoral,Agriculture
+biomass,biomassAEZ01,Agriculture
+biomass,biomassAEZ02,Agriculture
+biomass,biomassAEZ03,Agriculture
+biomass,biomassAEZ04,Agriculture
+biomass,biomassAEZ05,Agriculture
+biomass,biomassAEZ06,Agriculture
+biomass,biomassAEZ07,Agriculture
+biomass,biomassAEZ08,Agriculture
+biomass,biomassAEZ09,Agriculture
+biomass,biomassAEZ10,Agriculture
+biomass,biomassAEZ11,Agriculture
+biomass,biomassAEZ12,Agriculture
+Corn,CornAEZ01,Agriculture
+Corn,CornAEZ02,Agriculture
+Corn,CornAEZ03,Agriculture
+Corn,CornAEZ04,Agriculture
+Corn,CornAEZ05,Agriculture
+Corn,CornAEZ06,Agriculture
+Corn,CornAEZ07,Agriculture
+Corn,CornAEZ08,Agriculture
+Corn,CornAEZ09,Agriculture
+Corn,CornAEZ10,Agriculture
+Corn,CornAEZ11,Agriculture
+Corn,CornAEZ12,Agriculture
+Dairy,Mixed,Agriculture
+Dairy,Pastoral,Agriculture
+FiberCrop,FiberCropAEZ01,Agriculture
+FiberCrop,FiberCropAEZ02,Agriculture
+FiberCrop,FiberCropAEZ03,Agriculture
+FiberCrop,FiberCropAEZ04,Agriculture
+FiberCrop,FiberCropAEZ05,Agriculture
+FiberCrop,FiberCropAEZ06,Agriculture
+FiberCrop,FiberCropAEZ07,Agriculture
+FiberCrop,FiberCropAEZ08,Agriculture
+FiberCrop,FiberCropAEZ09,Agriculture
+FiberCrop,FiberCropAEZ10,Agriculture
+FiberCrop,FiberCropAEZ11,Agriculture
+FiberCrop,FiberCropAEZ12,Agriculture
+FodderGrass,FodderGrassAEZ01,Agriculture
+FodderGrass,FodderGrassAEZ02,Agriculture
+FodderGrass,FodderGrassAEZ03,Agriculture
+FodderGrass,FodderGrassAEZ04,Agriculture
+FodderGrass,FodderGrassAEZ05,Agriculture
+FodderGrass,FodderGrassAEZ07,Agriculture
+FodderGrass,FodderGrassAEZ08,Agriculture
+FodderHerb,FodderHerbAEZ01,Agriculture
+FodderHerb,FodderHerbAEZ02,Agriculture
+FodderHerb,FodderHerbAEZ03,Agriculture
+FodderHerb,FodderHerbAEZ04,Agriculture
+FodderHerb,FodderHerbAEZ05,Agriculture
+FodderHerb,FodderHerbAEZ06,Agriculture
+FodderHerb,FodderHerbAEZ08,Agriculture
+FodderHerb,FodderHerbAEZ09,Agriculture
+FodderHerb,FodderHerbAEZ10,Agriculture
+FodderHerb,FodderHerbAEZ11,Agriculture
+FodderHerb,FodderHerbAEZ12,Agriculture
+MiscCrop,MiscCropAEZ01,Agriculture
+MiscCrop,MiscCropAEZ02,Agriculture
+MiscCrop,MiscCropAEZ03,Agriculture
+MiscCrop,MiscCropAEZ04,Agriculture
+MiscCrop,MiscCropAEZ05,Agriculture
+MiscCrop,MiscCropAEZ06,Agriculture
+MiscCrop,MiscCropAEZ07,Agriculture
+MiscCrop,MiscCropAEZ08,Agriculture
+MiscCrop,MiscCropAEZ09,Agriculture
+MiscCrop,MiscCropAEZ10,Agriculture
+MiscCrop,MiscCropAEZ11,Agriculture
+MiscCrop,MiscCropAEZ12,Agriculture
+OilCrop,OilCropAEZ01,Agriculture
+OilCrop,OilCropAEZ02,Agriculture
+OilCrop,OilCropAEZ03,Agriculture
+OilCrop,OilCropAEZ04,Agriculture
+OilCrop,OilCropAEZ05,Agriculture
+OilCrop,OilCropAEZ06,Agriculture
+OilCrop,OilCropAEZ07,Agriculture
+OilCrop,OilCropAEZ08,Agriculture
+OilCrop,OilCropAEZ09,Agriculture
+OilCrop,OilCropAEZ10,Agriculture
+OilCrop,OilCropAEZ11,Agriculture
+OilCrop,OilCropAEZ12,Agriculture
+OtherGrain,OtherGrainAEZ01,Agriculture
+OtherGrain,OtherGrainAEZ02,Agriculture
+OtherGrain,OtherGrainAEZ03,Agriculture
+OtherGrain,OtherGrainAEZ04,Agriculture
+OtherGrain,OtherGrainAEZ05,Agriculture
+OtherGrain,OtherGrainAEZ06,Agriculture
+OtherGrain,OtherGrainAEZ08,Agriculture
+OtherGrain,OtherGrainAEZ09,Agriculture
+OtherGrain,OtherGrainAEZ10,Agriculture
+OtherGrain,OtherGrainAEZ11,Agriculture
+OtherGrain,OtherGrainAEZ12,Agriculture
+PalmFruit,PalmFruitAEZ01,Agriculture
+PalmFruit,PalmFruitAEZ02,Agriculture
+PalmFruit,PalmFruitAEZ03,Agriculture
+PalmFruit,PalmFruitAEZ04,Agriculture
+PalmFruit,PalmFruitAEZ05,Agriculture
+PalmFruit,PalmFruitAEZ06,Agriculture
+Pork,Mixed,Agriculture
+Poultry,Mixed,Agriculture
+Rice,RiceAEZ01,Agriculture
+Rice,RiceAEZ02,Agriculture
+Rice,RiceAEZ03,Agriculture
+Rice,RiceAEZ04,Agriculture
+Rice,RiceAEZ05,Agriculture
+Rice,RiceAEZ06,Agriculture
+Rice,RiceAEZ10,Agriculture
+Rice,RiceAEZ11,Agriculture
+Root_Tuber,Root_TuberAEZ01,Agriculture
+Root_Tuber,Root_TuberAEZ02,Agriculture
+Root_Tuber,Root_TuberAEZ03,Agriculture
+Root_Tuber,Root_TuberAEZ04,Agriculture
+Root_Tuber,Root_TuberAEZ05,Agriculture
+Root_Tuber,Root_TuberAEZ06,Agriculture
+Root_Tuber,Root_TuberAEZ07,Agriculture
+Root_Tuber,Root_TuberAEZ08,Agriculture
+Root_Tuber,Root_TuberAEZ09,Agriculture
+Root_Tuber,Root_TuberAEZ10,Agriculture
+Root_Tuber,Root_TuberAEZ11,Agriculture
+Root_Tuber,Root_TuberAEZ12,Agriculture
+SheepGoat,Mixed,Agriculture
+SheepGoat,Pastoral,Agriculture
+SugarCrop,SugarCropAEZ01,Agriculture
+SugarCrop,SugarCropAEZ02,Agriculture
+SugarCrop,SugarCropAEZ03,Agriculture
+SugarCrop,SugarCropAEZ04,Agriculture
+SugarCrop,SugarCropAEZ05,Agriculture
+SugarCrop,SugarCropAEZ06,Agriculture
+SugarCrop,SugarCropAEZ07,Agriculture
+SugarCrop,SugarCropAEZ08,Agriculture
+SugarCrop,SugarCropAEZ09,Agriculture
+SugarCrop,SugarCropAEZ10,Agriculture
+SugarCrop,SugarCropAEZ11,Agriculture
+SugarCrop,SugarCropAEZ12,Agriculture
+UnmanagedLand,ForestFiresAEZ01,Agriculture
+UnmanagedLand,ForestFiresAEZ02,Agriculture
+UnmanagedLand,ForestFiresAEZ03,Agriculture
+UnmanagedLand,ForestFiresAEZ04,Agriculture
+UnmanagedLand,ForestFiresAEZ05,Agriculture
+UnmanagedLand,ForestFiresAEZ06,Agriculture
+UnmanagedLand,ForestFiresAEZ08,Agriculture
+UnmanagedLand,ForestFiresAEZ09,Agriculture
+UnmanagedLand,ForestFiresAEZ10,Agriculture
+UnmanagedLand,ForestFiresAEZ11,Agriculture
+UnmanagedLand,ForestFiresAEZ12,Agriculture
+UnmanagedLand,GrasslandFiresAEZ01,Agriculture
+UnmanagedLand,GrasslandFiresAEZ02,Agriculture
+UnmanagedLand,GrasslandFiresAEZ03,Agriculture
+UnmanagedLand,GrasslandFiresAEZ04,Agriculture
+UnmanagedLand,GrasslandFiresAEZ05,Agriculture
+UnmanagedLand,GrasslandFiresAEZ06,Agriculture
+UnmanagedLand,GrasslandFiresAEZ07,Agriculture
+UnmanagedLand,GrasslandFiresAEZ08,Agriculture
+UnmanagedLand,GrasslandFiresAEZ09,Agriculture
+UnmanagedLand,GrasslandFiresAEZ10,Agriculture
+UnmanagedLand,GrasslandFiresAEZ11,Agriculture
+UnmanagedLand,GrasslandFiresAEZ12,Agriculture
+Wheat,WheatAEZ01,Agriculture
+Wheat,WheatAEZ02,Agriculture
+Wheat,WheatAEZ03,Agriculture
+Wheat,WheatAEZ04,Agriculture
+Wheat,WheatAEZ05,Agriculture
+Wheat,WheatAEZ06,Agriculture
+Wheat,WheatAEZ08,Agriculture
+Wheat,WheatAEZ09,Agriculture
+Wheat,WheatAEZ10,Agriculture
+Wheat,WheatAEZ11,Agriculture
+Wheat,WheatAEZ12,Agriculture
+FodderGrass,FodderGrassAEZ09,Agriculture
+FodderGrass,FodderGrassAEZ10,Agriculture
+FodderHerb,FodderHerbAEZ07,Agriculture
+OtherGrain,OtherGrainAEZ07,Agriculture
+Rice,RiceAEZ07,Agriculture
+Rice,RiceAEZ09,Agriculture
+Wheat,WheatAEZ07,Agriculture
+biomass,eucalyptusAEZ08,Agriculture
+biomass,eucalyptusAEZ09,Agriculture
+biomass,eucalyptusAEZ10,Agriculture
+biomass,eucalyptusAEZ11,Agriculture
+PalmFruit,PalmFruitAEZ09,Agriculture
+PalmFruit,PalmFruitAEZ10,Agriculture
+PalmFruit,PalmFruitAEZ11,Agriculture
+biomass,eucalyptusAEZ03,Agriculture
+biomass,eucalyptusAEZ04,Agriculture
+biomass,eucalyptusAEZ05,Agriculture
+biomass,eucalyptusAEZ06,Agriculture
+biomass,biomassAEZ13,Agriculture
+biomass,biomassAEZ14,Agriculture
+biomass,biomassAEZ15,Agriculture
+biomass,eucalyptusAEZ07,Agriculture
+biomass,eucalyptusAEZ12,Agriculture
+Corn,CornAEZ13,Agriculture
+Corn,CornAEZ14,Agriculture
+FodderGrass,FodderGrassAEZ11,Agriculture
+FodderGrass,FodderGrassAEZ12,Agriculture
+FodderGrass,FodderGrassAEZ13,Agriculture
+FodderGrass,FodderGrassAEZ14,Agriculture
+FodderGrass,FodderGrassAEZ15,Agriculture
+FodderHerb,FodderHerbAEZ13,Agriculture
+FodderHerb,FodderHerbAEZ14,Agriculture
+FodderHerb,FodderHerbAEZ15,Agriculture
+MiscCrop,MiscCropAEZ13,Agriculture
+MiscCrop,MiscCropAEZ14,Agriculture
+MiscCrop,MiscCropAEZ15,Agriculture
+OilCrop,OilCropAEZ14,Agriculture
+OtherGrain,OtherGrainAEZ14,Agriculture
+Rice,RiceAEZ12,Agriculture
+Rice,RiceAEZ13,Agriculture
+Root_Tuber,Root_TuberAEZ13,Agriculture
+Root_Tuber,Root_TuberAEZ14,Agriculture
+SugarCrop,SugarCropAEZ13,Agriculture
+UnmanagedLand,ForestFiresAEZ07,Agriculture
+UnmanagedLand,ForestFiresAEZ13,Agriculture
+UnmanagedLand,ForestFiresAEZ14,Agriculture
+UnmanagedLand,ForestFiresAEZ15,Agriculture
+UnmanagedLand,GrasslandFiresAEZ13,Agriculture
+UnmanagedLand,GrasslandFiresAEZ14,Agriculture
+UnmanagedLand,GrasslandFiresAEZ15,Agriculture
+UnmanagedLand,GrasslandFiresAEZ16,Agriculture
+Wheat,WheatAEZ13,Agriculture
+Wheat,WheatAEZ14,Agriculture
+Wheat,WheatAEZ15,Agriculture
+biomass,biomassAEZ16,Agriculture
+biomass,biomassAEZ17,Agriculture
+Corn,CornAEZ16,Agriculture
+FiberCrop,FiberCropAEZ16,Agriculture
+FodderGrass,FodderGrassAEZ06,Agriculture
+FodderGrass,FodderGrassAEZ16,Agriculture
+FodderGrass,FodderGrassAEZ17,Agriculture
+FodderHerb,FodderHerbAEZ16,Agriculture
+FodderHerb,FodderHerbAEZ17,Agriculture
+MiscCrop,MiscCropAEZ16,Agriculture
+MiscCrop,MiscCropAEZ17,Agriculture
+OilCrop,OilCropAEZ16,Agriculture
+OtherGrain,OtherGrainAEZ15,Agriculture
+OtherGrain,OtherGrainAEZ16,Agriculture
+OtherGrain,OtherGrainAEZ17,Agriculture
+Rice,RiceAEZ08,Agriculture
+Root_Tuber,Root_TuberAEZ16,Agriculture
+Root_Tuber,Root_TuberAEZ17,Agriculture
+UnmanagedLand,ForestFiresAEZ16,Agriculture
+UnmanagedLand,ForestFiresAEZ17,Agriculture
+UnmanagedLand,GrasslandFiresAEZ17,Agriculture
+Wheat,WheatAEZ16,Agriculture
+Wheat,WheatAEZ17,Agriculture
+biomass,eucalyptusAEZ02,Agriculture
+PalmFruit,PalmFruitAEZ12,Agriculture
+Corn,CornAEZ15,Agriculture
+FiberCrop,FiberCropAEZ13,Agriculture
+FiberCrop,FiberCropAEZ14,Agriculture
+FiberCrop,FiberCropAEZ15,Agriculture
+OilCrop,OilCropAEZ13,Agriculture
+OilCrop,OilCropAEZ15,Agriculture
+OtherGrain,OtherGrainAEZ13,Agriculture
+Root_Tuber,Root_TuberAEZ15,Agriculture
+Rice,RiceAEZ14,Agriculture
+Rice,RiceAEZ15,Agriculture
+SugarCrop,SugarCropAEZ14,Agriculture
+SugarCrop,SugarCropAEZ15,Agriculture
+SugarCrop,SugarCropAEZ16,Agriculture
+biomass,willowAEZ13,Agriculture
+biomass,willowAEZ14,Agriculture
+biomass,willowAEZ15,Agriculture
+biomass,willowAEZ16,Agriculture
+biomass,willowAEZ17,Agriculture
+Corn,CornAEZ17,Agriculture
+OilCrop,OilCropAEZ17,Agriculture
+Rice,RiceAEZ16,Agriculture
+Rice,RiceAEZ17,Agriculture
+biomass,miscanthusAEZ04,Agriculture
+biomass,miscanthusAEZ08,Agriculture
+biomass,miscanthusAEZ09,Agriculture
+biomass,miscanthusAEZ10,Agriculture
+biomass,miscanthusAEZ11,Agriculture
+biomass,miscanthusAEZ12,Agriculture
+biomass,willowAEZ08,Agriculture
+biomass,willowAEZ09,Agriculture
+biomass,willowAEZ10,Agriculture
+FodderGrass,FodderGrassAEZ18,Agriculture
+PalmFruit,PalmFruitAEZ07,Agriculture
+PalmFruit,PalmFruitAEZ08,Agriculture
+PalmFruit,PalmFruitAEZ13,Agriculture
+PalmFruit,PalmFruitAEZ14,Agriculture
+PalmFruit,PalmFruitAEZ15,Agriculture
+UnmanagedLand,ForestFiresAEZ18,Agriculture
+UnmanagedLand,GrasslandFiresAEZ18,Agriculture
+trn_aviation_intl,International Aviation,Aviation
+trn_pass,Domestic Aviation,Aviation
+comm cooling,electricity,Buildings
+resid cooling,electricity,Buildings
+comm heating,coal,Buildings
+comm heating,refined liquids,Buildings
+comm others,biomass,Buildings
+comm others,coal,Buildings
+comm others,refined liquids,Buildings
+resid others,biomass,Buildings
+resid others,coal,Buildings
+resid others,refined liquids,Buildings
+comm others,gas,Buildings
+resid others,gas,Buildings
+comm cooling,gas,Buildings
+comm heating,biomass,Buildings
+comm heating,gas,Buildings
+resid heating,biomass,Buildings
+resid heating,gas,Buildings
+resid heating,refined liquids,Buildings
+resid heating,coal,Buildings
+resid cooling,gas,Buildings
+resid heating,traditional biomass,Buildings
+resid others,traditional biomass,Buildings
+coal,coal,Coal
+district heat,biomass,District Heat
+district heat,coal,District Heat
+district heat,gas,District Heat
+district heat,refined liquids,District Heat
+electricity_net_ownuse,electricity_net_ownuse,Electricity
+backup_electricity,gas,Electricity
+csp_backup,gas,Electricity
+electricity,biomass,Electricity
+electricity,coal,Electricity
+electricity,gas,Electricity
+electricity,refined liquids,Electricity
+H2 central production,biomass,H2 Production
+H2 central production,coal,H2 Production
+H2 central production,gas,H2 Production
+H2 forecourt production,gas,H2 Production
+industrial processes,Al_Mg,Industry
+industrial processes,foams,Industry
+industrial processes,other industrial processes,Industry
+industrial processes,HCFC_22_Prod,Industry
+industrial processes,semiconductors,Industry
+industrial processes,solvents,Industry
+cement,cement,Industry
+industrial energy use,biomass,Industry
+industrial energy use,coal,Industry
+industrial energy use,refined liquids,Industry
+N fertilizer,gas,Industry
+N fertilizer,refined liquids,Industry
+process heat cement,biomass,Industry
+process heat cement,coal,Industry
+process heat cement,gas,Industry
+process heat cement,refined liquids,Industry
+industrial energy use,gas,Industry
+industrial feedstocks,gas,Industry
+industrial feedstocks,coal,Industry
+N fertilizer,coal,Industry
+industrial processes,adipic acid,Industry
+industrial processes,nitric acid,Industry
+trn_freight,Domestic Ship,Marine
+trn_shipping_intl,International Ship,Marine
+regional biomass,regional biomass,NA
+regional biomassOil,regional biomassOil,NA
+regional corn for ethanol,regional corn for ethanol,NA
+regional sugar for ethanol,regional sugar for ethanol,NA
+gas processing,biomass gasification,Oil & Gas
+gas processing,coal gasification,Oil & Gas
+refining,biomass liquids,Oil & Gas
+refining,coal to liquids,Oil & Gas
+refining,gas to liquids,Oil & Gas
+refining,oil refining,Oil & Gas
+unconventional oil production,unconventional oil production,Oil & Gas
+gas pipeline,gas pipeline,Oil & Gas
+crude oil,crude oil,Oil & Gas
+natural gas,natural gas,Oil & Gas
+trn_freight,Freight Rail,Transportation
+trn_freight_road,Truck (0-2t),Transportation
+trn_freight_road,Truck (2-5t),Transportation
+trn_freight_road,Truck (5-9t),Transportation
+trn_freight_road,Truck (9-16t),Transportation
+trn_pass,Passenger Rail,Transportation
+trn_pass_road,Bus,Transportation
+trn_pass_road_LDV,Three-Wheeler,Transportation
+trn_pass_road_LDV_2W,Motorcycle (50-250cc),Transportation
+trn_pass_road_LDV_4W,Compact Car,Transportation
+trn_pass_road_LDV_4W,Mini Car,Transportation
+trn_pass_road_LDV_4W,Multipurpose Vehicle,Transportation
+trn_pass_road_LDV_4W,Subcompact Car,Transportation
+trn_freight_road,Truck (>15t),Transportation
+trn_freight_road,Truck (0-1t),Transportation
+trn_freight_road,Truck (6-15t),Transportation
+trn_pass_road_LDV_2W,Moped,Transportation
+trn_pass_road_LDV_2W,Motorcycle (>250cc),Transportation
+trn_pass_road_LDV_4W,Large Car and SUV,Transportation
+trn_freight_road,Truck (1-6t),Transportation
+trn_freight_road,Truck (6-30t),Transportation
+trn_pass_road_LDV_4W,Large Car,Transportation
+trn_pass_road_LDV_4W,Light Truck and SUV,Transportation
+trn_pass_road_LDV_4W,Midsize Car,Transportation
+trn_freight_road,Truck (0-4.5t),Transportation
+trn_freight_road,Truck (4.5-15t),Transportation
+trn_pass_road_LDV_4W,Van,Transportation
+trn_freight_road,Truck (>32t),Transportation
+trn_freight_road,Truck (0-3.5t),Transportation
+trn_freight_road,Truck (16-32t),Transportation
+trn_freight_road,Truck (3.5-16t),Transportation
+trn_freight_road,3W Rural,Transportation
+trn_freight_road,Truck (>14t),Transportation
+trn_freight_road,Truck (0-6t),Transportation
+trn_freight_road,Truck (6-14t),Transportation
+trn_pass_road_bus,Heavy Bus,Transportation
+trn_pass_road_bus,Light Bus,Transportation
+trn_pass_road_LDV_2W,Scooter,Transportation
+trn_freight_road,Truck,Transportation
+trn_freight_road,Truck (>12t),Transportation
+trn_freight_road,Truck (0-2.7t),Transportation
+trn_freight_road,Truck (2.7-4.5t),Transportation
+trn_freight_road,Truck (4.5-12t),Transportation
+urban processes,aerosols,Waste
+urban processes,fire_exting,Waste
+urban processes,landfills,Waste
+urban processes,wastewater treatment,Waste

@@ -80,7 +80,7 @@ parsecounts <- function(unit)
 {
     unit <- stringr::str_trim(unit)
 
-    if(unit == '') {
+    if(unit == '' | grepl('person|vehicle|m2|km', unit)) {
         1
     }
     else if(grepl('hundred[ -]?thous', unit, ignore.case=TRUE)) {
@@ -337,6 +337,9 @@ unitconv_mass <- function(iunit, ounit, inverse=FALSE)
     iunit <- extractunit(rownames(massconv), iunit, 'mass')
     ounit <- extractunit(colnames(massconv), ounit, 'mass')
 
+    # In case either unit has different case, change here
+    iunit <- colnames(massconv)[grep(iunit, colnames(massconv), ignore.case = TRUE)]
+    ounit <- colnames(massconv)[grep(ounit, colnames(massconv), ignore.case = TRUE)]
     if(inverse)
         massconv[ounit, iunit]
     else
@@ -382,7 +385,7 @@ unitasserts <- function(iunit, ounit)
 extractunit <- function(unitlist, unitstr, type)
 {
     ## If we get a match, this should return a single '1'.  The names
-    unit <- lapply(unitlist, function(p){stringr::str_match(unitstr, p)}) %>%
+    unit <- lapply(unitlist, function(p){stringr::str_match(unitstr, stringr::regex(p, ignore_case = TRUE))}) %>%
       unlist(use.names=FALSE)
 
     unit <- unit[!is.na(unit)]

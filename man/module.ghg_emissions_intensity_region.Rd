@@ -2,7 +2,7 @@
 % Please edit documentation in R/emissions.R
 \name{module.ghg_emissions_intensity_region}
 \alias{module.ghg_emissions_intensity_region}
-\title{GHG Emissions Intensity Data Module}
+\title{GHG Emissions Intensity By Region Data Module}
 \usage{
 module.ghg_emissions_intensity_region(mode, allqueries, aggkeys, aggfn, years,
   filters, ounit)

@@ -1,0 +1,769 @@
+region,technology,capacity.factor
+Africa_Eastern,wind,0.34
+Africa_Eastern,wind_storage,0.34
+Africa_Eastern,rooftop_pv,0.282356648
+Africa_Eastern,CSP,0.246334343
+Africa_Eastern,CSP_storage,0.640469293
+Africa_Eastern,PV,0.282356648
+Africa_Eastern,PV_storage,0.282356648
+Africa_Eastern,coal (conv pul),0.85
+Africa_Eastern,coal (conv pul CCS),0.8
+Africa_Eastern,coal (IGCC),0.8
+Africa_Eastern,coal (IGCC CCS),0.8
+Africa_Eastern,gas (steam/CT),0.8
+Africa_Eastern,gas (CC),0.85
+Africa_Eastern,gas (CC CCS),0.8
+Africa_Eastern,refined liquids (steam/CT),0.8
+Africa_Eastern,refined liquids (CC),0.85
+Africa_Eastern,refined liquids (CC CCS),0.8
+Africa_Eastern,biomass (conv),0.85
+Africa_Eastern,biomass (conv CCS),0.8
+Africa_Eastern,biomass (IGCC),0.8
+Africa_Eastern,biomass (IGCC CCS),0.8
+Africa_Eastern,Gen_II_LWR,0.9
+Africa_Eastern,Gen_III,0.9
+Africa_Eastern,geothermal,0.9
+Africa_Northern,wind,0.39
+Africa_Northern,wind_storage,0.39
+Africa_Northern,rooftop_pv,0.280197257
+Africa_Northern,CSP,0.237109675
+Africa_Northern,CSP_storage,0.616485156
+Africa_Northern,PV,0.280197257
+Africa_Northern,PV_storage,0.280197257
+Africa_Northern,coal (conv pul),0.85
+Africa_Northern,coal (conv pul CCS),0.8
+Africa_Northern,coal (IGCC),0.8
+Africa_Northern,coal (IGCC CCS),0.8
+Africa_Northern,gas (steam/CT),0.8
+Africa_Northern,gas (CC),0.85
+Africa_Northern,gas (CC CCS),0.8
+Africa_Northern,refined liquids (steam/CT),0.8
+Africa_Northern,refined liquids (CC),0.85
+Africa_Northern,refined liquids (CC CCS),0.8
+Africa_Northern,biomass (conv),0.85
+Africa_Northern,biomass (conv CCS),0.8
+Africa_Northern,biomass (IGCC),0.8
+Africa_Northern,biomass (IGCC CCS),0.8
+Africa_Northern,Gen_II_LWR,0.9
+Africa_Northern,Gen_III,0.9
+Africa_Northern,geothermal,0.9
+Africa_Southern,wind,0.28
+Africa_Southern,wind_storage,0.28
+Africa_Southern,rooftop_pv,0.275527985
+Africa_Southern,CSP,0.237741045
+Africa_Southern,CSP_storage,0.618126716
+Africa_Southern,PV,0.275527985
+Africa_Southern,PV_storage,0.275527985
+Africa_Southern,coal (conv pul),0.85
+Africa_Southern,coal (conv pul CCS),0.8
+Africa_Southern,coal (IGCC),0.8
+Africa_Southern,coal (IGCC CCS),0.8
+Africa_Southern,gas (steam/CT),0.8
+Africa_Southern,gas (CC),0.85
+Africa_Southern,gas (CC CCS),0.8
+Africa_Southern,refined liquids (steam/CT),0.8
+Africa_Southern,refined liquids (CC),0.85
+Africa_Southern,refined liquids (CC CCS),0.8
+Africa_Southern,biomass (conv),0.85
+Africa_Southern,biomass (conv CCS),0.8
+Africa_Southern,biomass (IGCC),0.8
+Africa_Southern,biomass (IGCC CCS),0.8
+Africa_Southern,Gen_II_LWR,0.9
+Africa_Southern,Gen_III,0.9
+Africa_Southern,geothermal,0.9
+Africa_Western,wind,0.35
+Africa_Western,wind_storage,0.35
+Africa_Western,rooftop_pv,0.273630238
+Africa_Western,CSP,0.24341196
+Africa_Western,CSP_storage,0.632871097
+Africa_Western,PV,0.273630238
+Africa_Western,PV_storage,0.273630238
+Africa_Western,coal (conv pul),0.85
+Africa_Western,coal (conv pul CCS),0.8
+Africa_Western,coal (IGCC),0.8
+Africa_Western,coal (IGCC CCS),0.8
+Africa_Western,gas (steam/CT),0.8
+Africa_Western,gas (CC),0.85
+Africa_Western,gas (CC CCS),0.8
+Africa_Western,refined liquids (steam/CT),0.8
+Africa_Western,refined liquids (CC),0.85
+Africa_Western,refined liquids (CC CCS),0.8
+Africa_Western,biomass (conv),0.85
+Africa_Western,biomass (conv CCS),0.8
+Africa_Western,biomass (IGCC),0.8
+Africa_Western,biomass (IGCC CCS),0.8
+Africa_Western,Gen_II_LWR,0.9
+Africa_Western,Gen_III,0.9
+Africa_Western,geothermal,0.9
+Argentina,wind,0.37
+Argentina,wind_storage,0.37
+Argentina,rooftop_pv,0.232851932
+Argentina,CSP,0.236884857
+Argentina,CSP_storage,0.615900628
+Argentina,PV,0.232851932
+Argentina,PV_storage,0.232851932
+Argentina,coal (conv pul),0.85
+Argentina,coal (conv pul CCS),0.8
+Argentina,coal (IGCC),0.8
+Argentina,coal (IGCC CCS),0.8
+Argentina,gas (steam/CT),0.8
+Argentina,gas (CC),0.85
+Argentina,gas (CC CCS),0.8
+Argentina,refined liquids (steam/CT),0.8
+Argentina,refined liquids (CC),0.85
+Argentina,refined liquids (CC CCS),0.8
+Argentina,biomass (conv),0.85
+Argentina,biomass (conv CCS),0.8
+Argentina,biomass (IGCC),0.8
+Argentina,biomass (IGCC CCS),0.8
+Argentina,Gen_II_LWR,0.9
+Argentina,Gen_III,0.9
+Argentina,geothermal,0.9
+Australia_NZ,wind,0.39
+Australia_NZ,wind_storage,0.39
+Australia_NZ,rooftop_pv,0.272521652
+Australia_NZ,CSP,0.231893253
+Australia_NZ,CSP_storage,0.602922459
+Australia_NZ,PV,0.272521652
+Australia_NZ,PV_storage,0.272521652
+Australia_NZ,coal (conv pul),0.85
+Australia_NZ,coal (conv pul CCS),0.8
+Australia_NZ,coal (IGCC),0.8
+Australia_NZ,coal (IGCC CCS),0.8
+Australia_NZ,gas (steam/CT),0.8
+Australia_NZ,gas (CC),0.85
+Australia_NZ,gas (CC CCS),0.8
+Australia_NZ,refined liquids (steam/CT),0.8
+Australia_NZ,refined liquids (CC),0.85
+Australia_NZ,refined liquids (CC CCS),0.8
+Australia_NZ,biomass (conv),0.85
+Australia_NZ,biomass (conv CCS),0.8
+Australia_NZ,biomass (IGCC),0.8
+Australia_NZ,biomass (IGCC CCS),0.8
+Australia_NZ,Gen_II_LWR,0.9
+Australia_NZ,Gen_III,0.9
+Australia_NZ,geothermal,0.9
+Brazil,wind,0.35
+Brazil,wind_storage,0.35
+Brazil,rooftop_pv,0.246714494
+Brazil,CSP,0.305748844
+Brazil,CSP_storage,0.794946994
+Brazil,PV,0.246714494
+Brazil,PV_storage,0.246714494
+Brazil,coal (conv pul),0.85
+Brazil,coal (conv pul CCS),0.8
+Brazil,coal (IGCC),0.8
+Brazil,coal (IGCC CCS),0.8
+Brazil,gas (steam/CT),0.8
+Brazil,gas (CC),0.85
+Brazil,gas (CC CCS),0.8
+Brazil,refined liquids (steam/CT),0.8
+Brazil,refined liquids (CC),0.85
+Brazil,refined liquids (CC CCS),0.8
+Brazil,biomass (conv),0.85
+Brazil,biomass (conv CCS),0.8
+Brazil,biomass (IGCC),0.8
+Brazil,biomass (IGCC CCS),0.8
+Brazil,Gen_II_LWR,0.9
+Brazil,Gen_III,0.9
+Brazil,geothermal,0.9
+Canada,wind,0.39
+Canada,wind_storage,0.39
+Canada,rooftop_pv,0.129780734
+Canada,CSP,0.348881694
+Canada,CSP_storage,0.85
+Canada,PV,0.129780734
+Canada,PV_storage,0.129780734
+Canada,coal (conv pul),0.85
+Canada,coal (conv pul CCS),0.8
+Canada,coal (IGCC),0.8
+Canada,coal (IGCC CCS),0.8
+Canada,gas (steam/CT),0.8
+Canada,gas (CC),0.85
+Canada,gas (CC CCS),0.8
+Canada,refined liquids (steam/CT),0.8
+Canada,refined liquids (CC),0.85
+Canada,refined liquids (CC CCS),0.8
+Canada,biomass (conv),0.85
+Canada,biomass (conv CCS),0.8
+Canada,biomass (IGCC),0.8
+Canada,biomass (IGCC CCS),0.8
+Canada,Gen_II_LWR,0.9
+Canada,Gen_III,0.9
+Canada,geothermal,0.9
+Central America and Caribbean,wind,0.38
+Central America and Caribbean,wind_storage,0.38
+Central America and Caribbean,rooftop_pv,0.251481965
+Central America and Caribbean,CSP,0.27396028100000003
+Central America and Caribbean,CSP_storage,0.712296732
+Central America and Caribbean,PV,0.251481965
+Central America and Caribbean,PV_storage,0.251481965
+Central America and Caribbean,coal (conv pul),0.85
+Central America and Caribbean,coal (conv pul CCS),0.8
+Central America and Caribbean,coal (IGCC),0.8
+Central America and Caribbean,coal (IGCC CCS),0.8
+Central America and Caribbean,gas (steam/CT),0.8
+Central America and Caribbean,gas (CC),0.85
+Central America and Caribbean,gas (CC CCS),0.8
+Central America and Caribbean,refined liquids (steam/CT),0.8
+Central America and Caribbean,refined liquids (CC),0.85
+Central America and Caribbean,refined liquids (CC CCS),0.8
+Central America and Caribbean,biomass (conv),0.85
+Central America and Caribbean,biomass (conv CCS),0.8
+Central America and Caribbean,biomass (IGCC),0.8
+Central America and Caribbean,biomass (IGCC CCS),0.8
+Central America and Caribbean,Gen_II_LWR,0.9
+Central America and Caribbean,Gen_III,0.9
+Central America and Caribbean,geothermal,0.9
+Central Asia,wind,0.36
+Central Asia,wind_storage,0.36
+Central Asia,rooftop_pv,0.214675695
+Central Asia,CSP,0.284730779
+Central Asia,CSP_storage,0.740300026
+Central Asia,PV,0.214675695
+Central Asia,PV_storage,0.214675695
+Central Asia,coal (conv pul),0.85
+Central Asia,coal (conv pul CCS),0.8
+Central Asia,coal (IGCC),0.8
+Central Asia,coal (IGCC CCS),0.8
+Central Asia,gas (steam/CT),0.8
+Central Asia,gas (CC),0.85
+Central Asia,gas (CC CCS),0.8
+Central Asia,refined liquids (steam/CT),0.8
+Central Asia,refined liquids (CC),0.85
+Central Asia,refined liquids (CC CCS),0.8
+Central Asia,biomass (conv),0.85
+Central Asia,biomass (conv CCS),0.8
+Central Asia,biomass (IGCC),0.8
+Central Asia,biomass (IGCC CCS),0.8
+Central Asia,Gen_II_LWR,0.9
+Central Asia,Gen_III,0.9
+Central Asia,geothermal,0.9
+China,wind,0.39
+China,wind_storage,0.39
+China,rooftop_pv,0.239884951
+China,CSP,0.253152141
+China,CSP_storage,0.658195566
+China,PV,0.239884951
+China,PV_storage,0.239884951
+China,coal (conv pul),0.85
+China,coal (conv pul CCS),0.8
+China,coal (IGCC),0.8
+China,coal (IGCC CCS),0.8
+China,gas (steam/CT),0.8
+China,gas (CC),0.85
+China,gas (CC CCS),0.8
+China,refined liquids (steam/CT),0.8
+China,refined liquids (CC),0.85
+China,refined liquids (CC CCS),0.8
+China,biomass (conv),0.85
+China,biomass (conv CCS),0.8
+China,biomass (IGCC),0.8
+China,biomass (IGCC CCS),0.8
+China,Gen_II_LWR,0.9
+China,Gen_III,0.9
+China,geothermal,0.9
+Colombia,wind,0.33
+Colombia,wind_storage,0.33
+Colombia,rooftop_pv,0.218840056
+Colombia,CSP,0.32406261200000003
+Colombia,CSP_storage,0.842562791
+Colombia,PV,0.218840056
+Colombia,PV_storage,0.218840056
+Colombia,coal (conv pul),0.85
+Colombia,coal (conv pul CCS),0.8
+Colombia,coal (IGCC),0.8
+Colombia,coal (IGCC CCS),0.8
+Colombia,gas (steam/CT),0.8
+Colombia,gas (CC),0.85
+Colombia,gas (CC CCS),0.8
+Colombia,refined liquids (steam/CT),0.8
+Colombia,refined liquids (CC),0.85
+Colombia,refined liquids (CC CCS),0.8
+Colombia,biomass (conv),0.85
+Colombia,biomass (conv CCS),0.8
+Colombia,biomass (IGCC),0.8
+Colombia,biomass (IGCC CCS),0.8
+Colombia,Gen_II_LWR,0.9
+Colombia,Gen_III,0.9
+Colombia,geothermal,0.9
+EU-12,wind,0.37
+EU-12,wind_storage,0.37
+EU-12,rooftop_pv,0.165519569
+EU-12,CSP,0.25220069
+EU-12,CSP_storage,0.655721795
+EU-12,PV,0.165519569
+EU-12,PV_storage,0.165519569
+EU-12,coal (conv pul),0.85
+EU-12,coal (conv pul CCS),0.8
+EU-12,coal (IGCC),0.8
+EU-12,coal (IGCC CCS),0.8
+EU-12,gas (steam/CT),0.8
+EU-12,gas (CC),0.85
+EU-12,gas (CC CCS),0.8
+EU-12,refined liquids (steam/CT),0.8
+EU-12,refined liquids (CC),0.85
+EU-12,refined liquids (CC CCS),0.8
+EU-12,biomass (conv),0.85
+EU-12,biomass (conv CCS),0.8
+EU-12,biomass (IGCC),0.8
+EU-12,biomass (IGCC CCS),0.8
+EU-12,Gen_II_LWR,0.9
+EU-12,Gen_III,0.9
+EU-12,geothermal,0.9
+EU-15,wind,0.39
+EU-15,wind_storage,0.39
+EU-15,rooftop_pv,0.1831046
+EU-15,CSP,0.270318475
+EU-15,CSP_storage,0.702828034
+EU-15,PV,0.1831046
+EU-15,PV_storage,0.1831046
+EU-15,coal (conv pul),0.85
+EU-15,coal (conv pul CCS),0.8
+EU-15,coal (IGCC),0.8
+EU-15,coal (IGCC CCS),0.8
+EU-15,gas (steam/CT),0.8
+EU-15,gas (CC),0.85
+EU-15,gas (CC CCS),0.8
+EU-15,refined liquids (steam/CT),0.8
+EU-15,refined liquids (CC),0.85
+EU-15,refined liquids (CC CCS),0.8
+EU-15,biomass (conv),0.85
+EU-15,biomass (conv CCS),0.8
+EU-15,biomass (IGCC),0.8
+EU-15,biomass (IGCC CCS),0.8
+EU-15,Gen_II_LWR,0.9
+EU-15,Gen_III,0.9
+EU-15,geothermal,0.9
+Europe_Eastern,wind,0.34
+Europe_Eastern,wind_storage,0.34
+Europe_Eastern,rooftop_pv,0.162879869
+Europe_Eastern,CSP,0.330465573
+Europe_Eastern,CSP_storage,0.85
+Europe_Eastern,PV,0.162879869
+Europe_Eastern,PV_storage,0.162879869
+Europe_Eastern,coal (conv pul),0.85
+Europe_Eastern,coal (conv pul CCS),0.8
+Europe_Eastern,coal (IGCC),0.8
+Europe_Eastern,coal (IGCC CCS),0.8
+Europe_Eastern,gas (steam/CT),0.8
+Europe_Eastern,gas (CC),0.85
+Europe_Eastern,gas (CC CCS),0.8
+Europe_Eastern,refined liquids (steam/CT),0.8
+Europe_Eastern,refined liquids (CC),0.85
+Europe_Eastern,refined liquids (CC CCS),0.8
+Europe_Eastern,biomass (conv),0.85
+Europe_Eastern,biomass (conv CCS),0.8
+Europe_Eastern,biomass (IGCC),0.8
+Europe_Eastern,biomass (IGCC CCS),0.8
+Europe_Eastern,Gen_II_LWR,0.9
+Europe_Eastern,Gen_III,0.9
+Europe_Eastern,geothermal,0.9
+Europe_Non_EU,wind,0.37
+Europe_Non_EU,wind_storage,0.37
+Europe_Non_EU,rooftop_pv,0.219534769
+Europe_Non_EU,CSP,0.279812997
+Europe_Non_EU,CSP_storage,0.727513793
+Europe_Non_EU,PV,0.219534769
+Europe_Non_EU,PV_storage,0.219534769
+Europe_Non_EU,coal (conv pul),0.85
+Europe_Non_EU,coal (conv pul CCS),0.8
+Europe_Non_EU,coal (IGCC),0.8
+Europe_Non_EU,coal (IGCC CCS),0.8
+Europe_Non_EU,gas (steam/CT),0.8
+Europe_Non_EU,gas (CC),0.85
+Europe_Non_EU,gas (CC CCS),0.8
+Europe_Non_EU,refined liquids (steam/CT),0.8
+Europe_Non_EU,refined liquids (CC),0.85
+Europe_Non_EU,refined liquids (CC CCS),0.8
+Europe_Non_EU,biomass (conv),0.85
+Europe_Non_EU,biomass (conv CCS),0.8
+Europe_Non_EU,biomass (IGCC),0.8
+Europe_Non_EU,biomass (IGCC CCS),0.8
+Europe_Non_EU,Gen_II_LWR,0.9
+Europe_Non_EU,Gen_III,0.9
+Europe_Non_EU,geothermal,0.9
+European Free Trade Association,wind,0.38
+European Free Trade Association,wind_storage,0.38
+European Free Trade Association,rooftop_pv,0.109905752
+European Free Trade Association,CSP,2.5e-4
+European Free Trade Association,CSP_storage,6.5e-4
+European Free Trade Association,PV,0.109905752
+European Free Trade Association,PV_storage,0.109905752
+European Free Trade Association,coal (conv pul),0.85
+European Free Trade Association,coal (conv pul CCS),0.8
+European Free Trade Association,coal (IGCC),0.8
+European Free Trade Association,coal (IGCC CCS),0.8
+European Free Trade Association,gas (steam/CT),0.8
+European Free Trade Association,gas (CC),0.85
+European Free Trade Association,gas (CC CCS),0.8
+European Free Trade Association,refined liquids (steam/CT),0.8
+European Free Trade Association,refined liquids (CC),0.85
+European Free Trade Association,refined liquids (CC CCS),0.8
+European Free Trade Association,biomass (conv),0.85
+European Free Trade Association,biomass (conv CCS),0.8
+European Free Trade Association,biomass (IGCC),0.8
+European Free Trade Association,biomass (IGCC CCS),0.8
+European Free Trade Association,Gen_II_LWR,0.9
+European Free Trade Association,Gen_III,0.9
+European Free Trade Association,geothermal,0.9
+India,wind,0.36
+India,wind_storage,0.36
+India,rooftop_pv,0.247360719
+India,CSP,0.281168953
+India,CSP_storage,0.731039279
+India,PV,0.247360719
+India,PV_storage,0.247360719
+India,coal (conv pul),0.85
+India,coal (conv pul CCS),0.8
+India,coal (IGCC),0.8
+India,coal (IGCC CCS),0.8
+India,gas (steam/CT),0.8
+India,gas (CC),0.85
+India,gas (CC CCS),0.8
+India,refined liquids (steam/CT),0.8
+India,refined liquids (CC),0.85
+India,refined liquids (CC CCS),0.8
+India,biomass (conv),0.85
+India,biomass (conv CCS),0.8
+India,biomass (IGCC),0.8
+India,biomass (IGCC CCS),0.8
+India,Gen_II_LWR,0.9
+India,Gen_III,0.9
+India,geothermal,0.9
+Indonesia,wind,0.34
+Indonesia,wind_storage,0.34
+Indonesia,rooftop_pv,0.231764576
+Indonesia,CSP,0.333299229
+Indonesia,CSP_storage,0.85
+Indonesia,PV,0.231764576
+Indonesia,PV_storage,0.231764576
+Indonesia,coal (conv pul),0.85
+Indonesia,coal (conv pul CCS),0.8
+Indonesia,coal (IGCC),0.8
+Indonesia,coal (IGCC CCS),0.8
+Indonesia,gas (steam/CT),0.8
+Indonesia,gas (CC),0.85
+Indonesia,gas (CC CCS),0.8
+Indonesia,refined liquids (steam/CT),0.8
+Indonesia,refined liquids (CC),0.85
+Indonesia,refined liquids (CC CCS),0.8
+Indonesia,biomass (conv),0.85
+Indonesia,biomass (conv CCS),0.8
+Indonesia,biomass (IGCC),0.8
+Indonesia,biomass (IGCC CCS),0.8
+Indonesia,Gen_II_LWR,0.9
+Indonesia,Gen_III,0.9
+Indonesia,geothermal,0.9
+Japan,wind,0.39
+Japan,wind_storage,0.39
+Japan,rooftop_pv,0.18912206
+Japan,CSP,0.384107543
+Japan,CSP_storage,0.85
+Japan,PV,0.18912206
+Japan,PV_storage,0.18912206
+Japan,coal (conv pul),0.85
+Japan,coal (conv pul CCS),0.8
+Japan,coal (IGCC),0.8
+Japan,coal (IGCC CCS),0.8
+Japan,gas (steam/CT),0.8
+Japan,gas (CC),0.85
+Japan,gas (CC CCS),0.8
+Japan,refined liquids (steam/CT),0.8
+Japan,refined liquids (CC),0.85
+Japan,refined liquids (CC CCS),0.8
+Japan,biomass (conv),0.85
+Japan,biomass (conv CCS),0.8
+Japan,biomass (IGCC),0.8
+Japan,biomass (IGCC CCS),0.8
+Japan,Gen_II_LWR,0.9
+Japan,Gen_III,0.9
+Japan,geothermal,0.9
+Mexico,wind,0.39
+Mexico,wind_storage,0.39
+Mexico,rooftop_pv,0.268432483
+Mexico,CSP,0.25294355
+Mexico,CSP_storage,0.65765323
+Mexico,PV,0.268432483
+Mexico,PV_storage,0.268432483
+Mexico,coal (conv pul),0.85
+Mexico,coal (conv pul CCS),0.8
+Mexico,coal (IGCC),0.8
+Mexico,coal (IGCC CCS),0.8
+Mexico,gas (steam/CT),0.8
+Mexico,gas (CC),0.85
+Mexico,gas (CC CCS),0.8
+Mexico,refined liquids (steam/CT),0.8
+Mexico,refined liquids (CC),0.85
+Mexico,refined liquids (CC CCS),0.8
+Mexico,biomass (conv),0.85
+Mexico,biomass (conv CCS),0.8
+Mexico,biomass (IGCC),0.8
+Mexico,biomass (IGCC CCS),0.8
+Mexico,Gen_II_LWR,0.9
+Mexico,Gen_III,0.9
+Mexico,geothermal,0.9
+Middle East,wind,0.36
+Middle East,wind_storage,0.36
+Middle East,rooftop_pv,0.27372128
+Middle East,CSP,0.238139042
+Middle East,CSP_storage,0.61916151
+Middle East,PV,0.27372128
+Middle East,PV_storage,0.27372128
+Middle East,coal (conv pul),0.85
+Middle East,coal (conv pul CCS),0.8
+Middle East,coal (IGCC),0.8
+Middle East,coal (IGCC CCS),0.8
+Middle East,gas (steam/CT),0.8
+Middle East,gas (CC),0.85
+Middle East,gas (CC CCS),0.8
+Middle East,refined liquids (steam/CT),0.8
+Middle East,refined liquids (CC),0.85
+Middle East,refined liquids (CC CCS),0.8
+Middle East,biomass (conv),0.85
+Middle East,biomass (conv CCS),0.8
+Middle East,biomass (IGCC),0.8
+Middle East,biomass (IGCC CCS),0.8
+Middle East,Gen_II_LWR,0.9
+Middle East,Gen_III,0.9
+Middle East,geothermal,0.9
+Pakistan,wind,0.36
+Pakistan,wind_storage,0.36
+Pakistan,rooftop_pv,0.259618517
+Pakistan,CSP,0.267051929
+Pakistan,CSP_storage,0.69433501500000006
+Pakistan,PV,0.259618517
+Pakistan,PV_storage,0.259618517
+Pakistan,coal (conv pul),0.85
+Pakistan,coal (conv pul CCS),0.8
+Pakistan,coal (IGCC),0.8
+Pakistan,coal (IGCC CCS),0.8
+Pakistan,gas (steam/CT),0.8
+Pakistan,gas (CC),0.85
+Pakistan,gas (CC CCS),0.8
+Pakistan,refined liquids (steam/CT),0.8
+Pakistan,refined liquids (CC),0.85
+Pakistan,refined liquids (CC CCS),0.8
+Pakistan,biomass (conv),0.85
+Pakistan,biomass (conv CCS),0.8
+Pakistan,biomass (IGCC),0.8
+Pakistan,biomass (IGCC CCS),0.8
+Pakistan,Gen_II_LWR,0.9
+Pakistan,Gen_III,0.9
+Pakistan,geothermal,0.9
+Russia,wind,0.38
+Russia,wind_storage,0.38
+Russia,rooftop_pv,0.130216352
+Russia,CSP,0.37545867
+Russia,CSP_storage,0.85
+Russia,PV,0.130216352
+Russia,PV_storage,0.130216352
+Russia,coal (conv pul),0.85
+Russia,coal (conv pul CCS),0.8
+Russia,coal (IGCC),0.8
+Russia,coal (IGCC CCS),0.8
+Russia,gas (steam/CT),0.8
+Russia,gas (CC),0.85
+Russia,gas (CC CCS),0.8
+Russia,refined liquids (steam/CT),0.8
+Russia,refined liquids (CC),0.85
+Russia,refined liquids (CC CCS),0.8
+Russia,biomass (conv),0.85
+Russia,biomass (conv CCS),0.8
+Russia,biomass (IGCC),0.8
+Russia,biomass (IGCC CCS),0.8
+Russia,Gen_II_LWR,0.9
+Russia,Gen_III,0.9
+Russia,geothermal,0.9
+South Africa,wind,0.37
+South Africa,wind_storage,0.37
+South Africa,rooftop_pv,0.276146447
+South Africa,CSP,0.221167551
+South Africa,CSP_storage,0.575035633
+South Africa,PV,0.276146447
+South Africa,PV_storage,0.276146447
+South Africa,coal (conv pul),0.85
+South Africa,coal (conv pul CCS),0.8
+South Africa,coal (IGCC),0.8
+South Africa,coal (IGCC CCS),0.8
+South Africa,gas (steam/CT),0.8
+South Africa,gas (CC),0.85
+South Africa,gas (CC CCS),0.8
+South Africa,refined liquids (steam/CT),0.8
+South Africa,refined liquids (CC),0.85
+South Africa,refined liquids (CC CCS),0.8
+South Africa,biomass (conv),0.85
+South Africa,biomass (conv CCS),0.8
+South Africa,biomass (IGCC),0.8
+South Africa,biomass (IGCC CCS),0.8
+South Africa,Gen_II_LWR,0.9
+South Africa,Gen_III,0.9
+South Africa,geothermal,0.9
+South America_Northern,wind,0.36
+South America_Northern,wind_storage,0.36
+South America_Northern,rooftop_pv,0.242998806
+South America_Northern,CSP,0.280280054
+South America_Northern,CSP_storage,0.72872814
+South America_Northern,PV,0.242998806
+South America_Northern,PV_storage,0.242998806
+South America_Northern,coal (conv pul),0.85
+South America_Northern,coal (conv pul CCS),0.8
+South America_Northern,coal (IGCC),0.8
+South America_Northern,coal (IGCC CCS),0.8
+South America_Northern,gas (steam/CT),0.8
+South America_Northern,gas (CC),0.85
+South America_Northern,gas (CC CCS),0.8
+South America_Northern,refined liquids (steam/CT),0.8
+South America_Northern,refined liquids (CC),0.85
+South America_Northern,refined liquids (CC CCS),0.8
+South America_Northern,biomass (conv),0.85
+South America_Northern,biomass (conv CCS),0.8
+South America_Northern,biomass (IGCC),0.8
+South America_Northern,biomass (IGCC CCS),0.8
+South America_Northern,Gen_II_LWR,0.9
+South America_Northern,Gen_III,0.9
+South America_Northern,geothermal,0.9
+South America_Southern,wind,0.37
+South America_Southern,wind_storage,0.37
+South America_Southern,rooftop_pv,0.240659276
+South America_Southern,CSP,0.241142534
+South America_Southern,CSP_storage,0.626970589
+South America_Southern,PV,0.240659276
+South America_Southern,PV_storage,0.240659276
+South America_Southern,coal (conv pul),0.85
+South America_Southern,coal (conv pul CCS),0.8
+South America_Southern,coal (IGCC),0.8
+South America_Southern,coal (IGCC CCS),0.8
+South America_Southern,gas (steam/CT),0.8
+South America_Southern,gas (CC),0.85
+South America_Southern,gas (CC CCS),0.8
+South America_Southern,refined liquids (steam/CT),0.8
+South America_Southern,refined liquids (CC),0.85
+South America_Southern,refined liquids (CC CCS),0.8
+South America_Southern,biomass (conv),0.85
+South America_Southern,biomass (conv CCS),0.8
+South America_Southern,biomass (IGCC),0.8
+South America_Southern,biomass (IGCC CCS),0.8
+South America_Southern,Gen_II_LWR,0.9
+South America_Southern,Gen_III,0.9
+South America_Southern,geothermal,0.9
+South Asia,wind,0.36
+South Asia,wind_storage,0.36
+South Asia,rooftop_pv,0.254661555
+South Asia,CSP,0.275019061
+South Asia,CSP_storage,0.715049558
+South Asia,PV,0.254661555
+South Asia,PV_storage,0.254661555
+South Asia,coal (conv pul),0.85
+South Asia,coal (conv pul CCS),0.8
+South Asia,coal (IGCC),0.8
+South Asia,coal (IGCC CCS),0.8
+South Asia,gas (steam/CT),0.8
+South Asia,gas (CC),0.85
+South Asia,gas (CC CCS),0.8
+South Asia,refined liquids (steam/CT),0.8
+South Asia,refined liquids (CC),0.85
+South Asia,refined liquids (CC CCS),0.8
+South Asia,biomass (conv),0.85
+South Asia,biomass (conv CCS),0.8
+South Asia,biomass (IGCC),0.8
+South Asia,biomass (IGCC CCS),0.8
+South Asia,Gen_II_LWR,0.9
+South Asia,Gen_III,0.9
+South Asia,geothermal,0.9
+South Korea,wind,0.29
+South Korea,wind_storage,0.29
+South Korea,rooftop_pv,0.209226928
+South Korea,CSP,0.339213182
+South Korea,CSP_storage,0.85
+South Korea,PV,0.209226928
+South Korea,PV_storage,0.209226928
+South Korea,coal (conv pul),0.85
+South Korea,coal (conv pul CCS),0.8
+South Korea,coal (IGCC),0.8
+South Korea,coal (IGCC CCS),0.8
+South Korea,gas (steam/CT),0.8
+South Korea,gas (CC),0.85
+South Korea,gas (CC CCS),0.8
+South Korea,refined liquids (steam/CT),0.8
+South Korea,refined liquids (CC),0.85
+South Korea,refined liquids (CC CCS),0.8
+South Korea,biomass (conv),0.85
+South Korea,biomass (conv CCS),0.8
+South Korea,biomass (IGCC),0.8
+South Korea,biomass (IGCC CCS),0.8
+South Korea,Gen_II_LWR,0.9
+South Korea,Gen_III,0.9
+South Korea,geothermal,0.9
+Southeast Asia,wind,0.36
+Southeast Asia,wind_storage,0.36
+Southeast Asia,rooftop_pv,0.236867759
+Southeast Asia,CSP,0.280709728
+Southeast Asia,CSP_storage,0.729845294
+Southeast Asia,PV,0.236867759
+Southeast Asia,PV_storage,0.236867759
+Southeast Asia,coal (conv pul),0.85
+Southeast Asia,coal (conv pul CCS),0.8
+Southeast Asia,coal (IGCC),0.8
+Southeast Asia,coal (IGCC CCS),0.8
+Southeast Asia,gas (steam/CT),0.8
+Southeast Asia,gas (CC),0.85
+Southeast Asia,gas (CC CCS),0.8
+Southeast Asia,refined liquids (steam/CT),0.8
+Southeast Asia,refined liquids (CC),0.85
+Southeast Asia,refined liquids (CC CCS),0.8
+Southeast Asia,biomass (conv),0.85
+Southeast Asia,biomass (conv CCS),0.8
+Southeast Asia,biomass (IGCC),0.8
+Southeast Asia,biomass (IGCC CCS),0.8
+Southeast Asia,Gen_II_LWR,0.9
+Southeast Asia,Gen_III,0.9
+Southeast Asia,geothermal,0.9
+Taiwan,wind,0.32
+Taiwan,wind_storage,0.32
+Taiwan,rooftop_pv,0.199958443
+Taiwan,CSP,0.401339283
+Taiwan,CSP_storage,0.85
+Taiwan,PV,0.199958443
+Taiwan,PV_storage,0.199958443
+Taiwan,coal (conv pul),0.85
+Taiwan,coal (conv pul CCS),0.8
+Taiwan,coal (IGCC),0.8
+Taiwan,coal (IGCC CCS),0.8
+Taiwan,gas (steam/CT),0.8
+Taiwan,gas (CC),0.85
+Taiwan,gas (CC CCS),0.8
+Taiwan,refined liquids (steam/CT),0.8
+Taiwan,refined liquids (CC),0.85
+Taiwan,refined liquids (CC CCS),0.8
+Taiwan,biomass (conv),0.85
+Taiwan,biomass (conv CCS),0.8
+Taiwan,biomass (IGCC),0.8
+Taiwan,biomass (IGCC CCS),0.8
+Taiwan,Gen_II_LWR,0.9
+Taiwan,Gen_III,0.9
+Taiwan,geothermal,0.9
+USA,wind,0.38
+USA,wind_storage,0.38
+USA,rooftop_pv,0.2
+USA,CSP,0.25
+USA,CSP_storage,0.65
+USA,PV,0.2
+USA,PV_storage,0.2
+USA,coal (conv pul),0.85
+USA,coal (conv pul CCS),0.8
+USA,coal (IGCC),0.8
+USA,coal (IGCC CCS),0.8
+USA,gas (steam/CT),0.8
+USA,gas (CC),0.85
+USA,gas (CC CCS),0.8
+USA,refined liquids (steam/CT),0.8
+USA,refined liquids (CC),0.85
+USA,refined liquids (CC CCS),0.8
+USA,biomass (conv),0.85
+USA,biomass (conv CCS),0.8
+USA,biomass (IGCC),0.8
+USA,biomass (IGCC CCS),0.8
+USA,Gen_II_LWR,0.9
+USA,Gen_III,0.9
+USA,geothermal,0.9

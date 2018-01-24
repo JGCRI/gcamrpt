@@ -14,7 +14,15 @@
 \alias{process.tr_fe_output}
 \alias{process.trans_load_factors}
 \alias{process.tr_svc_intensity}
-\alias{module.sales}
+\alias{module.ldv_sales}
+\alias{module.pass_trans_service_output_capita}
+\alias{module.pass_trans_fleet}
+\alias{module.pass_trans_fleet_per_capita}
+\alias{module.ldv_sales_fuel_prop}
+\alias{module.pass_vkm}
+\alias{module.frgt_trans_shares}
+\alias{module.pass_trans_public_share}
+\alias{module.pass_trans_fleet_shares}
 \title{Transportation data modules}
 \usage{
 module.pass_trans_service_output(mode, allqueries, aggkeys, aggfn, years,
@@ -50,7 +58,29 @@ process.trans_load_factors(allqueries, aggkeys, aggfn, years, filters, ounit)
 process.tr_svc_intensity(allqueries, aggkeys, aggfn, years, filters, ounit,
   nativeunit)
 
-module.sales(mode, allqueries, aggkeys, aggfn, years, filters, ounit)
+module.ldv_sales(mode, allqueries, aggkeys, aggfn, years, filters, ounit)
+
+module.pass_trans_service_output_capita(mode, allqueries, aggkeys, aggfn, years,
+  filters, ounit)
+
+module.pass_trans_fleet(mode, allqueries, aggkeys, aggfn, years, filters, ounit)
+
+module.pass_trans_fleet_per_capita(mode, allqueries, aggkeys, aggfn, years,
+  filters, ounit)
+
+module.ldv_sales_fuel_prop(mode, allqueries, aggkeys, aggfn, years, filters,
+  ounit)
+
+module.pass_vkm(mode, allqueries, aggkeys, aggfn, years, filters, ounit)
+
+module.frgt_trans_shares(mode, allqueries, aggkeys, aggfn, years, filters,
+  ounit)
+
+module.pass_trans_public_share(mode, allqueries, aggkeys, aggfn, years, filters,
+  ounit)
+
+module.pass_trans_fleet_shares(mode, allqueries, aggkeys, aggfn, years, filters,
+  ounit)
 }
 \arguments{
 \item{mode}{Either \code{GETQ} or \code{RUN}.  The former returns
@@ -123,9 +153,27 @@ factored into a single worker function that is called by both variants
 \item \code{process.tr_svc_intensity}: Worker function for transportation service
 intensity
 
-\item \code{module.sales}: Vehicle sales
+\item \code{module.ldv_sales}: Vehicle sales
 
 This module appears to be incomplete.
+
+\item \code{module.pass_trans_service_output_capita}: Passenger transportation service output per capita data module
+
+\item \code{module.pass_trans_fleet}: Passenger transportation fleet size data module
+
+\item \code{module.pass_trans_fleet_per_capita}: Passenger transportation fleet size per person data module
+
+\item \code{module.ldv_sales_fuel_prop}: Vehicle sales
+
+This module appears to be incomplete.
+
+\item \code{module.pass_vkm}: Passenger transportation service output data module
+
+\item \code{module.frgt_trans_shares}: Freight transportation shares data module
+
+\item \code{module.pass_trans_public_share}: Passenger transportation shares public vs private (not including aviation) data module
+
+\item \code{module.pass_trans_fleet_shares}: Passenger transportation fleet fuel shares data module
 }}
 
 \keyword{internal}

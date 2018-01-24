@@ -1,0 +1,12 @@
+subsector,fuel_type
+biomass,Renewable
+coal,Fossil Fuel
+gas,Fossil Fuel
+geothermal,Renewable
+hydro,Renewable
+hydrogen,Renewable
+nuclear,Renewable
+refined liquids,Fossil Fuel
+rooftop_pv,Renewable
+solar,Renewable
+wind,Renewable
