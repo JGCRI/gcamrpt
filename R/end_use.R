@@ -148,7 +148,8 @@ module.final_energy_per_capita <- function(mode, allqueries, aggkeys, aggfn, yea
     else {
         message('Function for processing variable: Final Energy per capita')
 
-        final_energy <- allqueries$'Final energy by detailed end-use sector and fuel' %>%
+        final_energy <- allqueries$'Final energy by detailed end-use sector and fuel'  %>%
+            dplyr::select(-rundate) %>%
             dplyr::left_join(final_energy_fuel, by = 'input') %>%
             dplyr::left_join(final_energy_end_use_sector, by = 'sector') %>%
             # Aggregating here allows us to sum globally, but not by sector/fuel
@@ -156,17 +157,22 @@ module.final_energy_per_capita <- function(mode, allqueries, aggkeys, aggfn, yea
 
         pop <- allqueries$'Population' %>%
             # Aggregating here allows us to sum globally, but not by sector/fuel
-            aggregate(aggfn, aggkeys)
+            aggregate(aggfn, aggkeys) %>%
+            dplyr::select(-rundate)
 
-        if ('region' %in% names(final_energy) & 'region' %in% names(pop)){
+        # Determine columns to join by
+        join_cats <- names(pop)[!(names(pop) %in% c('Units', 'value'))]
+
         final_energy_cap <- final_energy %>%
-            dplyr::left_join(pop, by = c('scenario', 'region', 'year'))
-        } else {
-            final_energy_cap <- final_energy %>%
-                dplyr::left_join(pop, by = c('scenario', 'year'))
-        }
+            dplyr::left_join(pop, by = join_cats) %>%
+            filter(years, filters)
 
-        final_energy_cap <- filter(final_energy_cap, years, filters) %>%
+        grp_cats <- names(final_energy_cap)[!(names(final_energy_cap) %in% c('sector', 'input', 'value.x', 'value.y', 'fuel', 'end_use_sector'))]
+
+        final_energy_cap <- final_energy_cap %>%
+            dplyr::group_by_(.dots = grp_cats) %>%
+            dplyr::summarise(value.x = sum(value.x), value.y = sum(value.y)) %>%
+            dplyr::ungroup() %>%
             dplyr::mutate(Units = paste0(Units.x, "/", Units.y)) %>%
             dplyr::mutate(value = value.x / value.y) %>%
             dplyr::select(Units, scenario, region, year, value)
@@ -233,6 +239,9 @@ module.final_energy_per_gdp <- function(mode, allqueries, aggkeys, aggfn, years,
 
         if ('region' %in% names(gdp) & 'region' %in% names(final_energy)){
             final_energy_gdp <- final_energy %>%
+                dplyr::group_by(Units, scenario, region, year) %>%
+                dplyr::summarise(value = sum(value)) %>%
+                dplyr::ungroup() %>%
                 dplyr::left_join(gdp, by = c('scenario', 'region', 'year')) %>%
                 dplyr::mutate(Units = paste0(Units.x, "/", Units.y)) %>%
                 dplyr::mutate(value = value.x / value.y) %>%
@@ -240,6 +249,9 @@ module.final_energy_per_gdp <- function(mode, allqueries, aggkeys, aggfn, years,
         } else {
             final_energy_gdp <- final_energy %>%
                 dplyr::left_join(gdp, by = c('scenario', 'year')) %>%
+                dplyr::group_by(Units.x, Units.y, scenario, year) %>%
+                dplyr::summarise(value.x = sum(value.x), value.y = sum(value.y)) %>%
+                dplyr::ungroup() %>%
                 dplyr::mutate(Units = paste0(Units.x, "/", Units.y)) %>%
                 dplyr::mutate(value = value.x / value.y) %>%
                 dplyr::select(Units, scenario, year, value)
@@ -446,7 +458,7 @@ module.building_flrsp_cap <- function(mode, allqueries, aggkeys, aggfn, years,
         ## See notes above for unit conversion.  This is largely repeated from
         ## the passenger version, but there are a couple of wrinkles, so it
         ## would take more time than I have right now to refactor it.
-        pat <- '(\\w+)? *[A-z0-9\\^]+ */ *(\\w+) *(\\w+)? *'
+        pat <- '(\\w+) *[A-z0-9\\^]*/ *(\\w+) *'
         mmat <- stringr::str_match(c(iunit, ounit), pat)
         mmat[is.na(mmat[,3]), 3] <- ''
         cfac <-

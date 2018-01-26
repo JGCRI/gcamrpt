@@ -300,9 +300,14 @@ process.tr_svc_output <- function(allqueries, aggkeys, aggfn, years,
 
     ## units example: million p-km
     if(!is.na(ounit)) {
-        cf <- unitconv_counts(serviceOutput$Units[1], ounit)
-        if(!is.na(cf)) {
-            serviceOutput <- dplyr::mutate(serviceOutput, value=value*cf,
+        iunit <- serviceOutput$Units[1]
+        pat <- '(\\w+) *(\\w+-\\w+) *'
+        mmat <- stringr::str_match(c(iunit, ounit), pat)
+        mmat[is.na(mmat[,3]), 3] <- ''
+        cfac <-
+            unitconv_counts(mmat[1,2], mmat[2,2])
+        if(!is.na(cfac)) {
+            serviceOutput <- dplyr::mutate(serviceOutput, value=value*cfac,
                                            Units=ounit)
         }
     }
@@ -703,10 +708,16 @@ trans_standardize <- function(queryData) {
     # mode mapping
     aviation <- tolower(c('International Aviation', 'Domestic Aviation'))
     rail <- tolower(c('Freight Rail', 'Passenger Rail', 'HSR'))
-    road <- tolower(c('truck 0-2t', 'truck 2-5t', 'truck 5-9t', 'truck 9-16t', 'bus', '2W', '4W', 'Three-Wheeler'))
+    road <- tolower(c('truck 0-2t', 'truck 2-5t', 'truck 5-9t', 'truck 9-16t', 'truck >15t', 'truck 0-1t', 'truck 6-15t',
+                      'truck 1-6t', 'truck 6-30t', 'truck 0-4.5t', 'truck 4.5-15t', 'truck >32t', 'truck 0-3.5t',
+                      'truck 16-32t', 'truck 3.5-16t', '3w rural', 'truck >14t', 'truck 0-6t', 'truck 6-14t', 'truck',
+                      'truck >12t', 'truck 0-2.7t', 'truck 2.7-4.5t', 'truck 4.5-12t', 'bus', '2W', '4W', 'Three-Wheeler'))
     shipping <- tolower(c('domestic ship', 'international ship'))
     # submode mapping
-    lhdt <- c('truck 0-2t', 'truck 2-5t') # requires aggregation (see below) -- rest are 1:1 from subsector
+    lhdt <- c('truck 0-2t', 'truck 2-5t', 'truck 0-1t', 'truck 1-6t', 'truck 0-4.5t', 'truck 0-3.5t', 'truck 0-6t',
+              'truck 0-2.7t', 'truck 2.7-4.5t')
+    mhdt <- c('truck 5-9t', 'truck 6-15t', 'truck 6-30t', 'truck 4.5-15t', 'truck 3.5-16t', 'truck 6-14t', 'truck', 'truck 4.5-12t')
+    hhdt <- c('truck 9-16t', 'truck >15t', 'truck >32t', 'truck 16-32t', 'truck >14t', 'truck >12t')
 
     queryData <- queryData %>%
         dplyr::filter(! sector %in% removeSectors) %>%
@@ -727,8 +738,9 @@ trans_standardize <- function(queryData) {
         dplyr::mutate(submode = dplyr::if_else(subsector=='4w', '4W', submode)) %>%
         dplyr::mutate(submode = dplyr::if_else(subsector=='bus', 'Bus', submode)) %>%
         dplyr::mutate(submode = dplyr::if_else(subsector %in% lhdt, 'LHDT', submode)) %>%
-        dplyr::mutate(submode = dplyr::if_else(subsector=='truck 5-9t', 'MHDT', submode)) %>%
-        dplyr::mutate(submode = dplyr::if_else(subsector=='truck 9-16t', 'HHDT', submode)) %>%
+        dplyr::mutate(submode = dplyr::if_else(subsector %in% mhdt, 'MHDT', submode)) %>%
+        dplyr::mutate(submode = dplyr::if_else(subsector %in% hhdt, 'HHDT', submode)) %>%
+        dplyr::mutate(submode = dplyr::if_else(subsector == '3w rural', '3W Freight', submode)) %>%
         dplyr::filter( service != '' & mode != '' & submode != '' ) %>%
         dplyr::arrange(scenario, region, service, mode, submode, value, Units)
 
@@ -758,8 +770,8 @@ module.pass_trans_service_output_capita <- function(mode, allqueries, aggkeys, a
         # Columns to join by
         join_cats <- names(population)[!(names(population) %in% c('Units', 'value'))]
 
-        # Units are everything before division sign
-        iunit <- stringr::str_sub(so$Units[1], 1, stringr::str_locate(so$Units[1], '/')[,'start'] - 1)
+        # Units are everything before division sign if aggregation has ocurred
+        iunit <- allqueries$`Transportation Service Output`$Units[1]
 
         so_cap <- so %>%
             dplyr::left_join(population, by = join_cats) %>%
@@ -774,12 +786,12 @@ module.pass_trans_service_output_capita <- function(mode, allqueries, aggkeys, a
         ## See notes above for unit conversion.  This is largely repeated from
         ## the passenger version, but there are a couple of wrinkles, so it
         ## would take more time than I have right now to refactor it.
-        pat <- '([^/]+) */ *(\\w+) *'
+        pat <- '(\\w+) *(\\w+-\\w+) */ *(\\w+) *'
         mmat <- stringr::str_match(c(iunit, ounit), pat)
         mmat[is.na(mmat[,3]), 3] <- ''
         cfac <-
             unitconv_counts(mmat[1,2], mmat[2,2]) *
-            unitconv_counts(mmat[1,3], mmat[2,3], inverse=TRUE)
+            unitconv_counts(mmat[1,4], mmat[2,4], inverse=TRUE)
 
         if(!is.na(cfac)) {
             dplyr::mutate(so_cap, value=cfac*value, Units=ounit)
@@ -860,7 +872,7 @@ module.pass_trans_fleet_per_capita <- function(mode, allqueries, aggkeys, aggfn,
             dplyr::select(-value.x, -value.y, -Units.x, -Units.y)
 
         fleet <- process.tr_svc_output(allqueries, aggkeys, aggfn, years,
-                                       filters, ounit) %>%
+                                       filters, NA) %>%
             # units are not handled correctly by process.tr_svc_output, so set correctly here
             # are there any exceptions??
             dplyr::mutate(Units = allqueries$`Transportation Service Output`$Units[1])
@@ -942,9 +954,8 @@ module.ldv_sales_fuel_prop <- function(mode, allqueries, aggkeys, aggfn, years,
                           Units = 'million vehicles') %>%
             dplyr::select(Units, scenario, region, sector, subsector, technology, year, value = sales) %>%
             dplyr::mutate(sector = substr(sector, nchar(sector)-1, nchar(sector)),
-                          sector = if_else(sector == 'DV', '3W', sector))
+                          sector = dplyr::if_else(sector == 'DV', '3W', sector))
 
-        sales <- filter(sales, years, filters)
         sales <- aggregate(sales, aggfn, aggkeys)
 
         if (!('technology' %in% names(sales))){
@@ -958,6 +969,8 @@ module.ldv_sales_fuel_prop <- function(mode, allqueries, aggkeys, aggfn, years,
             dplyr::mutate(value = 100 * value / sum(value)) %>%
             dplyr::ungroup() %>%
             dplyr::mutate(Units = 'Percentage')
+
+        sales <- filter(sales, years, filters)
 
         ## units example: million p-km
         if(!is.na(ounit)) {
@@ -1041,7 +1054,7 @@ module.pass_trans_public_share <- function(mode, allqueries, aggkeys, aggfn, yea
         shares <- process.tr_svc_output(allqueries, aggkeys, aggfn, years,
                               filters, ounit) %>%
             dplyr::filter(mode != 'Aviation') %>%
-            dplyr::mutate(transit_type = if_else(mode == 'Rail' | submode == 'Bus', 'Public', 'Private')) %>%
+            dplyr::mutate(transit_type = dplyr::if_else(mode == 'Rail' | submode == 'Bus', 'Public', 'Private')) %>%
             dplyr::group_by(Units, scenario, region, year, service, transit_type) %>%
             dplyr::summarise(value = sum(value)) %>%
             dplyr::ungroup()

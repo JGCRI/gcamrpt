@@ -129,8 +129,8 @@ module.electricity_capacity <- function(mode, allqueries, aggkeys, aggfn, years,
         message('Function for processing variable: Electricity Capacity')
 
         electricity <- allqueries$'Electricity' %>%
-            # Add in capacity factor
-            dplyr::left_join(elec_capacity_factors, by = c('region', 'technology')) %>%
+            # Add in capacity factor---inner_join drops hydrogen and cogen technologies
+            dplyr::inner_join(elec_capacity_factors, by = c('region', 'technology')) %>%
             # To convert to capacity, divide by seconds in a year and capacity factor
             dplyr::mutate(value = 1e9 * value / (365 * 24 * 60 * 60 * capacity.factor),
                           Units = 'GW') %>%

@@ -385,7 +385,7 @@ unitasserts <- function(iunit, ounit)
 extractunit <- function(unitlist, unitstr, type)
 {
     ## If we get a match, this should return a single '1'.  The names
-    unit <- lapply(unitlist, function(p){stringr::str_match(unitstr, stringr::regex(p, ignore_case = TRUE))}) %>%
+    unit <- lapply(unitlist, function(p){stringr::str_match(unitstr, stringr::regex(paste0("\\b",p,"\\b"), ignore_case = TRUE))}) %>%
       unlist(use.names=FALSE)
 
     unit <- unit[!is.na(unit)]

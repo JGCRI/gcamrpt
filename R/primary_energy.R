@@ -244,3 +244,71 @@ module.primary_energy_shares <- function(mode, allqueries, aggkeys, aggfn, years
         pe_shares
     }
 }
+
+#' Primary Energy (Direct Equivalent) Per Capita Data Module
+#'
+#' Produce primary energy per capita by fuel
+#'
+#' The raw table used by this module has columns:
+#' \itemize{
+#'   \item{scenario}
+#'   \item{region}
+#'   \item{year}
+#'   \item{value}
+#'   \item{Units}
+#' }
+#'
+#' @keywords internal
+
+module.primary_energy_direct_pc <- function(mode, allqueries, aggkeys, aggfn, years,
+                                         filters, ounit)
+{
+    if(mode == GETQ) {
+        # Return titles of necessary queries
+        # For more complex variables, will return multiple query titles in vector
+        c('Primary Energy Consumption (Direct Equivalent)', 'Population')
+    }
+    else {
+        message('Function for processing variable: Primary Energy')
+        pe <- allqueries$'Primary Energy Consumption (Direct Equivalent)' %>%
+            dplyr::select(-rundate)
+        # Aggregating here allows us to sum globally
+        pe <- aggregate(pe, aggfn, aggkeys)
+
+        pop <- allqueries$'Population' %>%
+            dplyr::select(-rundate)
+        # Aggregating here allows us to sum globally
+        pop <- aggregate(pop, aggfn, aggkeys)
+
+        join_cats <- names(pop)[!(names(pop) %in% c('value', 'Units'))]
+        pe_pc <- pe %>%
+            dplyr::left_join(pop, by = join_cats) %>%
+            dplyr::mutate(value = value.x / value.y,
+                          Units = paste0(Units.x, '/', Units.y)) %>%
+            dplyr::select(-value.x, -value.y, -Units.x, -Units.y)
+
+        pe_pc <- filter(pe_pc, years, filters)
+
+        if(is.na(ounit))
+            return(pe_pc)
+
+        iunit <- pe_pc$Units[1]
+        ## See notes above for unit conversion.  This is largely repeated from
+        ## the passenger version, but there are a couple of wrinkles, so it
+        ## would take more time than I have right now to refactor it.
+        pat <- '(\\w+) */ *(\\w+) *(\\w+)? *'
+        mmat <- stringr::str_match(c(iunit, ounit), pat)
+        mmat[is.na(mmat[,3]), 3] <- ''
+        cfac <-
+            unitconv_energy(mmat[1,2], mmat[2,2]) *
+            unitconv_counts(mmat[1,3], mmat[2,3], inverse=TRUE)
+        if(!is.na(cfac)) {
+            dplyr::mutate(pe_pc, value=cfac*value, Units=ounit)
+        }
+        else {
+            ## If any conversions failed, the warning will already have been
+            ## issued, so just return the result unconverted.
+            pe_pc
+        }
+    }
+}
