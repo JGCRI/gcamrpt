@@ -174,51 +174,6 @@ module.population_growth <- function(mode, allqueries, aggkeys, aggfn, years,
     }
 }
 
-#' GDP PPP Data Module
-#'
-#' Produce GDP PPP by region.
-#'
-#' The raw table used by this module has columns:
-#' \itemize{
-#'   \item{scenario}
-#'   \item{region}
-#'   \item{year}
-#'   \item{value}
-#'   \item{Units}
-#' }
-#'
-#' @keywords internal
-module.gdp_ppp <- function(mode, allqueries, aggkeys, aggfn, years,
-                            filters, ounit)
-{
-    if(mode == GETQ) {
-        # Return titles of necessary queries
-        # For more complex variables, will return multiple query titles.
-        'GDP(MER)'
-    }
-    else {
-        ## silence notes on package check
-        value <- NULL
-
-        message('Function for processing variable: GDP MER')
-
-        gdp_mer <- allqueries$'GDP(MER)'
-        gdp_mer <- filter(gdp_mer, years, filters)
-        gdp_mer <- aggregate(gdp_mer, aggfn, aggkeys)
-        if(grepl('US', ounit)) {
-            cf <- unitconv_counts(gdp_mer$Units[1], ounit) *
-                unitconv_usdollar(gdp_mer$Units[1], ounit)
-            gdp_mer <- dplyr::mutate(gdp_mer, value=value*cf, Units=ounit)
-        }
-        else if (grepl('Rupee', ounit)) {
-            ## This is hacked together and needs to be fixed.
-            gdp_mer <- unitconv_counts(gdp_mer$Units[1], ounit) *
-                unitconv_rupee(gdp_mer$Units[1], ounit)
-        }
-
-        gdp_mer
-    }
-}
 
 #' GDP PPP Data Module
 #'

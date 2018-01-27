@@ -160,19 +160,19 @@ module.final_energy_per_capita <- function(mode, allqueries, aggkeys, aggfn, yea
             aggregate(aggfn, aggkeys) %>%
             dplyr::select(-rundate)
 
+        grp_cats <- names(final_energy)[!(names(final_energy) %in% c('sector', 'input', 'value', 'fuel', 'end_use_sector'))]
+
+        final_energy_cap <- final_energy %>%
+            dplyr::group_by_(.dots = grp_cats) %>%
+            dplyr::summarise(value = sum(value)) %>%
+            dplyr::ungroup()
+
         # Determine columns to join by
         join_cats <- names(pop)[!(names(pop) %in% c('Units', 'value'))]
 
-        final_energy_cap <- final_energy %>%
-            dplyr::left_join(pop, by = join_cats) %>%
-            filter(years, filters)
-
-        grp_cats <- names(final_energy_cap)[!(names(final_energy_cap) %in% c('sector', 'input', 'value.x', 'value.y', 'fuel', 'end_use_sector'))]
-
         final_energy_cap <- final_energy_cap %>%
-            dplyr::group_by_(.dots = grp_cats) %>%
-            dplyr::summarise(value.x = sum(value.x), value.y = sum(value.y)) %>%
-            dplyr::ungroup() %>%
+            dplyr::left_join(pop, by = join_cats) %>%
+            filter(years, filters) %>%
             dplyr::mutate(Units = paste0(Units.x, "/", Units.y)) %>%
             dplyr::mutate(value = value.x / value.y) %>%
             dplyr::select(Units, scenario, region, year, value)
