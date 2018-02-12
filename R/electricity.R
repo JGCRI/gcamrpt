@@ -79,7 +79,9 @@ module.electricity_shares <- function(mode, allqueries, aggkeys, aggfn, years,
             dplyr::group_by(Units, scenario, region, subsector, year) %>%
             dplyr::summarise(value = sum(value)) %>%
             dplyr::ungroup() %>%
-            dplyr::left_join(elec_fuel_type, by = 'subsector')
+            dplyr::left_join(elec_fuel_type, by = 'subsector') %>%
+            # Rearrange columns for climateworks format
+            dplyr::select(Units, scenario, region, fuel_type, subsector, year, value)
 
         electricity_shares <- filter(electricity_shares, years, filters)
         electricity_shares <- aggregate(electricity_shares, aggfn, aggkeys)

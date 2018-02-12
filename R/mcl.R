@@ -205,7 +205,7 @@ generate <- function(scenctl,
     if(scenmerge)
         rslts <- merge_scenarios(rslts)
 
-    if(! dataformat %in% c('tabs', 'merged', 'IIASA')) {
+    if(! dataformat %in% c('tabs', 'merged', 'IIASA', 'climateworks')) {
         warning('Unrecognized data format: ', dataformat, '.  Using "tabs".')
         dataformat <- 'tabs'
     }
@@ -283,6 +283,67 @@ generate <- function(scenctl,
                 rslts<- lapply(rslts, function(df) {lapply(df, tidyr::spread, year,value)})
             }
         }
+
+    if (dataformat == "climateworks"){
+        for (name in names(rslts)){
+            rslts[[name]] <- rslts[[name]] %>%
+                dplyr::mutate(variable = name)
+
+            categories <- setdiff(names(rslts[[name]]), c("scenario", "region", "year", "value", "Units", "variable", "rundate"))
+
+            stopifnot(length(categories) <= 3)
+
+            # If there are no categories, then just rearrange columns
+            if (length(categories) == 0){
+                rslts[[name]] <- dplyr::select(rslts[[name]], scenario, region, variable, year, value, Units)
+            } # length 0
+
+            # If there is only 1 category, make sure it is named sector
+            if (length(categories) == 1){
+                rslts[[name]] <- rename_length_1(rslts[[name]], categories, "sector")
+                rslts[[name]] <- dplyr::select(rslts[[name]], scenario, region, variable, sector, year, value, Units)
+            } # length 1
+
+            # If there are two categories, we want them to be named sector and subsector
+            else if (length(categories) == 2){
+                rslts[[name]] <- rename_length_2(rslts[[name]], categories, c("sector", "subsector"))
+                rslts[[name]] <- dplyr::select(rslts[[name]], scenario, region, variable, sector, subsector, year, value, Units)
+            } # length 2
+
+            # If there are three categories, we want them to be named sector, subsector, technology
+            else if (length(categories) == 3){
+                # If subset column present, then perform rename with subsector and technology
+                if ("sector" %in% categories){
+                    categories <- subset(categories, categories != "sector")
+                    rslts[[name]] <- rename_length_2(rslts[[name]], categories, c("subsector", "technology"))
+                }
+                # If one column contains "_sector", then rename than to sector
+                else if (length(grep("_sector", categories)) == 1){
+                    rename_to_sector <- categories[grep("_sector", categories)]
+                    data <- rename_length_1(data, rename_to_sector, "sector")
+                    categories <- subset(categories, categories != rename_to_sector)
+                    rslts[[name]] <- rename_length_2(rslts[[name]], categories, c("subsector", "technology"))
+                }
+                # Last resort, rename left to right
+                else{
+                    rslts[[name]] <- rename_length_1(rslts[[name]], categories[1], "sector")
+                    rslts[[name]] <- rename_length_1(rslts[[name]], categories[2], "subsector")
+                    rslts[[name]] <- rename_length_1(rslts[[name]], categories[2], "technology")
+                }
+                rslts[[name]] <- dplyr::select(rslts[[name]], scenario, region, variable, sector, subsector, technology, year, value, Units)
+            }
+        }
+
+        # Create template so that our results have all columns included
+        template <- tibble::tibble(scenario = character(), region = character(), variable = character(),
+                                   sector = character(), subsector = character(), technology = character(),
+                                   year = integer(), value = double(), Units = character())
+
+        data <- dplyr::bind_rows(rslts, template) %>%
+            dplyr::select(scenario, region, variable, sector, subsector, technology, year, value, Units)
+        rslts <- list()
+        rslts[["iamrpt"]] <- data
+    }
 
     output(rslts, dataformat, fileformat, outputdir)
 
@@ -427,3 +488,42 @@ validate1 <- function(ctl, ctlname, expectcols, rqdcols) {
     }
 }
 
+#' Work function for generate climateworks format
+#'
+#' @param data Tibble of GCAM data
+#' @param old_name Column name we are replacing
+#' @param new_name New column name
+#' @keywords internal
+rename_length_1 <- function(data, old_name, new_name){
+    data <- dplyr::rename_at(data, dplyr::vars(dplyr::matches(paste0("^",old_name, "$"))), dplyr::funs(sub(old_name, new_name, .)))
+    return(data)
+}
+
+#' Work function for generate climateworks format
+#'
+#' @param data Tibble of GCAM data
+#' @param old_names Vector of two column names we are replacing
+#' @param new_names Vector of two new column names
+#' @keywords internal
+rename_length_2 <- function(data, old_names, new_names){
+    # If 1st-tier name already present, then just name 2nd-tier old name as 2nd-tier new name
+    if (new_names[1] %in% old_names){
+        old_names <- subset(old_names, old_names != new_names[1])
+        data <- rename_length_1(data, old_names, new_names[2])
+    }
+
+    # If version of 1st-tier name  in one category, name that one 1st-tier new name and name other old category as 2nd-tier new name
+    else if (length(grep(paste0("_", new_names[1]), old_names)) == 1){
+        rename_to_sector <- old_names[grep(paste0("_", new_names[1]), old_names)]
+        data <- rename_length_1(data, rename_to_sector, new_names[1])
+        old_names <- subset(old_names, old_names != rename_to_sector)
+        data <- rename_length_1(data, old_names, new_names[2])
+    }
+
+    # If no idea how to name, go in order (left to right)
+    else{
+        data <- rename_length_1(data, old_names[1], new_names[1])
+        data <- rename_length_1(data, old_names[2], new_names[2])
+    }
+    return(data)
+}

@@ -760,8 +760,9 @@ module.pass_trans_service_output_capita <- function(mode, allqueries, aggkeys, a
         population <- allqueries$'Population' %>%
             dplyr::select(-rundate)
         allqueries <- trans_filter_svc(allqueries['Transportation Service Output'], TRUE)
+        unitz <- allqueries$`Transportation Service Output`$Units[1]
         so <- process.tr_svc_output(allqueries, aggkeys, aggfn, years,
-                              filters, ounit)
+                              filters, unitz)
         # sum globally if needed
         if (!('region' %in% names(so))){
             population <- aggregate(population,'sum', 'scenario')

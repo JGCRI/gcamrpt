@@ -229,7 +229,8 @@ module.primary_energy_shares <- function(mode, allqueries, aggkeys, aggfn, years
         message('Function for processing variable: Primary Energy')
         pe <- allqueries$'Primary Energy Consumption (Direct Equivalent)' %>%
             dplyr::left_join(primary_fuel_type, by = "fuel") %>%
-            dplyr::select(-rundate)
+            # specify order so that fuel_type is to left of fuel for climateworks format
+            dplyr::select(Units, scenario, region, fuel_type, fuel, year, value)
         pe <- filter(pe, years, filters)
         pe <- aggregate(pe, aggfn, aggkeys)
 
