@@ -717,4 +717,24 @@ local:generate-sector-output-coefs(remove($inputNameQueue, 1), $currTree, $coefs
       </supplyDemandQuery>
 </aQuery>
 
+<aQuery>
+      	<all-regions/>
+      <supplyDemandQuery title="Energy consumption by subsector">
+         <axis1 name="sector">sector</axis1>
+         <axis2 name="Year">demand-physical[@vintage]</axis2>
+         <xPath buildList="true" dataName="input" group="false" sumAll="false">*[@type='sector']/*[@type='subsector']//*[@type='input']/demand-physical[@unit='EJ']/node()</xPath>
+         <comments>Supply sectors only.</comments>
+      </supplyDemandQuery>
+</aQuery>
+
+<aQuery>
+      	<all-regions/>
+		<query title="Land Use Change Emission (future)">
+         <axis1 name="land-use-change-emission">LandLeaf</axis1>
+         <axis2 name="Year">land-use-change-emission[@year]</axis2>
+         <xPath buildList="true" dataName="land-use-change-emission" group="false" sumAll="true">/LandNode[@name='root' or @type='LandNode' (: collapse :)]//land-use-change-emission[@year&gt;1975]/text()</xPath>
+         <comments/>
+      	</query>
+  </aQuery>
+
 </queries>

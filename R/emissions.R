@@ -41,51 +41,6 @@ module.co2_emissions <- function(mode, allqueries, aggkeys, aggfn, years,
     }
 }
 
-#' GHG Emissions Data Module
-#'
-#' Produce ghg emissions by subsector, converted to MTCO2e with AR4 GWPs
-#'
-#' The raw table used by this module has columns:
-#' \itemize{
-#'   \item{scenario}
-#'   \item{region}
-#'   \item{year}
-#'   \item{value}
-#'   \item{Units}
-#' }
-#'
-#' @keywords internal
-module.ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, aggfn, years,
-                                 filters, ounit)
-{
-    if(mode == GETQ) {
-        # Return titles of necessary queries
-        # For more complex variables, will return multiple query titles in vector
-        'GHG emissions by subsector'
-    }
-    else {
-        message('Function for processing variable: GHG emissions by subsector')
-
-        ghg <- allqueries$'GHG emissions by subsector'
-        ghg <- filter(ghg, years, filters) %>%
-            # Add in GWP, and remove gases without GWP
-            dplyr::right_join(gwp_ar4, by = c('ghg', 'Units')) %>%
-            # Convert to MTCO2e
-            dplyr::mutate(value = value * GWP,
-                          Units = 'MTCO2e') %>%
-            dplyr::select(-GWP)
-        ghg <- aggregate(ghg, aggfn, aggkeys)
-        if(!is.na(ounit)) {
-            cfac <- unitconv_counts(ghg$Units[1], ounit)
-            if(!is.na(cfac)) {
-                ghg$value <- ghg$value *cfac
-                ghg$Units <- ounit
-            }
-        }
-        ghg
-    }
-}
-
 #' CO2 emissions by end-use sector Data Module
 #'
 #' Produce service output by technology and vintage
@@ -146,14 +101,24 @@ module.ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, aggfn, years,
     if(mode == GETQ) {
         # Return titles of necessary queries
         # For more complex variables, will return multiple query titles in vector
-        'GHG emissions by subsector'
+        c('GHG emissions by subsector', 'Land Use Change Emission (future)')
     }
     else {
         message('Function for processing variable: GHG emissions by subsector')
 
+        luc <- allqueries$'Land Use Change Emission (future)' %>%
+            dplyr::group_by(Units, scenario, region, year) %>%
+            dplyr::summarise(value = sum(value)) %>%
+            dplyr::ungroup() %>%
+            dplyr::mutate(Units = "MTC",
+                          ghg = "LUC CO2",
+                          sector = "LUC",
+                          subsector = "LUC")
+
         ghg <- allqueries$'GHG emissions by subsector' %>%
+            dplyr::bind_rows(luc) %>%
             # Add in GWP, and remove gases without GWP
-            dplyr::right_join(gwp_ar4, by = c('ghg', 'Units')) %>%
+            dplyr::inner_join(gwp_ar4, by = c('ghg', 'Units')) %>%
             # Convert to MTCO2e
             dplyr::mutate(value = value * GWP,
                           Units = 'MTCO2e') %>%
@@ -194,12 +159,22 @@ module.ghg_emissions_ar5 <- function(mode, allqueries, aggkeys, aggfn, years,
   if(mode == GETQ) {
     # Return titles of necessary queries
     # For more complex variables, will return multiple query titles in vector
-    'GHG emissions by subsector'
+      c('GHG emissions by subsector', 'Land Use Change Emission (future)')
   }
   else {
     message('Function for processing variable: GHG emissions by subsector')
 
+    luc <- allqueries$'Land Use Change Emission (future)' %>%
+        dplyr::group_by(Units, scenario, region, year) %>%
+        dplyr::summarise(value = sum(value)) %>%
+        dplyr::ungroup() %>%
+        dplyr::mutate(Units = "MTC",
+                    ghg = "LUC CO2",
+                    sector = "LUC",
+                    subsector = "LUC")
+
     ghg <- allqueries$'GHG emissions by subsector' %>%
+      dplyr::bind_rows(luc) %>%
       # Add in GWP, and remove gases without GWP
       dplyr::right_join(gwp_ar5, by = c('ghg', 'Units')) %>%
       # Convert to MTCO2e
@@ -242,15 +217,24 @@ module.ghg_emissions_intensity_region <- function(mode, allqueries, aggkeys, agg
     if(mode == GETQ) {
         # Return titles of necessary queries
         # For more complex variables, will return multiple query titles in vector
-        c('GHG emissions by subsector', 'Final energy by detailed end-use sector and fuel')
+        c('GHG emissions by subsector', 'Final energy by detailed end-use sector and fuel',
+          'Land Use Change Emission (future)')
     }
     else {
         message('Function for processing variable: GHG emissions intensity by region')
 
+        luc <- allqueries$'Land Use Change Emission (future)' %>%
+            dplyr::group_by(Units, scenario, region, year) %>%
+            dplyr::summarise(value = sum(value)) %>%
+            dplyr::ungroup() %>%
+            dplyr::mutate(Units = "MTC",
+                          ghg = "LUC CO2")
+
         # Aggregate emissions and energy by region/year
         ghg <- allqueries$'GHG emissions by subsector' %>%
+            bind_rows(luc) %>%
             # Add in GWP, and remove gases without GWP
-            dplyr::right_join(gwp_ar4, by = c('ghg', 'Units')) %>%
+            dplyr::inner_join(gwp_ar4, by = c('ghg', 'Units')) %>%
             # Convert to MTCO2e
             dplyr::mutate(value = value * GWP,
                           Units = 'MTCO2e') %>%
@@ -338,13 +322,22 @@ module.ghg_emissions_per_capita <- function(mode, allqueries, aggkeys, aggfn, ye
     if(mode == GETQ) {
         # Return titles of necessary queries
         # For more complex variables, will return multiple query titles in vector
-        c('GHG emissions by subsector', 'Population')
+        c('GHG emissions by subsector', 'Population',
+          'Land Use Change Emission (future)')
     }
     else {
         message('Function for processing variable: GHG emissions per capita by region')
 
+        luc <- allqueries$'Land Use Change Emission (future)' %>%
+            dplyr::group_by(Units, scenario, region, year) %>%
+            dplyr::summarise(value = sum(value)) %>%
+            dplyr::ungroup() %>%
+            dplyr::mutate(Units = "MTC",
+                          ghg = "LUC CO2")
+
         # Aggregate emissions by region/year
         ghg <- allqueries$'GHG emissions by subsector' %>%
+            bind_rows(luc) %>%
             # Add in GWP, and remove gases without GWP
             dplyr::right_join(gwp_ar4, by = c('ghg', 'Units')) %>%
             # Convert to MTCO2e
@@ -421,13 +414,22 @@ module.ghg_emissions_per_gdp <- function(mode, allqueries, aggkeys, aggfn, years
     if(mode == GETQ) {
         # Return titles of necessary queries
         # For more complex variables, will return multiple query titles in vector
-        c('GHG emissions by subsector', 'GDP(MER)')
+        c('GHG emissions by subsector', 'pcGDP(PPP)', 'Population',
+          'Land Use Change Emission (future)')
     }
     else {
         message('Function for processing variable: GHG emissions per GDP by region')
 
+        luc <- allqueries$'Land Use Change Emission (future)' %>%
+            dplyr::group_by(Units, scenario, region, year) %>%
+            dplyr::summarise(value = sum(value)) %>%
+            dplyr::ungroup() %>%
+            dplyr::mutate(Units = "MTC",
+                          ghg = "LUC CO2")
+
         # Aggregate emissions by region/year
         ghg <- allqueries$'GHG emissions by subsector' %>%
+            bind_rows(luc) %>%
             # Add in GWP, and remove gases without GWP
             dplyr::right_join(gwp_ar4, by = c('ghg', 'Units')) %>%
             # Convert to MTCO2e
@@ -438,7 +440,11 @@ module.ghg_emissions_per_gdp <- function(mode, allqueries, aggkeys, aggfn, years
             dplyr::ungroup() %>%
             aggregate(aggfn, aggkeys)
 
-        gdp <- allqueries$'GDP(MER)' %>%
+        gdp <- allqueries$'pcGDP(PPP)' %>%
+            dplyr::left_join(allqueries$'Population', by = c('scenario', 'region', 'year')) %>%
+            dplyr::mutate(value = value.x * value.y,
+                          Units = "Million1990US$") %>%
+            dplyr::select(-Units.x, -Units.y, -value.x, -value.y, -rundate.x, -rundate.y) %>%
             aggregate(aggfn, aggkeys)
 
         if ('region' %in% names(gdp) & 'region' %in% names(ghg)){
@@ -528,7 +534,7 @@ module.direct_ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, aggfn, ye
 
         all_ghg <- filter(all_ghg, years, filters) %>%
             # Add in GWP, and remove gases without GWP
-            dplyr::right_join(gwp_ar4, by = c('ghg', 'Units')) %>%
+            dplyr::inner_join(gwp_ar4, by = c('ghg', 'Units')) %>%
             # Convert to MTCO2e
             dplyr::mutate(value = value * GWP,
                           Units = 'MTCO2e') %>%
@@ -599,9 +605,9 @@ module.indirect_ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, aggfn, 
             # refined liquids industrial, and wholesale gas. These are all practically zero.
             dplyr::inner_join(ghg_sector, by = 'sector')
 
-        all_ghg <- filter(all_ghg, years, filters) %>%
+        all_ghg <- all_ghg %>%
             # Add in GWP, and remove gases without GWP
-            dplyr::right_join(gwp_ar4, by = c('ghg', 'Units')) %>%
+            dplyr::inner_join(gwp_ar4, by = c('ghg', 'Units')) %>%
             # Convert to MTCO2e
             dplyr::mutate(value = value * GWP,
                           Units = 'MTCO2e') %>%
@@ -616,7 +622,8 @@ module.indirect_ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, aggfn, 
             dplyr::right_join(elec_split, by = c('scenario', 'region', 'year')) %>%
             dplyr::mutate(indirect_emissions = value.x * value.y,
                           Units = Units.x) %>%
-            dplyr::select(Units, scenario, region, year, value = indirect_emissions, end_use)
+            dplyr::select(Units, scenario, region, year, value = indirect_emissions, end_use) %>%
+            filter(years, filters)
 
         indirect_emissions <- aggregate(indirect_emissions, aggfn, aggkeys)
 
@@ -1384,65 +1391,58 @@ module.ghg_per_cement <- function(mode, allqueries, aggkeys, aggfn, years,
         ghg <- allqueries$'GHG emissions by sector' %>%
             dplyr::filter(ghg != 'CO2')
 
-        # CO2 emissions by enduse sector
         co2 <- allqueries$'Net Zero Bio CO2 Emissions by Sector' %>%
             dplyr::mutate(ghg = 'CO2') %>%
             dplyr::rename(sector = `primary fuel`)
 
-        # Electricity splits
         elec_split <- allqueries$'Energy consumption by sector' %>%
             dplyr::select(-rundate) %>%
-            dplyr::filter(grepl('elect_td', input)) %>%
+            dplyr::filter(grepl("elect_", input)) %>%
             # Turn demand into proportions
             dplyr::group_by(Units, scenario, region, year) %>%
             dplyr::mutate(value = value / sum(value)) %>%
             dplyr::ungroup() %>%
-            dplyr::mutate(Units = 'Proportion',
-                          end_use = dplyr::if_else(input == 'elect_td_bld', 'Buildings', ''),
-                          end_use = dplyr::if_else(input == 'elect_td_ind', 'Industry', end_use),
-                          end_use = dplyr::if_else(input == 'elect_td_trn', 'Transportation', end_use))
+            dplyr::filter(grepl("cement", sector)) %>%
+            dplyr::mutate(Units = 'Proportion')
 
-        # All GHG Emissions
+        # Now calculate all sectoral emissions, then split out electricity emissions
         all_ghg <- ghg %>%
             dplyr::bind_rows(co2) %>%
             dplyr::select(-rundate) %>%
             # Inner join gets rid of CO2 from the following categories: delivered biomass, delivered gas, refined liquids enduse,
             # refined liquids industrial, and wholesale gas. These are all practically zero.
-            dplyr::inner_join(ghg_sector, by = 'sector') %>%
+            dplyr::inner_join(ghg_sector, by = 'sector')
+
+        all_ghg <- all_ghg %>%
             # Add in GWP, and remove gases without GWP
             dplyr::right_join(gwp_ar4, by = c('ghg', 'Units')) %>%
             # Convert to MTCO2e
             dplyr::mutate(value = value * GWP,
                           Units = 'MTCO2e') %>%
-            dplyr::select(-GWP) %>%
-            dplyr::group_by(Units, scenario, region, year, sector, end_use) %>%
+            # aggregate across all ghgs
+            dplyr::group_by(Units, scenario, region, sector, year, end_use) %>%
             dplyr::summarise(value = sum(value)) %>%
             dplyr::ungroup()
 
-        # Electricity GHG emissions
         elec_ghg <- all_ghg %>%
-            dplyr::filter(end_use == 'Electricity') %>%
+            dplyr::filter(end_use == "Electricity") %>%
             dplyr::group_by(Units, scenario, region, year) %>%
-            dplyr::summarise(elec = sum(value)) %>%
+            dplyr::summarise(value = sum(value)) %>%
             dplyr::ungroup()
 
         # Pull out electricity emissions in order to split between end use sectors
         indirect_emissions <- elec_ghg %>%
             dplyr::right_join(elec_split, by = c('scenario', 'region', 'year')) %>%
-            dplyr::mutate(indirect_emissions = value * elec,
+            dplyr::mutate(indirect_emissions = value.x * value.y,
                           Units = Units.x) %>%
-            dplyr::select(Units, scenario, region, year, sector, value = indirect_emissions, end_use) %>%
-            dplyr::group_by(Units, scenario, region, sector, end_use, year) %>%
-            dplyr::summarise(value = sum(value)) %>%
-            dplyr::ungroup() %>%
-            dplyr::filter(sector == 'cement')
+            dplyr::select(Units, scenario, region, year, value = indirect_emissions, sector)
 
         # Replace electricity emissions with indirect emissions
-        total_cement_emissions <- all_ghg %>%
-            dplyr::filter(sector == 'cement') %>%
+        total_emissions <- all_ghg %>%
+            dplyr::filter(grepl("cement", sector)) %>%
             dplyr::bind_rows(indirect_emissions) %>%
             # aggregate direct and indirect emissions
-            dplyr::group_by(Units, scenario, region, sector, end_use, year) %>%
+            dplyr::group_by(Units, scenario, region, year) %>%
             dplyr::summarise(value = sum(value)) %>%
             dplyr::ungroup()
 
@@ -1451,8 +1451,8 @@ module.ghg_per_cement <- function(mode, allqueries, aggkeys, aggfn, years,
             dplyr::select(-rundate)
 
         # Add in service output to emissions, which will ignore H2 forecourt production
-        emissions_intensity <- total_cement_emissions %>%
-            dplyr::inner_join(cement_prod, by = c("scenario", "region", "sector", "year")) %>%
+        emissions_intensity <- total_emissions %>%
+            dplyr::inner_join(cement_prod, by = c("scenario", "region", "year")) %>%
             dplyr::mutate(value = value.x / value.y,
                           Units = paste0(Units.x, '/', Units.y)) %>%
             dplyr::select(-Units.x, -Units.y, -value.x, -value.y)
@@ -1480,5 +1480,401 @@ module.ghg_per_cement <- function(mode, allqueries, aggkeys, aggfn, years,
             ## issued, so just return the result unconverted.
             emissions_intensity
         }
+    }
+}
+
+#' Total Cement GHG Emissions Data Module
+#'
+#' Produce total cement ghg emissions - includes indirect emissions from electricity and biomass CO2 accounting.
+#'
+#' The raw table used by this module has columns:
+#' \itemize{
+#'   \item{scenario}
+#'   \item{region}
+#'   \item{year}
+#'   \item{value}
+#'   \item{Units}
+#' }
+#'
+#' @keywords internal
+module.cement_ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, aggfn, years,
+                                                  filters, ounit)
+{
+    if(mode == GETQ) {
+        # Return titles of necessary queries
+        # For more complex variables, will return multiple query titles in vector
+        c('GHG emissions by sector', 'Net Zero Bio CO2 Emissions by Sector', 'Energy consumption by sector')
+    }
+    else {
+        message('Function for processing variable: GHG emissions by sector')
+
+        # We need to filter out the CO2 emissions from ghg and add them in from the co2 query to get them attributed to the correct sector
+        ghg <- allqueries$'GHG emissions by sector' %>%
+            dplyr::filter(ghg != 'CO2')
+
+        co2 <- allqueries$'Net Zero Bio CO2 Emissions by Sector' %>%
+            dplyr::mutate(ghg = 'CO2') %>%
+            dplyr::rename(sector = `primary fuel`)
+
+        elec_split <- allqueries$'Energy consumption by sector' %>%
+            dplyr::select(-rundate) %>%
+            dplyr::filter(grepl("elect_", input)) %>%
+            # Turn demand into proportions
+            dplyr::group_by(Units, scenario, region, year) %>%
+            dplyr::mutate(value = value / sum(value)) %>%
+            dplyr::ungroup() %>%
+            dplyr::filter(grepl("cement", sector)) %>%
+            dplyr::mutate(Units = 'Proportion')
+
+        # Now calculate all sectoral emissions, then split out electricity emissions
+        all_ghg <- ghg %>%
+            dplyr::bind_rows(co2) %>%
+            dplyr::select(-rundate) %>%
+            # Inner join gets rid of CO2 from the following categories: delivered biomass, delivered gas, refined liquids enduse,
+            # refined liquids industrial, and wholesale gas. These are all practically zero.
+            dplyr::inner_join(ghg_sector, by = 'sector')
+
+        all_ghg <- all_ghg %>%
+            # Add in GWP, and remove gases without GWP
+            dplyr::right_join(gwp_ar4, by = c('ghg', 'Units')) %>%
+            # Convert to MTCO2e
+            dplyr::mutate(value = value * GWP,
+                          Units = 'MTCO2e') %>%
+            # aggregate across all ghgs
+            dplyr::group_by(Units, scenario, region, sector, year, end_use) %>%
+            dplyr::summarise(value = sum(value)) %>%
+            dplyr::ungroup()
+
+        elec_ghg <- all_ghg %>%
+            dplyr::filter(end_use == "Electricity") %>%
+            dplyr::group_by(Units, scenario, region, year) %>%
+            dplyr::summarise(value = sum(value)) %>%
+            dplyr::ungroup()
+
+        # Pull out electricity emissions in order to split between end use sectors
+        indirect_emissions <- elec_ghg %>%
+            dplyr::right_join(elec_split, by = c('scenario', 'region', 'year')) %>%
+            dplyr::mutate(indirect_emissions = value.x * value.y,
+                          Units = Units.x) %>%
+            dplyr::select(Units, scenario, region, year, value = indirect_emissions, sector)
+
+        # Replace electricity emissions with indirect emissions
+        total_emissions <- all_ghg %>%
+            dplyr::filter(grepl("cement", sector)) %>%
+            dplyr::bind_rows(indirect_emissions) %>%
+            # aggregate direct and indirect emissions
+            dplyr::group_by(Units, scenario, region, year) %>%
+            dplyr::summarise(value = sum(value)) %>%
+            dplyr::ungroup()
+
+        total_emissions <- filter(total_emissions, years, filters)
+        total_emissions <- aggregate(total_emissions, aggfn, aggkeys)
+
+
+        if(!is.na(ounit)) {
+            cfac <- unitconv_counts(total_emissions$Units[1], ounit)
+            if(!is.na(cfac)) {
+                total_emissions$value <- total_emissions$value *cfac
+                total_emissions$Units <- ounit
+            }
+        }
+        total_emissions
+    }
+}
+
+#' Total Transport GHG Emissions Data Module
+#'
+#' Produce total transport ghg emissions - includes indirect emissions from electricity and biomass CO2 accounting.
+#'
+#' The raw table used by this module has columns:
+#' \itemize{
+#'   \item{scenario}
+#'   \item{region}
+#'   \item{year}
+#'   \item{value}
+#'   \item{Units}
+#' }
+#'
+#' @keywords internal
+module.total_trans_ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, aggfn, years,
+                                                  filters, ounit)
+{
+    if(mode == GETQ) {
+        # Return titles of necessary queries
+        # For more complex variables, will return multiple query titles in vector
+        c('GHG emissions by subsector', 'Net Zero Bio CO2 Emissions by Sector', 'Energy consumption by subsector')
+    }
+    else {
+        message('Function for processing variable: GHG emissions by sector')
+
+        # We need to filter out the CO2 emissions from ghg and add them in from the co2 query to get them attributed to the correct sector
+        ghg <- allqueries$'GHG emissions by subsector' %>%
+            dplyr::filter(ghg != 'CO2')
+
+        co2 <- allqueries$'Net Zero Bio CO2 Emissions by Sector' %>%
+            dplyr::mutate(ghg = 'CO2') %>%
+            dplyr::rename(sector = `primary fuel`)
+
+        elec_split <- allqueries$'Energy consumption by subsector' %>%
+            dplyr::select(-rundate) %>%
+            dplyr::filter(grepl("elect_", input)) %>%
+            # Turn demand into proportions
+            dplyr::group_by(Units, scenario, region, year) %>%
+            dplyr::mutate(value = value / sum(value)) %>%
+            dplyr::ungroup() %>%
+            dplyr::mutate(Units = 'Proportion') %>%
+            dplyr::filter(grepl("trn_", sector))
+
+        # Now calculate all electricity emissions
+        elec_ghg <- ghg %>%
+            dplyr::bind_rows(co2) %>%
+            dplyr::select(-rundate) %>%
+            # Inner join gets rid of CO2 from the following categories: delivered biomass, delivered gas, refined liquids enduse,
+            # refined liquids industrial, and wholesale gas. These are all practically zero.
+            dplyr::inner_join(ghg_sector, by = 'sector') %>%
+            dplyr::filter(end_use == "Electricity") %>%
+            # Add in GWP, and remove gases without GWP
+            dplyr::right_join(gwp_ar4, by = c('ghg', 'Units')) %>%
+            # Convert to MTCO2e
+            dplyr::mutate(value = value * GWP,
+                          Units = 'MTCO2e') %>%
+            # aggregate across all ghgs
+            dplyr::group_by(Units, scenario, region, year, end_use) %>%
+            dplyr::summarise(value = sum(value)) %>%
+            dplyr::ungroup() %>%
+            # Pull out electricity emissions in order to split between end use sectors
+            dplyr::right_join(elec_split, by = c('scenario', 'region', 'year')) %>%
+            dplyr::mutate(indirect_emissions = value.x * value.y,
+                          Units = Units.x) %>%
+            dplyr::select(Units, scenario, region, sector, subsector, year, value = indirect_emissions)
+
+        # Transportation co2 split
+        trn_co2_split <- allqueries$'Energy consumption by subsector' %>%
+            dplyr::filter(grepl("trn_", sector),
+                          !(subsector %in% c("Walk", "Cycle")),
+                          input != "elect_td_trn",
+                          input != "H2 enduse") %>%
+            dplyr::group_by(Units, scenario, region, sector, subsector, year) %>%
+            dplyr::summarise(value = sum(value)) %>%
+            dplyr::group_by(Units, scenario, sector, region, year) %>%
+            dplyr::mutate(value = value / sum(value)) %>%
+            dplyr::ungroup() %>%
+            dplyr::mutate(Units = "Proportion")
+
+        # Calculate direct emissions
+        direct_emissions <- co2 %>%
+            dplyr::filter(grepl("trn_", sector)) %>%
+            # apportion sector co2 emissions to subsector
+            dplyr::right_join(trn_co2_split, by = c("scenario", "region", "sector", "year")) %>%
+            dplyr::mutate(value = value.x * value.y,
+                          Units = Units.x) %>%
+            dplyr::select(-value.x, -value.y, -Units.x, -Units.y) %>%
+            dplyr::bind_rows(dplyr::filter(ghg, grepl("trn_", sector))) %>%
+            # Add in GWP, and remove gases without GWP
+            dplyr::inner_join(gwp_ar4, by = c('ghg', 'Units')) %>%
+            # Convert to MTCO2e
+            dplyr::mutate(value = value * GWP,
+                          Units = 'MTCO2e') %>%
+            # aggregate across all ghgs
+            dplyr::group_by(Units, scenario, region, year, sector, subsector) %>%
+            dplyr::summarise(value = sum(value)) %>%
+            dplyr::ungroup()
+
+        # Replace electricity emissions with indirect emissions
+        total_emissions <- direct_emissions %>%
+            dplyr::bind_rows(elec_ghg) %>%
+            dplyr::left_join(trn_subsector_map, by = c("sector", "subsector")) %>%
+            # aggregate direct and indirect emissions
+            dplyr::group_by(Units, scenario, region, year, end_use) %>%
+            dplyr::summarise(value = sum(value)) %>%
+            dplyr::ungroup()
+
+        total_emissions <- filter(total_emissions, years, filters)
+        total_emissions <- aggregate(total_emissions, aggfn, aggkeys)
+
+
+        if(!is.na(ounit)) {
+            cfac <- unitconv_counts(total_emissions$Units[1], ounit)
+            if(!is.na(cfac)) {
+                total_emissions$value <- total_emissions$value *cfac
+                total_emissions$Units <- ounit
+            }
+        }
+        total_emissions
+    }
+}
+
+#' Direct Transport GHG Emissions Data Module
+#'
+#' Produce direct transport ghg emissions - includes biomass CO2 accounting.
+#'
+#' The raw table used by this module has columns:
+#' \itemize{
+#'   \item{scenario}
+#'   \item{region}
+#'   \item{year}
+#'   \item{value}
+#'   \item{Units}
+#' }
+#'
+#' @keywords internal
+module.direct_trans_ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, aggfn, years,
+                                                 filters, ounit)
+{
+    if(mode == GETQ) {
+        # Return titles of necessary queries
+        # For more complex variables, will return multiple query titles in vector
+        c('GHG emissions by subsector', 'Net Zero Bio CO2 Emissions by Sector', 'Energy consumption by subsector')
+    }
+    else {
+        message('Function for processing variable: GHG emissions by sector')
+
+        # We need to filter out the CO2 emissions from ghg and add them in from the co2 query to get them attributed to the correct sector
+        ghg <- allqueries$'GHG emissions by subsector' %>%
+            dplyr::filter(ghg != 'CO2',
+                          grepl("trn_", sector))
+
+        co2 <- allqueries$'Net Zero Bio CO2 Emissions by Sector' %>%
+            dplyr::mutate(ghg = 'CO2') %>%
+            dplyr::rename(sector = `primary fuel`) %>%
+            dplyr::filter(grepl("trn_", sector))
+
+        # Transportation co2 split
+        trn_co2_split <- allqueries$'Energy consumption by subsector' %>%
+            dplyr::filter(grepl("trn_", sector),
+                          !(subsector %in% c("Walk", "Cycle")),
+                          input != "elect_td_trn",
+                          input != "H2 enduse") %>%
+            dplyr::group_by(Units, scenario, region, sector, subsector, year) %>%
+            dplyr::summarise(value = sum(value)) %>%
+            dplyr::group_by(Units, scenario, sector, region, year) %>%
+            dplyr::mutate(value = value / sum(value)) %>%
+            dplyr::ungroup() %>%
+            dplyr::mutate(Units = "Proportion")
+
+        # Calculate direct emissions
+        direct_emissions <- co2 %>%
+            # apportion sector co2 emissions to subsector
+            dplyr::right_join(trn_co2_split, by = c("scenario", "region", "sector", "year")) %>%
+            dplyr::mutate(value = value.x * value.y,
+                          Units = Units.x) %>%
+            dplyr::select(-value.x, -value.y, -Units.x, -Units.y) %>%
+            dplyr::bind_rows(ghg) %>%
+            # Add in GWP, and remove gases without GWP
+            dplyr::inner_join(gwp_ar4, by = c('ghg', 'Units')) %>%
+            # Convert to MTCO2e
+            dplyr::mutate(value = value * GWP,
+                          Units = 'MTCO2e') %>%
+            # aggregate across all ghgs
+            dplyr::group_by(Units, scenario, region, year, sector, subsector) %>%
+            dplyr::summarise(value = sum(value)) %>%
+            dplyr::ungroup() %>%
+            dplyr::left_join(trn_subsector_map, by = c("sector", "subsector")) %>%
+            # aggregate direct and indirect emissions
+            dplyr::group_by(Units, scenario, region, year, end_use) %>%
+            dplyr::summarise(value = sum(value)) %>%
+            dplyr::ungroup()
+
+        direct_emissions <- filter(direct_emissions, years, filters)
+        direct_emissions <- aggregate(direct_emissions, aggfn, aggkeys)
+
+
+        if(!is.na(ounit)) {
+            cfac <- unitconv_counts(direct_emissions$Units[1], ounit)
+            if(!is.na(cfac)) {
+                direct_emissions$value <- direct_emissions$value *cfac
+                direct_emissions$Units <- ounit
+            }
+        }
+        direct_emissions
+    }
+}
+
+#' Indirect Transport GHG Emissions Data Module
+#'
+#' Produce indirect transport ghg emissions - includes indirect emissions from electricity and biomass CO2 accounting in electricity.
+#'
+#' The raw table used by this module has columns:
+#' \itemize{
+#'   \item{scenario}
+#'   \item{region}
+#'   \item{year}
+#'   \item{value}
+#'   \item{Units}
+#' }
+#'
+#' @keywords internal
+module.indirect_trans_ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, aggfn, years,
+                                                 filters, ounit)
+{
+    if(mode == GETQ) {
+        # Return titles of necessary queries
+        # For more complex variables, will return multiple query titles in vector
+        c('GHG emissions by subsector', 'Net Zero Bio CO2 Emissions by Sector', 'Energy consumption by subsector')
+    }
+    else {
+        message('Function for processing variable: GHG emissions by sector')
+
+        # We need to filter out the CO2 emissions from ghg and add them in from the co2 query to get them attributed to the correct sector
+        ghg <- allqueries$'GHG emissions by subsector' %>%
+            dplyr::filter(ghg != 'CO2')
+
+        co2 <- allqueries$'Net Zero Bio CO2 Emissions by Sector' %>%
+            dplyr::mutate(ghg = 'CO2') %>%
+            dplyr::rename(sector = `primary fuel`)
+
+        elec_split <- allqueries$'Energy consumption by subsector' %>%
+            dplyr::select(-rundate) %>%
+            dplyr::filter(grepl("elect_", input)) %>%
+            # Turn demand into proportions
+            dplyr::group_by(Units, scenario, region, year) %>%
+            dplyr::mutate(value = value / sum(value)) %>%
+            dplyr::ungroup() %>%
+            dplyr::mutate(Units = 'Proportion') %>%
+            dplyr::filter(grepl("trn_", sector))
+
+        # Now calculate all electricity emissions
+        elec_ghg <- ghg %>%
+            dplyr::bind_rows(co2) %>%
+            dplyr::select(-rundate) %>%
+            # Inner join gets rid of CO2 from the following categories: delivered biomass, delivered gas, refined liquids enduse,
+            # refined liquids industrial, and wholesale gas. These are all practically zero.
+            dplyr::inner_join(ghg_sector, by = 'sector') %>%
+            dplyr::filter(end_use == "Electricity") %>%
+            # Add in GWP, and remove gases without GWP
+            dplyr::right_join(gwp_ar4, by = c('ghg', 'Units')) %>%
+            # Convert to MTCO2e
+            dplyr::mutate(value = value * GWP,
+                          Units = 'MTCO2e') %>%
+            # aggregate across all ghgs
+            dplyr::group_by(Units, scenario, region, year, end_use) %>%
+            dplyr::summarise(value = sum(value)) %>%
+            dplyr::ungroup() %>%
+            # Pull out electricity emissions in order to split between end use sectors
+            dplyr::right_join(elec_split, by = c('scenario', 'region', 'year')) %>%
+            dplyr::mutate(value = value.x * value.y,
+                          Units = Units.x) %>%
+            dplyr::select(Units, scenario, region, sector, subsector, year, value)
+
+        # Replace electricity emissions with indirect emissions
+        indirect_emissions <- elec_ghg %>%
+            dplyr::left_join(trn_subsector_map, by = c("sector", "subsector")) %>%
+            # aggregate direct and indirect emissions
+            dplyr::group_by(Units, scenario, region, year, end_use) %>%
+            dplyr::summarise(value = sum(value)) %>%
+            dplyr::ungroup()
+
+        indirect_emissions <- filter(total_emissions, years, filters)
+        indirect_emissions <- aggregate(total_emissions, aggfn, aggkeys)
+
+
+        if(!is.na(ounit)) {
+            cfac <- unitconv_counts(indirect_emissions$Units[1], ounit)
+            if(!is.na(cfac)) {
+                indirect_emissions$value <- indirect_emissions$value *cfac
+                indirect_emissions$Units <- ounit
+            }
+        }
+        indirect_emissions
     }
 }

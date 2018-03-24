@@ -39,6 +39,7 @@ final_energy_end_use_sector <- readr::read_csv('data-raw/final_energy_end_use_se
 elec_fuel_type <- readr::read_csv('data-raw/electricity_fuel_type.csv')
 primary_fuel_type <- readr::read_csv('data-raw/primary_fuel_type.csv')
 elec_capacity_factors <- readr::read_csv('data-raw/elec_capacity_factors.csv')
+trn_subsector_map <- readr::read_csv('data-raw/trn_subsector_map.csv')
 
 devtools::use_data(gdpdef, pm_emissions_factors, annual_mileage,
                    energyconv, countconv, emissionsconv, massconv,

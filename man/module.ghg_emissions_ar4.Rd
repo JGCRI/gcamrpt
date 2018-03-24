@@ -2,30 +2,15 @@
 % Please edit documentation in R/emissions.R
 \name{module.ghg_emissions_ar4}
 \alias{module.ghg_emissions_ar4}
-\alias{module.ghg_emissions_ar4}
 \title{GHG Emissions Data Module}
 \usage{
-module.ghg_emissions_ar4(mode, allqueries, aggkeys, aggfn, years, filters,
-  ounit)
-
 module.ghg_emissions_ar4(mode, allqueries, aggkeys, aggfn, years, filters,
   ounit)
 }
 \description{
 Produce ghg emissions by subsector, converted to MTCO2e with AR4 GWPs
-
-Produce ghg emissions by subsector, converted to MTCO2e with AR4 GWPs
 }
 \details{
-The raw table used by this module has columns:
-\itemize{
-  \item{scenario}
-  \item{region}
-  \item{year}
-  \item{value}
-  \item{Units}
-}
-
 The raw table used by this module has columns:
 \itemize{
   \item{scenario}
