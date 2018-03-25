@@ -16,7 +16,7 @@
 #' @keywords internal
 
 module.final_energy_sector_fuel <- function(mode, allqueries, aggkeys, aggfn, years,
-                              filters, ounit){
+                              filters, ounit, region, agg_region, add_global){
     if(mode == GETQ) {
         # Return titles of necessary queries
         # For more complex variables, will return multiple query titles.
@@ -30,6 +30,7 @@ module.final_energy_sector_fuel <- function(mode, allqueries, aggkeys, aggfn, ye
             dplyr::left_join(final_energy_end_use_sector, by = 'sector')
         final_energy <- filter(final_energy, years, filters)
         final_energy <- aggregate(final_energy, aggfn, aggkeys)
+        final_energy <- region_agg(final_energy, region, agg_region, add_global)
 
         if(!is.na(ounit)) {
             cfac <- unitconv_energy(final_energy$Units[1], ounit)
@@ -58,7 +59,7 @@ module.final_energy_sector_fuel <- function(mode, allqueries, aggkeys, aggfn, ye
 #' @keywords internal
 
 module.building_floorspace <- function(mode, allqueries, aggkeys, aggfn, years,
-                                            filters, ounit)
+                                            filters, ounit, region, agg_region, add_global)
 {
     if(mode == GETQ) {
         # Return titles of necessary queries
@@ -72,6 +73,8 @@ module.building_floorspace <- function(mode, allqueries, aggkeys, aggfn, years,
             dplyr::select(-nodeinput, -`building-node-input`)
         floorspace <- filter(floorspace, years, filters)
         floorspace <- aggregate(floorspace, aggfn, aggkeys)
+        floorspace <- region_agg(floorspace, region, agg_region, add_global)
+
         if(!is.na(ounit)) {
             cfac <- unitconv_counts(floorspace$Units[1], ounit)
             if(!is.na(cfac)) {
@@ -99,7 +102,7 @@ module.building_floorspace <- function(mode, allqueries, aggkeys, aggfn, years,
 #' @keywords internal
 
 module.cement_production <- function(mode, allqueries, aggkeys, aggfn, years,
-                                       filters, ounit)
+                                       filters, ounit, region, agg_region, add_global)
 {
     if(mode == GETQ) {
         # Return titles of necessary queries
@@ -112,6 +115,8 @@ module.cement_production <- function(mode, allqueries, aggkeys, aggfn, years,
         cement <- allqueries$'Cement production by region'
         cement <- filter(cement, years, filters)
         cement <- aggregate(cement, aggfn, aggkeys)
+        cement <- region_agg(cement, region, agg_region, add_global)
+
         if(!is.na(ounit)) {
             cfac <- unitconv_mass(cement$Units[1], ounit)
             if(!is.na(cfac)) {
@@ -139,7 +144,7 @@ module.cement_production <- function(mode, allqueries, aggkeys, aggfn, years,
 #' @keywords internal
 
 module.final_energy_per_capita <- function(mode, allqueries, aggkeys, aggfn, years,
-                                            filters, ounit){
+                                            filters, ounit, region, agg_region, add_global){
     if(mode == GETQ) {
         # Return titles of necessary queries
         # For more complex variables, will return multiple query titles.
@@ -154,11 +159,13 @@ module.final_energy_per_capita <- function(mode, allqueries, aggkeys, aggfn, yea
             dplyr::left_join(final_energy_end_use_sector, by = 'sector') %>%
             # Aggregating here allows us to sum globally, but not by sector/fuel
             aggregate(aggfn, aggkeys)
+        final_energy <- region_agg(final_energy, region, agg_region, add_global)
 
         pop <- allqueries$'Population' %>%
             # Aggregating here allows us to sum globally, but not by sector/fuel
             aggregate(aggfn, aggkeys) %>%
             dplyr::select(-rundate)
+        pop <- region_agg(pop, region, agg_region, add_global)
 
         grp_cats <- names(final_energy)[!(names(final_energy) %in% c('sector', 'input', 'value', 'fuel', 'end_use_sector'))]
 
@@ -218,7 +225,7 @@ module.final_energy_per_capita <- function(mode, allqueries, aggkeys, aggfn, yea
 #' @keywords internal
 
 module.final_energy_per_gdp <- function(mode, allqueries, aggkeys, aggfn, years,
-                                         filters, ounit){
+                                         filters, ounit, region, agg_region, add_global){
     if(mode == GETQ) {
         # Return titles of necessary queries
         # For more complex variables, will return multiple query titles in vector
@@ -232,10 +239,12 @@ module.final_energy_per_gdp <- function(mode, allqueries, aggkeys, aggfn, years,
             dplyr::left_join(final_energy_end_use_sector, by = 'sector') %>%
             # Aggregating here allows us to sum globally, but not by sector/fuel
             aggregate(aggfn, aggkeys)
+        final_energy <- region_agg(final_energy, region, agg_region, add_global)
 
         gdp <- allqueries$'GDP(MER)' %>%
             # Aggregating here allows us to sum globally, but not by sector/fuel
             aggregate(aggfn, aggkeys)
+        gdp <- region_agg(gdp, region, agg_region, add_global)
 
         if ('region' %in% names(gdp) & 'region' %in% names(final_energy)){
             final_energy_gdp <- final_energy %>%
@@ -302,7 +311,7 @@ module.final_energy_per_gdp <- function(mode, allqueries, aggkeys, aggfn, years,
 #' @keywords internal
 
 module.final_energy_fuel_shares <- function(mode, allqueries, aggkeys, aggfn, years,
-                                            filters, ounit){
+                                            filters, ounit, region, agg_region, add_global){
     if(mode == GETQ) {
         # Return titles of necessary queries
         # For more complex variables, will return multiple query titles.
@@ -320,6 +329,7 @@ module.final_energy_fuel_shares <- function(mode, allqueries, aggkeys, aggfn, ye
 
         # Can aggregate globally or by end use sector here
         final_energy_shares <- aggregate(final_energy_shares, aggfn, aggkeys)
+        final_energy_shares <- region_agg(final_energy_shares, region, agg_region, add_global)
 
         grp_vars <- names(final_energy_shares[!(names(final_energy_shares) %in% c('value', 'fuel'))])
         final_energy_shares <- final_energy_shares %>%
@@ -350,7 +360,7 @@ module.final_energy_fuel_shares <- function(mode, allqueries, aggkeys, aggfn, ye
 #' @keywords internal
 
 module.cement_capita <- function(mode, allqueries, aggkeys, aggfn, years,
-                                     filters, ounit)
+                                     filters, ounit, region, agg_region, add_global)
 {
     if(mode == GETQ) {
         # Return titles of necessary queries
@@ -364,10 +374,12 @@ module.cement_capita <- function(mode, allqueries, aggkeys, aggfn, years,
             dplyr::select(-rundate)
         # Can only aggregate globally
         cement <- aggregate(cement, aggfn, aggkeys)
+        cement <- region_agg(cement, region, agg_region, add_global)
 
         pop <- allqueries$'Population' %>%
             dplyr::select(-rundate)
         pop <- aggregate(pop, aggfn, aggkeys)
+        pop <- region_agg(pop, region, agg_region, add_global)
 
         # Determine columns to join by
         join_cats <- names(pop)[!(names(pop) %in% c('Units', 'value'))]
@@ -421,7 +433,7 @@ module.cement_capita <- function(mode, allqueries, aggkeys, aggfn, years,
 #' @keywords internal
 
 module.building_flrsp_cap <- function(mode, allqueries, aggkeys, aggfn, years,
-                                       filters, ounit)
+                                       filters, ounit, region, agg_region, add_global)
 {
     if(mode == GETQ) {
         # Return titles of necessary queries
@@ -434,12 +446,15 @@ module.building_flrsp_cap <- function(mode, allqueries, aggkeys, aggfn, years,
         floorspace <- allqueries$'Building floorspace' %>%
             dplyr::select(-nodeinput, -`building-node-input`, -rundate)
         floorspace <- aggregate(floorspace, aggfn, aggkeys)
+        floorspace <- region_agg(floorspace, region, agg_region, add_global)
 
         pop <- allqueries$'Population' %>%
             dplyr::select(-rundate)
         if (!is.na(aggkeys) & !(grepl('region', aggkeys))){
             pop <- aggregate(pop, aggfn, aggkeys)
         }
+        pop <- region_agg(pop, region, agg_region, add_global)
+
         # Determine columns to join by
         join_cats <- names(pop)[!(names(pop) %in% c('Units', 'value'))]
 
@@ -492,7 +507,7 @@ module.building_flrsp_cap <- function(mode, allqueries, aggkeys, aggfn, years,
 #' @keywords internal
 
 module.liquid_shares <- function(mode, allqueries, aggkeys, aggfn, years,
-                                       filters, ounit)
+                                       filters, ounit, region, agg_region, add_global)
 {
     if(mode == GETQ) {
         # Return titles of necessary queries

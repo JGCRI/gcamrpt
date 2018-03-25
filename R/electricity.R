@@ -19,7 +19,7 @@
 #' @keywords internal
 
 module.electricity <- function(mode, allqueries, aggkeys, aggfn, years,
-                              filters, ounit)
+                              filters, ounit, region, agg_region, add_global)
 {
     if(mode == GETQ) {
         # Return titles of necessary queries
@@ -32,6 +32,7 @@ module.electricity <- function(mode, allqueries, aggkeys, aggfn, years,
         electricity <- allqueries$'Electricity'
         electricity <- filter(electricity, years, filters)
         electricity <- aggregate(electricity, aggfn, aggkeys)
+        electricity <- region_agg(electricity, region, agg_region, add_global)
 
         if(!is.na(ounit)) {
             ## skip unit conversion if output unit not specified.
@@ -64,7 +65,7 @@ module.electricity <- function(mode, allqueries, aggkeys, aggfn, years,
 #' @keywords internal
 
 module.electricity_shares <- function(mode, allqueries, aggkeys, aggfn, years,
-                               filters, ounit)
+                               filters, ounit, region, agg_region, add_global)
 {
     if(mode == GETQ) {
         # Return titles of necessary queries
@@ -85,6 +86,7 @@ module.electricity_shares <- function(mode, allqueries, aggkeys, aggfn, years,
 
         electricity_shares <- filter(electricity_shares, years, filters)
         electricity_shares <- aggregate(electricity_shares, aggfn, aggkeys)
+        electricity_shares <- region_agg(electricity_shares, region, agg_region, add_global)
 
         grouping_vars <- names(electricity_shares)[!(names(electricity_shares) %in%
                                                          c('subsector', 'value', 'fuel_type'))]
@@ -120,7 +122,7 @@ module.electricity_shares <- function(mode, allqueries, aggkeys, aggfn, years,
 #' @keywords internal
 
 module.electricity_capacity <- function(mode, allqueries, aggkeys, aggfn, years,
-                               filters, ounit)
+                               filters, ounit, region, agg_region, add_global)
 {
     if(mode == GETQ) {
         # Return titles of necessary queries
@@ -140,6 +142,7 @@ module.electricity_capacity <- function(mode, allqueries, aggkeys, aggfn, years,
             dplyr::left_join(elec_fuel_type, by = 'subsector')
         electricity <- filter(electricity, years, filters)
         electricity <- aggregate(electricity, aggfn, aggkeys)
+        electricity <- region_agg(electricity, region, agg_region, add_global)
 
         if(!is.na(ounit)) {
             ## skip unit conversion if output unit not specified.
@@ -172,7 +175,7 @@ module.electricity_capacity <- function(mode, allqueries, aggkeys, aggfn, years,
 #' @keywords internal
 
 module.electricity_capita <- function(mode, allqueries, aggkeys, aggfn, years,
-                               filters, ounit)
+                               filters, ounit, region, agg_region, add_global)
 {
     if(mode == GETQ) {
         # Return titles of necessary queries
@@ -187,6 +190,7 @@ module.electricity_capita <- function(mode, allqueries, aggkeys, aggfn, years,
         # Aggregating here allows us to aggregate by region, sector, subsector, technology
         # Need to be careful about adding in population if we aggregate globally though
         electricity <- aggregate(electricity, aggfn, aggkeys)
+        electricity <- region_agg(electricity, region, agg_region, add_global)
 
         pop <- allqueries$'Population' %>%
             dplyr::select(-rundate)
@@ -195,6 +199,7 @@ module.electricity_capita <- function(mode, allqueries, aggkeys, aggfn, years,
         if (!is.na(aggkeys) & !grepl('region', aggkeys)){
             pop <- aggregate(pop, aggfn, 'scenario')
         }
+        pop <- region_agg(pop, region, agg_region, add_global)
 
         elec_capita <- electricity %>%
             dplyr::left_join(pop, by = c('scenario', 'region', 'year')) %>%

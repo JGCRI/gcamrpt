@@ -16,7 +16,7 @@
 #' @keywords internal
 
 module.population <- function(mode, allqueries, aggkeys, aggfn, years,
-                              filters, ounit)
+                              filters, ounit, region, agg_region, add_global)
 {
     if(mode == GETQ) {
         # Return titles of necessary queries
@@ -29,6 +29,8 @@ module.population <- function(mode, allqueries, aggkeys, aggfn, years,
         population <- allqueries$'Population'
         population <- filter(population, years, filters)
         population <- aggregate(population, aggfn, aggkeys)
+        population <- region_agg(population, region, agg_region, add_global)
+
 
         if(!is.na(ounit)) {
             cfac <- unitconv_counts(population$Units[1], ounit)
@@ -56,7 +58,7 @@ module.population <- function(mode, allqueries, aggkeys, aggfn, years,
 #'
 #' @keywords internal
 module.gdp_mer_ <- function(mode, allqueries, aggkeys, aggfn, years,
-                              filters, ounit)
+                              filters, ounit, region, agg_region, add_global)
 {
     if(mode == GETQ) {
         # Return titles of necessary queries
@@ -72,6 +74,7 @@ module.gdp_mer_ <- function(mode, allqueries, aggkeys, aggfn, years,
         gdp_mer <- allqueries$'GDP(MER)'
         gdp_mer <- filter(gdp_mer, years, filters)
         gdp_mer <- aggregate(gdp_mer, aggfn, aggkeys)
+        gdp_mer <- region_agg(gdp_mer, region, agg_region, add_global)
         if(grepl('US', ounit)) {
             cf1 <- unitconv_counts(gdp_mer$Units[1], ounit)
             cf2 <- unitconv_usdollar(gdp_mer$Units[1], ounit)
@@ -101,7 +104,7 @@ module.gdp_mer_ <- function(mode, allqueries, aggkeys, aggfn, years,
 #'
 #' @keywords internal
 module.pcgdp_ppp_ <- function(mode, allqueries, aggkeys, aggfn, years,
-                           filters, ounit)
+                           filters, ounit, region, agg_region, add_global)
 {
     if(mode == GETQ) {
         # Return titles of necessary queries
@@ -143,7 +146,7 @@ module.pcgdp_ppp_ <- function(mode, allqueries, aggkeys, aggfn, years,
 #' @keywords internal
 
 module.population_growth <- function(mode, allqueries, aggkeys, aggfn, years,
-                              filters, ounit)
+                              filters, ounit, region, agg_region, add_global)
 {
     if(mode == GETQ) {
         # Return titles of necessary queries
@@ -156,6 +159,7 @@ module.population_growth <- function(mode, allqueries, aggkeys, aggfn, years,
         population <- allqueries$'Population'
         population <- filter(population, years, filters)
         population <- aggregate(population, aggfn, aggkeys)
+        population <- region_agg(population, region, agg_region, add_global)
         # Select vars to group by in case user has aggregated globally
         grp_vars <- names(population)[!(names(population) %in%
                                          c('Units', 'year', 'value', 'rundate'))]
@@ -190,7 +194,7 @@ module.population_growth <- function(mode, allqueries, aggkeys, aggfn, years,
 #'
 #' @keywords internal
 module.gdp_ppp <- function(mode, allqueries, aggkeys, aggfn, years,
-                              filters, ounit)
+                              filters, ounit, region, agg_region, add_global)
 {
     if(mode == GETQ) {
         # Return titles of necessary queries
@@ -209,6 +213,8 @@ module.gdp_ppp <- function(mode, allqueries, aggkeys, aggfn, years,
             dplyr::select(Units, scenario, region, year, value, rundate)
         gdp_ppp <- filter(gdp_ppp, years, filters)
         gdp_ppp <- aggregate(gdp_ppp, aggfn, aggkeys)
+        gdp_ppp <- region_agg(gdp_ppp, region, agg_region, add_global)
+
         if(!is.na(ounit)) {
             cf <- unitconv_counts(gdp_ppp$Units[1], ounit)*
                 unitconv_usdollar(gdp_ppp$Units[1], ounit)
@@ -236,7 +242,7 @@ module.gdp_ppp <- function(mode, allqueries, aggkeys, aggfn, years,
 #' @keywords internal
 
 module.gdp_ppp_growth <- function(mode, allqueries, aggkeys, aggfn, years,
-                                     filters, ounit)
+                                     filters, ounit, region, agg_region, add_global)
 {
     if(mode == GETQ) {
         # Return titles of necessary queries
@@ -255,6 +261,8 @@ module.gdp_ppp_growth <- function(mode, allqueries, aggkeys, aggfn, years,
             dplyr::select(Units, scenario, region, year, value, rundate)
         gdp_ppp <- filter(gdp_ppp, years, filters)
         gdp_ppp <- aggregate(gdp_ppp, aggfn, aggkeys)
+        gdp_ppp <- region_agg(gdp_ppp, region, agg_region, add_global)
+
         # Select vars to group by in case user has aggregated globally
         grp_vars <- names(gdp_ppp)[!(names(gdp_ppp) %in%
                                        c('Units', 'year', 'value', 'rundate'))]

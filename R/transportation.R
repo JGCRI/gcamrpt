@@ -12,7 +12,7 @@
 #' meaningful for transportation.  A quantity represented as a sector could be
 #' spliced in underneath another sector, for example.
 #'
-#' Each transporttion data module starts with a call to the
+#' Each transportation data module starts with a call to the
 #' \code{trans_standardize} function, which translates all of the GCAM output
 #' variables to the standard taxonomy.  Each module also comes in a passenger
 #' and a freight variant.  This is necessary because although the procedure for
@@ -29,7 +29,7 @@ NULL
 
 #' @describeIn trans_modules Passenger transportation service output data module
 module.pass_trans_service_output <- function(mode, allqueries, aggkeys, aggfn, years,
-                                             filters, ounit)
+                                             filters, ounit, region, agg_region, add_global)
 {
     queries <- 'Transportation Service Output'
     if(mode == GETQ) {
@@ -38,13 +38,14 @@ module.pass_trans_service_output <- function(mode, allqueries, aggkeys, aggfn, y
     else {
         allqueries <- trans_filter_svc(allqueries[queries], TRUE)
         process.tr_svc_output(allqueries, aggkeys, aggfn, years,
-                              filters, ounit)
+                              filters, ounit) %>%
+            region_agg(region, agg_region, add_global)
     }
 }
 
 #' @describeIn trans_modules Freight transportation service output data module
 module.frgt_trans_service_output <- function(mode, allqueries, aggkeys, aggfn, years,
-                                             filters, ounit)
+                                             filters, ounit, region, agg_region, add_global)
 {
     queries <- 'Transportation Service Output'
     if(mode == GETQ) {
@@ -53,13 +54,14 @@ module.frgt_trans_service_output <- function(mode, allqueries, aggkeys, aggfn, y
     else {
         allqueries <- trans_filter_svc(allqueries[queries], FALSE)
         process.tr_svc_output(allqueries, aggkeys, aggfn, years,
-                              filters, ounit)
+                              filters, ounit) %>%
+            region_agg(region, agg_region, add_global)
     }
 }
 
 #' @describeIn trans_modules Passenger transportation final energy module
 module.pass_trans_final_energy <- function(mode, allqueries, aggkeys, aggfn, years,
-                                           filters, ounit)
+                                           filters, ounit, region, agg_region, add_global)
 {
     queries <- c('Transportation Final Energy', 'Refined Liquids')
     if(mode == GETQ) {
@@ -70,13 +72,14 @@ module.pass_trans_final_energy <- function(mode, allqueries, aggkeys, aggfn, yea
         transqueries <-
             trans_filter_svc(allqueries['Transportation Final Energy'], TRUE)
         allqueries <- c(transqueries, allqueries['Refined Liquids'])
-        process.tr_fe_output(allqueries, aggkeys, aggfn, years, filters, ounit)
+        process.tr_fe_output(allqueries, aggkeys, aggfn, years, filters, ounit) %>%
+            region_agg(region, agg_region, add_global)
     }
 }
 
 #' @describeIn trans_modules Freight transportation final energy module
 module.frgt_trans_final_energy <- function(mode, allqueries, aggkeys, aggfn, years,
-                                           filters, ounit)
+                                           filters, ounit, region, agg_region, add_global)
 {
     queries <- c('Transportation Final Energy', 'Refined Liquids')
     if(mode == GETQ) {
@@ -87,14 +90,15 @@ module.frgt_trans_final_energy <- function(mode, allqueries, aggkeys, aggfn, yea
         transqueries <-
             trans_filter_svc(allqueries['Transportation Final Energy'], FALSE)
         allqueries <- c(transqueries, allqueries['Refined Liquids'])
-        process.tr_fe_output(allqueries, aggkeys, aggfn, years, filters, ounit)
+        process.tr_fe_output(allqueries, aggkeys, aggfn, years, filters, ounit) %>%
+            region_agg(region, agg_region, add_global)
     }
 }
 
 
 #' @describeIn trans_modules Passenger transportation service intensity module
 module.pass_trans_service_intensity <- function(mode, allqueries, aggkeys, aggfn, years,
-                                                filters, ounit)
+                                                filters, ounit, region, agg_region, add_global)
 {
     queries <- c('Transportation Final Energy', 'Transportation Service Output',
                  'Refined Liquids')
@@ -109,6 +113,7 @@ module.pass_trans_service_intensity <- function(mode, allqueries, aggkeys, aggfn
         ## be filtered by service
         transqueries <- trans_filter_svc(allqueries[queries[1:2]], TRUE)
         allqueries <- c(transqueries, allqueries['Refined Liquids'])
+        allqueries <- lapply(allqueries, region_agg, region, agg_region, add_global)
         svc_intensity <- process.tr_svc_intensity(allqueries, aggkeys, aggfn, years, filters,
                                                   ounit, 'EJ / million pass-km')
 
@@ -175,7 +180,7 @@ module.pass_trans_service_intensity <- function(mode, allqueries, aggkeys, aggfn
 
 #' @describeIn trans_modules Passenger transportation service intensity module
 module.frgt_trans_service_intensity <- function(mode, allqueries, aggkeys, aggfn, years,
-                                                filters, ounit)
+                                                filters, ounit, region, agg_region, add_global)
 {
     queries <- c('Transportation Final Energy', 'Transportation Service Output',
                  'Refined Liquids')
@@ -190,6 +195,7 @@ module.frgt_trans_service_intensity <- function(mode, allqueries, aggkeys, aggfn
         ## be filtered by service
         transqueries <- trans_filter_svc(allqueries[queries[1:2]], FALSE)
         allqueries <- c(transqueries, allqueries['Refined Liquids'])
+        allqueries <- lapply(allqueries, region_agg, region, agg_region, add_global)
         svc_intensity <- process.tr_svc_intensity(allqueries, aggkeys, aggfn, years, filters,
                                                   ounit, 'EJ / million tonne-km')
 
@@ -232,7 +238,7 @@ module.frgt_trans_service_intensity <- function(mode, allqueries, aggkeys, aggfn
 
 #' @describeIn trans_modules Passenger transportation load factor data module
 module.pass_trans_load_factor <- function(mode, allqueries, aggkeys, aggfn, years,
-                                           filters, ounit)
+                                           filters, ounit, region, agg_region, add_global)
 {
     queries <- 'Transportation Load Factors'
     if(mode == GETQ) {
@@ -245,7 +251,8 @@ module.pass_trans_load_factor <- function(mode, allqueries, aggkeys, aggfn, year
         ## "passengers"
         allqueries[['Transportation Load Factors']]$Units <- 'pass / veh'
         process.trans_load_factors(allqueries, aggkeys, aggfn, years, filters,
-                                   ounit)
+                                   ounit) %>%
+            region_agg(region, agg_region, add_global)
         ## no unit conversions for passenger load factors; passengers / vehicle
         ## is the only sensible unit.
     }
@@ -253,7 +260,7 @@ module.pass_trans_load_factor <- function(mode, allqueries, aggkeys, aggfn, year
 
 #' @describeIn trans_modules Freight transportation load factor data module
 module.frgt_trans_load_factor <- function(mode, allqueries, aggkeys, aggfn, years,
-                                           filters, ounit)
+                                           filters, ounit, region, agg_region, add_global)
 {
     queries <- 'Transportation Load Factors'
     if(mode == GETQ) {
@@ -269,7 +276,8 @@ module.frgt_trans_load_factor <- function(mode, allqueries, aggkeys, aggfn, year
         ## "tonnes"
         allqueries[['Transportation Load Factors']]$Units <- 'tonnes / veh'
         lf <- process.trans_load_factors(allqueries, aggkeys, aggfn, years, filters,
-                                         ounit)
+                                         ounit) %>%
+            region_agg(region, agg_region, add_global)
         if(!is.na(ounit)) {
             cf <- unitconv_mass(lf$Units[1], ounit)
             if(!is.na(cf)) {
@@ -418,7 +426,7 @@ process.tr_svc_intensity <- function(allqueries, aggkeys, aggfn, years,
 #'
 #' This module appears to be incomplete.
 module.ldv_sales <- function(mode, allqueries, aggkeys, aggfn, years,
-                         filters, ounit)
+                         filters, ounit, region, agg_region, add_global)
 {
     queries <- 'Transportation Service Output'
     if(mode == GETQ) {
@@ -456,6 +464,7 @@ module.ldv_sales <- function(mode, allqueries, aggkeys, aggfn, years,
 
         sales <- filter(sales, years, filters)
         sales <- aggregate(sales, aggfn, aggkeys)
+        sales <- region_agg(sales, region, region_agg, add_global)
 
         ## units example: million p-km
         if(!is.na(ounit)) {
@@ -549,7 +558,7 @@ mapfuel <- function(en, ref = NULL) {
 #'
 #' @keywords internal
 module.transportation_pm_emissions <- function(mode, allqueries, aggkeys, aggfn, years,
-                                               filters, ounit)
+                                               filters, ounit, region, agg_region, add_global)
 {
     if(mode == GETQ) {
         # Return titles of necessary queries
@@ -596,6 +605,8 @@ module.transportation_pm_emissions <- function(mode, allqueries, aggkeys, aggfn,
 
         pm <- filter(pm, years, filters)
         pm <- aggregate(pm, aggfn, aggkeys)
+        pm <- region_agg(pm, region, region_agg, add_global)
+
         if(!is.na(ounit)) {
             cf <- unitconv_mass(pm$Units[1], ounit)
             if(!is.na(cf)) {
@@ -750,7 +761,7 @@ trans_standardize <- function(queryData) {
 
 #' @describeIn trans_modules Passenger transportation service output per capita data module
 module.pass_trans_service_output_capita <- function(mode, allqueries, aggkeys, aggfn, years,
-                                             filters, ounit)
+                                             filters, ounit, region, agg_region, add_global)
 {
     queries <- c('Transportation Service Output', 'Population')
     if(mode == GETQ) {
@@ -763,10 +774,13 @@ module.pass_trans_service_output_capita <- function(mode, allqueries, aggkeys, a
         unitz <- allqueries$`Transportation Service Output`$Units[1]
         so <- process.tr_svc_output(allqueries, aggkeys, aggfn, years,
                               filters, unitz)
+        so <- region_agg(so, region, region_agg, add_global)
+
         # sum globally if needed
         if (!('region' %in% names(so))){
             population <- aggregate(population,'sum', 'scenario')
         }
+        population <- region_agg(population, region, region_agg, add_global)
 
         # Columns to join by
         join_cats <- names(population)[!(names(population) %in% c('Units', 'value'))]
@@ -808,7 +822,7 @@ module.pass_trans_service_output_capita <- function(mode, allqueries, aggkeys, a
 
 #' @describeIn trans_modules Passenger transportation fleet size data module
 module.pass_trans_fleet <- function(mode, allqueries, aggkeys, aggfn, years,
-                                             filters, ounit)
+                                             filters, ounit, region, agg_region, add_global)
 {
     queries <- 'Transportation Service Output'
     if(mode == GETQ) {
@@ -834,6 +848,8 @@ module.pass_trans_fleet <- function(mode, allqueries, aggkeys, aggfn, years,
 
         fleet <- process.tr_svc_output(allqueries, aggkeys, aggfn, years,
                               filters, ounit)
+        fleet <- region_agg(fleet, region, region_agg, add_global)
+
 
         if(!is.na(ounit)) {
             cfac <- unitconv_counts(fleet$Units[1], ounit)
@@ -848,7 +864,7 @@ module.pass_trans_fleet <- function(mode, allqueries, aggkeys, aggfn, years,
 
 #' @describeIn trans_modules Passenger transportation fleet size per person data module
 module.pass_trans_fleet_per_capita <- function(mode, allqueries, aggkeys, aggfn, years,
-                                    filters, ounit)
+                                    filters, ounit, region, agg_region, add_global)
 {
     queries <- c('Transportation Service Output', 'Population')
     if(mode == GETQ) {
@@ -877,6 +893,8 @@ module.pass_trans_fleet_per_capita <- function(mode, allqueries, aggkeys, aggfn,
             # units are not handled correctly by process.tr_svc_output, so set correctly here
             # are there any exceptions??
             dplyr::mutate(Units = allqueries$`Transportation Service Output`$Units[1])
+        fleet <- region_agg(fleet, region, region_agg, add_global)
+
 
         pop <- allqueries$'Population' %>%
             dplyr::select(-rundate)
@@ -885,6 +903,8 @@ module.pass_trans_fleet_per_capita <- function(mode, allqueries, aggkeys, aggfn,
         if (!('region' %in% names(fleet))){
             pop <- aggregate(pop, aggfn, 'year')
         }
+
+        pop <- region_agg(pop, region, region_agg, add_global)
 
         # Determine columns to join by
         join_cats <- names(pop)[!(names(pop) %in% c('Units', 'value'))]
@@ -921,7 +941,7 @@ module.pass_trans_fleet_per_capita <- function(mode, allqueries, aggkeys, aggfn,
 #'
 #' This module appears to be incomplete.
 module.ldv_sales_fuel_prop <- function(mode, allqueries, aggkeys, aggfn, years,
-                             filters, ounit)
+                             filters, ounit, region, agg_region, add_global)
 {
     queries <- 'Transportation Service Output'
     if(mode == GETQ) {
@@ -958,6 +978,7 @@ module.ldv_sales_fuel_prop <- function(mode, allqueries, aggkeys, aggfn, years,
                           sector = dplyr::if_else(sector == 'DV', '3W', sector))
 
         sales <- aggregate(sales, aggfn, aggkeys)
+        sales <- region_agg(sales, region, region_agg, add_global)
 
         if (!('technology' %in% names(sales))){
             warning('Technology not in LDV Sales')
@@ -986,7 +1007,7 @@ module.ldv_sales_fuel_prop <- function(mode, allqueries, aggkeys, aggfn, years,
 
 #' @describeIn trans_modules Passenger transportation service output data module
 module.pass_vkm <- function(mode, allqueries, aggkeys, aggfn, years,
-                                             filters, ounit)
+                                             filters, ounit, region, agg_region, add_global)
 {
     queries <- 'Transportation Service Output'
     if(mode == GETQ) {
@@ -1002,13 +1023,15 @@ module.pass_vkm <- function(mode, allqueries, aggkeys, aggfn, years,
 
 
         process.tr_svc_output(allqueries, aggkeys, aggfn, years,
-                              filters, ounit)
+                              filters, ounit) %>%
+            region_agg(region, region_agg, add_global)
+
     }
 }
 
 #' @describeIn trans_modules Freight transportation shares data module
 module.frgt_trans_shares <- function(mode, allqueries, aggkeys, aggfn, years,
-                                             filters, ounit)
+                                             filters, ounit, region, agg_region, add_global)
 {
     queries <- 'Transportation Service Output'
     if(mode == GETQ) {
@@ -1027,6 +1050,7 @@ module.frgt_trans_shares <- function(mode, allqueries, aggkeys, aggfn, years,
             dplyr::group_by_(.dots = grp_cats) %>%
             dplyr::summarise(value = sum(value)) %>%
             dplyr::ungroup()
+        freight <- region_agg(freight, region, region_agg, add_global)
 
         # This will only allow us to see percentage of mode or submode in service, not submode in mode
         grp_cats <- names(freight)[!(names(freight) %in% c('value', 'mode', 'submode', 'technology'))]
@@ -1043,7 +1067,7 @@ module.frgt_trans_shares <- function(mode, allqueries, aggkeys, aggfn, years,
 
 #' @describeIn trans_modules Passenger transportation shares public vs private (not including aviation) data module
 module.pass_trans_public_share <- function(mode, allqueries, aggkeys, aggfn, years,
-                                             filters, ounit)
+                                             filters, ounit, region, agg_region, add_global)
 {
     queries <- 'Transportation Service Output'
     if(mode == GETQ) {
@@ -1059,6 +1083,7 @@ module.pass_trans_public_share <- function(mode, allqueries, aggkeys, aggfn, yea
             dplyr::group_by(Units, scenario, region, year, service, transit_type) %>%
             dplyr::summarise(value = sum(value)) %>%
             dplyr::ungroup()
+        shares <- region_agg(shares, region, region_agg, add_global)
 
         grp_cats <- names(shares)[!(names(shares) %in% c('value', 'transit_type'))]
 
@@ -1074,7 +1099,7 @@ module.pass_trans_public_share <- function(mode, allqueries, aggkeys, aggfn, yea
 
 #' @describeIn trans_modules Passenger transportation fleet fuel shares data module
 module.pass_trans_fleet_shares <- function(mode, allqueries, aggkeys, aggfn, years,
-                                    filters, ounit)
+                                    filters, ounit, region, agg_region, add_global)
 {
     queries <- 'Transportation Service Output'
     if(mode == GETQ) {
@@ -1100,6 +1125,7 @@ module.pass_trans_fleet_shares <- function(mode, allqueries, aggkeys, aggfn, yea
 
         fleet <- process.tr_svc_output(allqueries, aggkeys, aggfn, years,
                                        filters, ounit)
+        fleet <- region_agg(fleet, region, region_agg, add_global)
 
         grp_cats <- names(fleet)[!(names(fleet) %in% c('technology', 'value'))]
 

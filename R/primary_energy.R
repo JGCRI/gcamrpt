@@ -19,7 +19,7 @@
 #' @keywords internal
 
 module.resource_production <- function(mode, allqueries, aggkeys, aggfn, years,
-                               filters, ounit)
+                               filters, ounit, region, agg_region, add_global)
 {
     if(mode == GETQ) {
         # Return titles of necessary queries
@@ -32,6 +32,7 @@ module.resource_production <- function(mode, allqueries, aggkeys, aggfn, years,
         resources <- allqueries$'Resource production'
         resources <- filter(resources, years, filters)
         resources <- aggregate(resources, aggfn, aggkeys)
+        resources <- region_agg(resources, region, agg_region, add_global)
 
         if(!is.na(ounit)) {
             ## skip unit conversion if output unit not specified.
@@ -61,7 +62,7 @@ module.resource_production <- function(mode, allqueries, aggkeys, aggfn, years,
 #' @keywords internal
 
 module.primary_energy_direct <- function(mode, allqueries, aggkeys, aggfn, years,
-                                         filters, ounit)
+                                         filters, ounit, region, agg_region, add_global)
 {
     if(mode == GETQ) {
         # Return titles of necessary queries
@@ -73,6 +74,8 @@ module.primary_energy_direct <- function(mode, allqueries, aggkeys, aggfn, years
         pe <- allqueries$'Primary Energy Consumption (Direct Equivalent)'
         pe <- filter(pe, years, filters)
         pe <- aggregate(pe, aggfn, aggkeys)
+        pe <- region_agg(pe, region, agg_region, add_global)
+
         if(!is.na(ounit)) {
             ## skip unit conversion if output unit not specified.
             cfac <- unitconv_energy(pe$Units[1], ounit)
@@ -104,7 +107,7 @@ module.primary_energy_direct <- function(mode, allqueries, aggkeys, aggfn, years
 #' @keywords internal
 
 module.resource_production_pc <- function(mode, allqueries, aggkeys, aggfn, years,
-                                       filters, ounit)
+                                       filters, ounit, region, agg_region, add_global)
 {
     if(mode == GETQ) {
         # Return titles of necessary queries
@@ -117,10 +120,12 @@ module.resource_production_pc <- function(mode, allqueries, aggkeys, aggfn, year
         resources <- allqueries$'Resource production'
         # Aggregating here allows us to sum globally
         resources <- aggregate(resources, aggfn, aggkeys)
+        resources <- region_agg(resources, region, agg_region, add_global)
 
         pop <- allqueries$'Population'
         # Aggregating here allows us to sum globally
         pop <- aggregate(pop, aggfn, aggkeys)
+        pop <- region_agg(pop, region, agg_region, add_global)
 
         join_cats <- names(pop)[!(names(pop) %in% c('value', 'Units'))]
         resource_pc <- resources %>%
@@ -174,7 +179,7 @@ module.resource_production_pc <- function(mode, allqueries, aggkeys, aggfn, year
 #' @keywords internal
 
 module.oil_shares <- function(mode, allqueries, aggkeys, aggfn, years,
-                                          filters, ounit)
+                                          filters, ounit, region, agg_region, add_global)
 {
     if(mode == GETQ) {
         # Return titles of necessary queries
@@ -188,6 +193,7 @@ module.oil_shares <- function(mode, allqueries, aggkeys, aggfn, years,
             dplyr::filter(grepl('oil', resource))
         # Aggregating here allows us to sum globally
         oil_shares <- aggregate(oil_shares, aggfn, aggkeys)
+        oil_shares <- region_agg(oil_shares, region, agg_region, add_global)
 
         grp_vars <- names(oil_shares)[!(names(oil_shares) %in% c('value', 'resource'))]
         oil_shares <- oil_shares %>%
@@ -218,7 +224,7 @@ module.oil_shares <- function(mode, allqueries, aggkeys, aggfn, years,
 #' @keywords internal
 
 module.primary_energy_shares <- function(mode, allqueries, aggkeys, aggfn, years,
-                                         filters, ounit)
+                                         filters, ounit, region, agg_region, add_global)
 {
     if(mode == GETQ) {
         # Return titles of necessary queries
@@ -233,6 +239,7 @@ module.primary_energy_shares <- function(mode, allqueries, aggkeys, aggfn, years
             dplyr::select(Units, scenario, region, fuel_type, fuel, year, value)
         pe <- filter(pe, years, filters)
         pe <- aggregate(pe, aggfn, aggkeys)
+        pe <- region_agg(pe, region, agg_region, add_global)
 
         grp_cats <- names(pe)[!(names(pe) %in% c('fuel', 'fuel_type', 'value'))]
 
@@ -262,7 +269,7 @@ module.primary_energy_shares <- function(mode, allqueries, aggkeys, aggfn, years
 #' @keywords internal
 
 module.primary_energy_direct_pc <- function(mode, allqueries, aggkeys, aggfn, years,
-                                         filters, ounit)
+                                         filters, ounit, region, agg_region, add_global)
 {
     if(mode == GETQ) {
         # Return titles of necessary queries
@@ -275,11 +282,13 @@ module.primary_energy_direct_pc <- function(mode, allqueries, aggkeys, aggfn, ye
             dplyr::select(-rundate)
         # Aggregating here allows us to sum globally
         pe <- aggregate(pe, aggfn, aggkeys)
+        pe <- region_agg(pe, region, agg_region, add_global)
 
         pop <- allqueries$'Population' %>%
             dplyr::select(-rundate)
         # Aggregating here allows us to sum globally
         pop <- aggregate(pop, aggfn, aggkeys)
+        pop <- region_agg(pop, region, agg_region, add_global)
 
         join_cats <- names(pop)[!(names(pop) %in% c('value', 'Units'))]
         pe_pc <- pe %>%

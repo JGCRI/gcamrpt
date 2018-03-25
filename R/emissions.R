@@ -16,7 +16,7 @@
 #' @keywords internal
 
 module.co2_emissions <- function(mode, allqueries, aggkeys, aggfn, years,
-                                  filters, ounit)
+                                  filters, ounit, region, agg_region, add_global)
 {
     if(mode == GETQ) {
         # Return titles of necessary queries
@@ -36,6 +36,7 @@ module.co2_emissions <- function(mode, allqueries, aggkeys, aggfn, years,
             dplyr::ungroup()
         co2 <- filter(co2, years, filters)
         co2 <- aggregate(co2, aggfn, aggkeys)
+        co2 <- region_agg(co2, region, region_agg, add_global)
         co2 <- unitconv_co2(co2, ounit)
         co2
     }
@@ -56,7 +57,7 @@ module.co2_emissions <- function(mode, allqueries, aggkeys, aggfn, years,
 #'
 #' @keywords internal
 module.co2_emissions_end_use <- function(mode, allqueries, aggkeys, aggfn, years,
-                                         filters, ounit)
+                                         filters, ounit, region, agg_region, add_global)
 {
   if(mode == GETQ) {
     # Return titles of necessary queries
@@ -68,6 +69,7 @@ module.co2_emissions_end_use <- function(mode, allqueries, aggkeys, aggfn, years
     co2 <- allqueries$'CO2 Emissions by enduse'
     co2 <- filter(co2, years, filters)
     co2 <- aggregate(co2, aggfn, aggkeys)
+    co2 <- region_agg(co2, region, region_agg, add_global)
 
     if(!is.na(ounit)) {
       cfac <- unitconv_co2(co2$Units[1], ounit)
@@ -96,7 +98,7 @@ module.co2_emissions_end_use <- function(mode, allqueries, aggkeys, aggfn, years
 #'
 #' @keywords internal
 module.ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, aggfn, years,
-                                     filters, ounit)
+                                     filters, ounit, region, agg_region, add_global)
 {
     if(mode == GETQ) {
         # Return titles of necessary queries
@@ -128,6 +130,8 @@ module.ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, aggfn, years,
 
         ghg <- filter(ghg, years, filters)
         ghg <- aggregate(ghg, aggfn, aggkeys)
+        ghg <- region_agg(ghg, region, region_agg, add_global)
+
         if(!is.na(ounit)) {
             cfac <- unitconv_counts(ghg$Units[1], ounit)
             if(!is.na(cfac)) {
@@ -154,7 +158,7 @@ module.ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, aggfn, years,
 #'
 #' @keywords internal
 module.ghg_emissions_ar5 <- function(mode, allqueries, aggkeys, aggfn, years,
-                                     filters, ounit)
+                                     filters, ounit, region, agg_region, add_global)
 {
   if(mode == GETQ) {
     # Return titles of necessary queries
@@ -186,6 +190,8 @@ module.ghg_emissions_ar5 <- function(mode, allqueries, aggkeys, aggfn, years,
 
     ghg <- filter(ghg, years, filters)
     ghg <- aggregate(ghg, aggfn, aggkeys)
+    ghg <- region_agg(ghg, region, region_agg, add_global)
+
     if(!is.na(ounit)) {
       cfac <- unitconv_counts(ghg$Units[1], ounit)
       if(!is.na(cfac)) {
@@ -213,7 +219,7 @@ module.ghg_emissions_ar5 <- function(mode, allqueries, aggkeys, aggfn, years,
 #' @keywords internal
 
 module.ghg_emissions_intensity_region <- function(mode, allqueries, aggkeys, aggfn, years,
-                                     filters, ounit){
+                                     filters, ounit, region, agg_region, add_global){
     if(mode == GETQ) {
         # Return titles of necessary queries
         # For more complex variables, will return multiple query titles in vector
@@ -242,12 +248,14 @@ module.ghg_emissions_intensity_region <- function(mode, allqueries, aggkeys, agg
             dplyr::summarise(value = sum(value)) %>%
             dplyr::ungroup() %>%
             aggregate(aggfn, aggkeys)
+        ghg <- region_agg(ghg, region, region_agg, add_global)
 
         final_energy <- allqueries$'Final energy by detailed end-use sector and fuel' %>%
             dplyr::group_by(Units, scenario, region, year) %>%
             dplyr::summarise(value = sum(value)) %>%
             dplyr::ungroup() %>%
             aggregate(aggfn, aggkeys)
+        final_energy <- region_agg(final_energy, region, region_agg, add_global)
 
         if ('region' %in% names(final_energy) & 'region' %in% names(ghg)){
         ghg_intensity <- ghg %>%
@@ -318,7 +326,7 @@ module.ghg_emissions_intensity_region <- function(mode, allqueries, aggkeys, agg
 #' @keywords internal
 
 module.ghg_emissions_per_capita <- function(mode, allqueries, aggkeys, aggfn, years,
-                                                  filters, ounit){
+                                                  filters, ounit, region, agg_region, add_global){
     if(mode == GETQ) {
         # Return titles of necessary queries
         # For more complex variables, will return multiple query titles in vector
@@ -347,9 +355,11 @@ module.ghg_emissions_per_capita <- function(mode, allqueries, aggkeys, aggfn, ye
             dplyr::summarise(value = sum(value)) %>%
             dplyr::ungroup() %>%
             aggregate(aggfn, aggkeys)
+        ghg <- region_agg(ghg, region, region_agg, add_global)
 
         pop <- allqueries$'Population' %>%
             aggregate(aggfn, aggkeys)
+        pop <- region_agg(pop, region, region_agg, add_global)
 
         if ('region' %in% names(pop) & 'region' %in% names(ghg)){
             ghg_cap <- ghg %>%
@@ -410,7 +420,7 @@ module.ghg_emissions_per_capita <- function(mode, allqueries, aggkeys, aggfn, ye
 #' @keywords internal
 
 module.ghg_emissions_per_gdp <- function(mode, allqueries, aggkeys, aggfn, years,
-                                            filters, ounit){
+                                            filters, ounit, region, agg_region, add_global){
     if(mode == GETQ) {
         # Return titles of necessary queries
         # For more complex variables, will return multiple query titles in vector
@@ -439,6 +449,7 @@ module.ghg_emissions_per_gdp <- function(mode, allqueries, aggkeys, aggfn, years
             dplyr::summarise(value = sum(value)) %>%
             dplyr::ungroup() %>%
             aggregate(aggfn, aggkeys)
+        ghg <- region_agg(ghg, region, region_agg, add_global)
 
         gdp <- allqueries$'pcGDP(PPP)' %>%
             dplyr::left_join(allqueries$'Population', by = c('scenario', 'region', 'year')) %>%
@@ -446,6 +457,7 @@ module.ghg_emissions_per_gdp <- function(mode, allqueries, aggkeys, aggfn, years
                           Units = "Million1990US$") %>%
             dplyr::select(-Units.x, -Units.y, -value.x, -value.y, -rundate.x, -rundate.y) %>%
             aggregate(aggfn, aggkeys)
+        gdp <- region_agg(gdp, region, region_agg, add_global)
 
         if ('region' %in% names(gdp) & 'region' %in% names(ghg)){
             ghg_gdp <- ghg %>%
@@ -507,7 +519,7 @@ module.ghg_emissions_per_gdp <- function(mode, allqueries, aggkeys, aggfn, years
 #'
 #' @keywords internal
 module.direct_ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, aggfn, years,
-                                     filters, ounit)
+                                     filters, ounit, region, agg_region, add_global)
 {
     if(mode == GETQ) {
         # Return titles of necessary queries
@@ -541,6 +553,7 @@ module.direct_ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, aggfn, ye
             dplyr::select(-GWP)
 
         all_ghg <- aggregate(all_ghg, aggfn, aggkeys)
+        all_ghg <- region_agg(all_ghg, region, region_agg, add_global)
 
         if(!is.na(ounit)) {
             cfac <- unitconv_counts(all_ghg$Units[1], ounit)
@@ -568,7 +581,7 @@ module.direct_ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, aggfn, ye
 #'
 #' @keywords internal
 module.indirect_ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, aggfn, years,
-                                            filters, ounit)
+                                            filters, ounit, region, agg_region, add_global)
 {
     if(mode == GETQ) {
         # Return titles of necessary queries
@@ -626,6 +639,7 @@ module.indirect_ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, aggfn, 
             filter(years, filters)
 
         indirect_emissions <- aggregate(indirect_emissions, aggfn, aggkeys)
+        indirect_emissions <- region_agg(indirect_emissions, region, region_agg, add_global)
 
         if(!is.na(ounit)) {
             cfac <- unitconv_counts(indirect_emissions$Units[1], ounit)
@@ -653,7 +667,7 @@ module.indirect_ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, aggfn, 
 #'
 #' @keywords internal
 module.total_enduse_ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, aggfn, years,
-                                              filters, ounit)
+                                              filters, ounit, region, agg_region, add_global)
 {
     if(mode == GETQ) {
         # Return titles of necessary queries
@@ -721,6 +735,7 @@ module.total_enduse_ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, agg
 
         total_emissions <- filter(total_emissions, years, filters)
         total_emissions <- aggregate(total_emissions, aggfn, aggkeys)
+        total_emissions <- region_agg(total_emissions, region, region_agg, add_global)
 
 
         if(!is.na(ounit)) {
@@ -749,7 +764,7 @@ module.total_enduse_ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, agg
 #'
 #' @keywords internal
 module.total_enduse_intensity_ar4 <- function(mode, allqueries, aggkeys, aggfn, years,
-                                                  filters, ounit)
+                                                  filters, ounit, region, agg_region, add_global)
 {
     if(mode == GETQ) {
         # Return titles of necessary queries
@@ -785,6 +800,7 @@ module.total_enduse_intensity_ar4 <- function(mode, allqueries, aggkeys, aggfn, 
             dplyr::summarise(value = sum(value)) %>%
             dplyr::ungroup() %>%
             dplyr::rename(end_use = end_use_sector)
+        energy <- region_agg(energy, region, region_agg, add_global)
 
         # Now calculate all sectoral emissions, then split out electricity emissions
         all_ghg <- ghg %>%
@@ -822,6 +838,7 @@ module.total_enduse_intensity_ar4 <- function(mode, allqueries, aggkeys, aggfn, 
             dplyr::group_by(Units, scenario, region, year, end_use) %>%
             dplyr::summarise(value = sum(value)) %>%
             dplyr::ungroup()
+        total_emissions <- region_agg(total_emissions, region, region_agg, add_global)
 
         # Add energy and calculate intensity
         emissions_intensity <- total_emissions %>%
@@ -874,7 +891,7 @@ module.total_enduse_intensity_ar4 <- function(mode, allqueries, aggkeys, aggfn, 
 #'
 #' @keywords internal
 module.elec_ghg_emissions_intensity_ar4 <- function(mode, allqueries, aggkeys, aggfn, years,
-                                            filters, ounit)
+                                            filters, ounit, region, agg_region, add_global)
 {
     if(mode == GETQ) {
         # Return titles of necessary queries
@@ -896,6 +913,7 @@ module.elec_ghg_emissions_intensity_ar4 <- function(mode, allqueries, aggkeys, a
             dplyr::group_by(Units, scenario, region, year) %>%
             dplyr::summarise(value = sum(value)) %>%
             dplyr::ungroup()
+        electricity <- region_agg(electricity, region, region_agg, add_global)
 
         all_ghg <- ghg %>%
             dplyr::bind_rows(co2) %>%
@@ -915,6 +933,7 @@ module.elec_ghg_emissions_intensity_ar4 <- function(mode, allqueries, aggkeys, a
             dplyr::group_by(Units, scenario, region, year, end_use) %>%
             dplyr::summarise(value = sum(value)) %>%
             dplyr::ungroup()
+        all_ghg <- region_agg(all_ghg, region, region_agg, add_global)
 
         # Calculate intensity
         elec_intensity <- all_ghg %>%
@@ -967,7 +986,7 @@ module.elec_ghg_emissions_intensity_ar4 <- function(mode, allqueries, aggkeys, a
 #'
 #' @keywords internal
 module.floorspace_ghg_intensity_ar4 <- function(mode, allqueries, aggkeys, aggfn, years,
-                                              filters, ounit)
+                                              filters, ounit, region, agg_region, add_global)
 {
     if(mode == GETQ) {
         # Return titles of necessary queries
@@ -1054,10 +1073,12 @@ module.floorspace_ghg_intensity_ar4 <- function(mode, allqueries, aggkeys, aggfn
             dplyr::group_by(Units, scenario, region, building, year) %>%
             dplyr::summarise(value = sum(value)) %>%
             dplyr::ungroup()
+        total_building_emissions <- region_agg(total_building_emissions, region, region_agg, add_global)
 
         # Resid and comm floorspace
         flrspace <- allqueries$'Building floorspace' %>%
             dplyr::select(-nodeinput, -`building-node-input`, -rundate)
+        flrspace <- region_agg(flrspace, region, region_agg, add_global)
 
         building_intensity <- total_building_emissions %>%
             dplyr::inner_join(flrspace, by = c("scenario", "region", "building", "year"))
@@ -1115,7 +1136,7 @@ module.floorspace_ghg_intensity_ar4 <- function(mode, allqueries, aggkeys, aggfn
 #'
 #' @keywords internal
 module.ghg_per_capita_ar4 <- function(mode, allqueries, aggkeys, aggfn, years,
-                                                filters, ounit)
+                                                filters, ounit, region, agg_region, add_global)
 {
     if(mode == GETQ) {
         # Return titles of necessary queries
@@ -1188,9 +1209,11 @@ module.ghg_per_capita_ar4 <- function(mode, allqueries, aggkeys, aggfn, years,
             dplyr::group_by(Units, scenario, region, end_use, year) %>%
             dplyr::summarise(value = sum(value)) %>%
             dplyr::ungroup()
+        total_emissions <- region_agg(total_emissions, region, region_agg, add_global)
 
         pop <- allqueries$'Population' %>%
             dplyr::select(-rundate)
+        pop <- region_agg(pop, region, region_agg, add_global)
 
         emissions_per_capita <- total_emissions %>%
             dplyr::left_join(pop, by = c("scenario", "region", "year")) %>%
@@ -1239,7 +1262,7 @@ module.ghg_per_capita_ar4 <- function(mode, allqueries, aggkeys, aggfn, years,
 #'
 #' @keywords internal
 module.ghg_per_pass_km <- function(mode, allqueries, aggkeys, aggfn, years,
-                                      filters, ounit)
+                                      filters, ounit, region, agg_region, add_global)
 {
     if(mode == GETQ) {
         # Return titles of necessary queries
@@ -1315,18 +1338,21 @@ module.ghg_per_pass_km <- function(mode, allqueries, aggkeys, aggfn, years,
             dplyr::group_by(Units, scenario, region, sector, end_use, year) %>%
             dplyr::summarise(value = sum(value)) %>%
             dplyr::ungroup()
+        total_transport_emissions <- region_agg(total_transport_emissions, region, region_agg, add_global)
 
         # Passenger service output
         pass_so <- trans_filter_svc(allqueries['Transportation Service Output'], TRUE)$'Transportation Service Output' %>%
             dplyr::group_by(Units, scenario, region, sector, year) %>%
             dplyr::summarise(value = sum(value)) %>%
             dplyr::ungroup()
+        pass_so <- region_agg(pass_so, region, region_agg, add_global)
 
         # Freight service output
         freight_so <- trans_filter_svc(allqueries['Transportation Service Output'], FALSE)$'Transportation Service Output' %>%
             dplyr::group_by(Units, scenario, region, sector, year) %>%
             dplyr::summarise(value = sum(value)) %>%
             dplyr::ungroup()
+        freight_so <- region_agg(freight_so, region, region_agg, add_global)
 
         # Add in service output to emissions, which will ignore H2 forecourt production
         emissions_intensity <- total_transport_emissions %>%
@@ -1376,7 +1402,7 @@ module.ghg_per_pass_km <- function(mode, allqueries, aggkeys, aggfn, years,
 #'
 #' @keywords internal
 module.ghg_per_cement <- function(mode, allqueries, aggkeys, aggfn, years,
-                                   filters, ounit)
+                                   filters, ounit, region, agg_region, add_global)
 {
     if(mode == GETQ) {
         # Return titles of necessary queries
@@ -1445,10 +1471,12 @@ module.ghg_per_cement <- function(mode, allqueries, aggkeys, aggfn, years,
             dplyr::group_by(Units, scenario, region, year) %>%
             dplyr::summarise(value = sum(value)) %>%
             dplyr::ungroup()
+        total_emissions <- region_agg(total_emissions, region, region_agg, add_global)
 
         # Passenger service output
         cement_prod <- allqueries$'Cement production by region' %>%
             dplyr::select(-rundate)
+        cement_prod <- region_agg(cement_prod, region, region_agg, add_global)
 
         # Add in service output to emissions, which will ignore H2 forecourt production
         emissions_intensity <- total_emissions %>%
@@ -1498,7 +1526,7 @@ module.ghg_per_cement <- function(mode, allqueries, aggkeys, aggfn, years,
 #'
 #' @keywords internal
 module.cement_ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, aggfn, years,
-                                                  filters, ounit)
+                                                  filters, ounit, region, agg_region, add_global)
 {
     if(mode == GETQ) {
         # Return titles of necessary queries
@@ -1569,6 +1597,7 @@ module.cement_ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, aggfn, ye
 
         total_emissions <- filter(total_emissions, years, filters)
         total_emissions <- aggregate(total_emissions, aggfn, aggkeys)
+        total_emissions <- region_agg(total_emissions, region, region_agg, add_global)
 
 
         if(!is.na(ounit)) {
@@ -1597,7 +1626,7 @@ module.cement_ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, aggfn, ye
 #'
 #' @keywords internal
 module.total_trans_ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, aggfn, years,
-                                                  filters, ounit)
+                                                  filters, ounit, region, agg_region, add_global)
 {
     if(mode == GETQ) {
         # Return titles of necessary queries
@@ -1691,6 +1720,7 @@ module.total_trans_ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, aggf
 
         total_emissions <- filter(total_emissions, years, filters)
         total_emissions <- aggregate(total_emissions, aggfn, aggkeys)
+        total_emissions <- region_agg(total_emissions, region, region_agg, add_global)
 
 
         if(!is.na(ounit)) {
@@ -1719,7 +1749,7 @@ module.total_trans_ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, aggf
 #'
 #' @keywords internal
 module.direct_trans_ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, aggfn, years,
-                                                 filters, ounit)
+                                                 filters, ounit, region, agg_region, add_global)
 {
     if(mode == GETQ) {
         # Return titles of necessary queries
@@ -1777,7 +1807,7 @@ module.direct_trans_ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, agg
 
         direct_emissions <- filter(direct_emissions, years, filters)
         direct_emissions <- aggregate(direct_emissions, aggfn, aggkeys)
-
+        direct_emissions <- region_agg(direct_emissions, region, region_agg, add_global)
 
         if(!is.na(ounit)) {
             cfac <- unitconv_counts(direct_emissions$Units[1], ounit)
@@ -1805,7 +1835,7 @@ module.direct_trans_ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, agg
 #'
 #' @keywords internal
 module.indirect_trans_ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, aggfn, years,
-                                                 filters, ounit)
+                                                 filters, ounit, region, agg_region, add_global)
 {
     if(mode == GETQ) {
         # Return titles of necessary queries
@@ -1866,7 +1896,7 @@ module.indirect_trans_ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, a
 
         indirect_emissions <- filter(total_emissions, years, filters)
         indirect_emissions <- aggregate(total_emissions, aggfn, aggkeys)
-
+        indirect_emissions <- region_agg(indirect_emissions, region, region_agg, add_global)
 
         if(!is.na(ounit)) {
             cfac <- unitconv_counts(indirect_emissions$Units[1], ounit)
