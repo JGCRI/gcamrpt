@@ -5,7 +5,8 @@
 \title{Run a data module}
 \usage{
 runModule(var, mode, allqueries = NULL, aggkeys = NULL, aggfn = NULL,
-  years = NULL, filters = NULL, ounit = NULL)
+  years = NULL, filters = NULL, ounit = NULL, region = NULL,
+  agg_region = NULL)
 }
 \arguments{
 \item{var}{Name of the variable to produce.  This must be one of the varibles

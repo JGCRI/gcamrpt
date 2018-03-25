@@ -29,7 +29,7 @@
 #' no unit conversion.
 #' @keywords internal
 runModule <- function(var, mode, allqueries=NULL, aggkeys=NULL, aggfn=NULL,
-                      years=NULL, filters=NULL, ounit=NULL)
+                      years=NULL, filters=NULL, ounit=NULL, region = NULL, agg_region = NULL, add_global = FALSE)
 {
     fun <- tryCatch(
         ## Find the corresponding function, limited to the package environment
@@ -41,7 +41,7 @@ runModule <- function(var, mode, allqueries=NULL, aggkeys=NULL, aggfn=NULL,
         },
         finally = NULL
         )
-    fun(mode, allqueries, aggkeys, aggfn, years, filters, ounit)
+    fun(mode, allqueries, aggkeys, aggfn, years, filters, ounit, region, agg_region, add_global)
 }
 
 

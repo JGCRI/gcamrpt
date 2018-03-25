@@ -4,7 +4,7 @@
 \alias{process_scenario}
 \title{Run queries and process results for a single scenario}
 \usage{
-process_scenario(scen, dbloc, dbname, q2run, varctl)
+process_scenario(scen, dbloc, dbname, q2run, varctl, regionctl)
 }
 \arguments{
 \item{scen}{Scenario name}

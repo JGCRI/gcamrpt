@@ -162,12 +162,15 @@ generate <- function(scenctl,
                      fileformat = getOption('iamrpt.fileformat', 'CSV'),
                      scenmerge = getOption('iamrpt.scenmerge', TRUE),
                      dataformat = getOption('iamrpt.dataformat', 'tabs'),
-                     wideformat = getOption('iamrpt.wideformat', TRUE)
+                     wideformat = getOption('iamrpt.wideformat', TRUE),
+                     regionctl = NULL,
+                     add_global = FALSE
                      )
 {
     year <- value <- NULL               # silence package check notes.
     suppressMessages({scenctl <- readr::read_csv(scenctl)})
     suppressMessages({varctl <- readr::read_csv(varctl)})
+    if (!is.null(regionctl)){suppressMessages({regionctl <- readr::read_csv(regionctl)})}
 
     validatectl(scenctl, varctl)
 
@@ -194,7 +197,7 @@ generate <- function(scenctl,
 
     ## process the scenarios, one by one
     rslts <- Map(function(scen, dbname) {
-                     process_scenario(scen, dbloc, dbname, q2run, varctl)
+                     process_scenario(scen, dbloc, dbname, q2run, varctl, regionctl, add_global)
                  },
                  scenctl[['GCAM scenario']],
                  scenctl[['scenario db']])
@@ -363,7 +366,7 @@ generate <- function(scenctl,
 #' @param q2run Character vector of titles of queries to run.
 #' @param varctl Table read in from the variable control file.
 #' @keywords internal
-process_scenario <- function(scen, dbloc, dbname, q2run, varctl)
+process_scenario <- function(scen, dbloc, dbname, q2run, varctl, regionctl, add_global)
 {
     message('Processing scenario: ', scen)
 
@@ -371,17 +374,35 @@ process_scenario <- function(scen, dbloc, dbname, q2run, varctl)
     queries <- runQueries(q2run, dbloc, dbname, scen)
 
     ## Process each requested variable
-    rslts <-
-        Map(function(var, aggkeys, aggfn, years, filters, ounit) {
+    if (!is.null(regionctl)){
+        rslts <-
+            Map(function(var, aggkeys, aggfn, years, filters, ounit, region, agg_region, add_global) {
                 runModule(var, RUN, queries, aggkeys, aggfn, years,
-                          filters, ounit)
+                          filters, ounit, region, agg_region, add_global)
             },
             varctl[['GCAM variable']],
             varctl[['aggregation keys']],
             varctl[['aggregation function']],
             varctl[['years']],
             varctl[['filters']],
-            varctl[['output units']])
+            varctl[['output units']],
+            list(regionctl[['region']]),
+            list(regionctl[['agg_region']]),
+            add_global)
+    } else {
+        rslts <-
+            Map(function(var, aggkeys, aggfn, years, filters, ounit, add_global) {
+                runModule(var, RUN, queries, aggkeys, aggfn, years,
+                          filters, ounit, add_global)
+            },
+            varctl[['GCAM variable']],
+            varctl[['aggregation keys']],
+            varctl[['aggregation function']],
+            varctl[['years']],
+            varctl[['filters']],
+            varctl[['output units']],
+            add_global)
+    }
 
     ## Rename variables to their output values
     names(rslts) <- varctl[['output variable']]
