@@ -4,7 +4,8 @@
 \alias{module.cement_capita}
 \title{Cement Production Per Capita Module}
 \usage{
-module.cement_capita(mode, allqueries, aggkeys, aggfn, years, filters, ounit)
+module.cement_capita(mode, allqueries, aggkeys, aggfn, years, filters, ounit,
+  region, agg_region, add_global)
 }
 \description{
 Produce cement production per capita by region.

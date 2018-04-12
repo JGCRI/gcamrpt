@@ -5,7 +5,7 @@
 \title{Population Growth Data Module}
 \usage{
 module.population_growth(mode, allqueries, aggkeys, aggfn, years, filters,
-  ounit)
+  ounit, region, agg_region, add_global)
 }
 \description{
 Produce population growth by region.

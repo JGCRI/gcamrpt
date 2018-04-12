@@ -434,7 +434,7 @@ module.ldv_sales <- function(mode, allqueries, aggkeys, aggfn, years,
     }
     else {
         ## silence notes on package check
-        value <- year <- vintage <- Units <- scenario <- region <- service <-
+        value <- year <- vintage <- Units <- scenario <- service <-
             submode <- value.x <- value.y <- pkm <- lf <- Units.x <- Units.y <-
                 vkm <- mileage <- NULL
 
@@ -464,7 +464,7 @@ module.ldv_sales <- function(mode, allqueries, aggkeys, aggfn, years,
 
         sales <- filter(sales, years, filters)
         sales <- aggregate(sales, aggfn, aggkeys)
-        sales <- region_agg(sales, region, region_agg, add_global)
+        sales <- region_agg(sales, region, agg_region, add_global)
 
         ## units example: million p-km
         if(!is.na(ounit)) {
@@ -567,7 +567,7 @@ module.transportation_pm_emissions <- function(mode, allqueries, aggkeys, aggfn,
     }
     else {
         ## silence notes on package check
-        Units <- scenario <- region <- year <- service <- submode <- value <-
+        Units <- scenario <- year <- service <- submode <- value <-
             value.x <- value.y <- pkm <- lf <- Units.x <- Units.y <- pmfac <-
                 pm_emissions <- NULL
 
@@ -605,7 +605,7 @@ module.transportation_pm_emissions <- function(mode, allqueries, aggkeys, aggfn,
 
         pm <- filter(pm, years, filters)
         pm <- aggregate(pm, aggfn, aggkeys)
-        pm <- region_agg(pm, region, region_agg, add_global)
+        pm <- region_agg(pm, region, agg_region, add_global)
 
         if(!is.na(ounit)) {
             cf <- unitconv_mass(pm$Units[1], ounit)
@@ -774,13 +774,13 @@ module.pass_trans_service_output_capita <- function(mode, allqueries, aggkeys, a
         unitz <- allqueries$`Transportation Service Output`$Units[1]
         so <- process.tr_svc_output(allqueries, aggkeys, aggfn, years,
                               filters, unitz)
-        so <- region_agg(so, region, region_agg, add_global)
+        so <- region_agg(so, region, agg_region, add_global)
 
         # sum globally if needed
         if (!('region' %in% names(so))){
             population <- aggregate(population,'sum', 'scenario')
         }
-        population <- region_agg(population, region, region_agg, add_global)
+        population <- region_agg(population, region, agg_region, add_global)
 
         # Columns to join by
         join_cats <- names(population)[!(names(population) %in% c('Units', 'value'))]
@@ -848,7 +848,7 @@ module.pass_trans_fleet <- function(mode, allqueries, aggkeys, aggfn, years,
 
         fleet <- process.tr_svc_output(allqueries, aggkeys, aggfn, years,
                               filters, ounit)
-        fleet <- region_agg(fleet, region, region_agg, add_global)
+        fleet <- region_agg(fleet, region, agg_region, add_global)
 
 
         if(!is.na(ounit)) {
@@ -893,7 +893,7 @@ module.pass_trans_fleet_per_capita <- function(mode, allqueries, aggkeys, aggfn,
             # units are not handled correctly by process.tr_svc_output, so set correctly here
             # are there any exceptions??
             dplyr::mutate(Units = allqueries$`Transportation Service Output`$Units[1])
-        fleet <- region_agg(fleet, region, region_agg, add_global)
+        fleet <- region_agg(fleet, region, agg_region, add_global)
 
 
         pop <- allqueries$'Population' %>%
@@ -904,7 +904,7 @@ module.pass_trans_fleet_per_capita <- function(mode, allqueries, aggkeys, aggfn,
             pop <- aggregate(pop, aggfn, 'year')
         }
 
-        pop <- region_agg(pop, region, region_agg, add_global)
+        pop <- region_agg(pop, region, agg_region, add_global)
 
         # Determine columns to join by
         join_cats <- names(pop)[!(names(pop) %in% c('Units', 'value'))]
@@ -949,7 +949,7 @@ module.ldv_sales_fuel_prop <- function(mode, allqueries, aggkeys, aggfn, years,
     }
     else {
         ## silence notes on package check
-        value <- year <- vintage <- Units <- scenario <- region <- service <-
+        value <- year <- vintage <- Units <- scenario <- service <-
             submode <- value.x <- value.y <- pkm <- lf <- Units.x <- Units.y <-
             vkm <- mileage <- NULL
 
@@ -978,7 +978,7 @@ module.ldv_sales_fuel_prop <- function(mode, allqueries, aggkeys, aggfn, years,
                           sector = dplyr::if_else(sector == 'DV', '3W', sector))
 
         sales <- aggregate(sales, aggfn, aggkeys)
-        sales <- region_agg(sales, region, region_agg, add_global)
+        sales <- region_agg(sales, region, agg_region, add_global)
 
         if (!('technology' %in% names(sales))){
             warning('Technology not in LDV Sales')
@@ -1024,7 +1024,7 @@ module.pass_vkm <- function(mode, allqueries, aggkeys, aggfn, years,
 
         process.tr_svc_output(allqueries, aggkeys, aggfn, years,
                               filters, ounit) %>%
-            region_agg(region, region_agg, add_global)
+            region_agg(region, agg_region, add_global)
 
     }
 }
@@ -1050,7 +1050,7 @@ module.frgt_trans_shares <- function(mode, allqueries, aggkeys, aggfn, years,
             dplyr::group_by_(.dots = grp_cats) %>%
             dplyr::summarise(value = sum(value)) %>%
             dplyr::ungroup()
-        freight <- region_agg(freight, region, region_agg, add_global)
+        freight <- region_agg(freight, region, agg_region, add_global)
 
         # This will only allow us to see percentage of mode or submode in service, not submode in mode
         grp_cats <- names(freight)[!(names(freight) %in% c('value', 'mode', 'submode', 'technology'))]
@@ -1083,7 +1083,7 @@ module.pass_trans_public_share <- function(mode, allqueries, aggkeys, aggfn, yea
             dplyr::group_by(Units, scenario, region, year, service, transit_type) %>%
             dplyr::summarise(value = sum(value)) %>%
             dplyr::ungroup()
-        shares <- region_agg(shares, region, region_agg, add_global)
+        shares <- region_agg(shares, region, agg_region, add_global)
 
         grp_cats <- names(shares)[!(names(shares) %in% c('value', 'transit_type'))]
 
@@ -1125,7 +1125,7 @@ module.pass_trans_fleet_shares <- function(mode, allqueries, aggkeys, aggfn, yea
 
         fleet <- process.tr_svc_output(allqueries, aggkeys, aggfn, years,
                                        filters, ounit)
-        fleet <- region_agg(fleet, region, region_agg, add_global)
+        fleet <- region_agg(fleet, region, agg_region, add_global)
 
         grp_cats <- names(fleet)[!(names(fleet) %in% c('technology', 'value'))]
 

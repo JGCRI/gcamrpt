@@ -5,7 +5,7 @@
 \title{GHG Emissions Data Module}
 \usage{
 module.ghg_emissions_ar4(mode, allqueries, aggkeys, aggfn, years, filters,
-  ounit)
+  ounit, region, agg_region, add_global)
 }
 \description{
 Produce ghg emissions by subsector, converted to MTCO2e with AR4 GWPs

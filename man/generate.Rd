@@ -8,7 +8,8 @@ generate(scenctl, varctl, dbloc, outputdir = getwd(), model = "GCAM",
   template = NULL, fileformat = getOption("iamrpt.fileformat", "CSV"),
   scenmerge = getOption("iamrpt.scenmerge", TRUE),
   dataformat = getOption("iamrpt.dataformat", "tabs"),
-  wideformat = getOption("iamrpt.wideformat", TRUE), regionctl = NULL)
+  wideformat = getOption("iamrpt.wideformat", TRUE), regionctl = NULL,
+  add_global = FALSE)
 }
 \arguments{
 \item{scenctl}{Name of the scenario control file.}

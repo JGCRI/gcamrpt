@@ -5,7 +5,7 @@
 \title{Building Floorspace Module}
 \usage{
 module.building_floorspace(mode, allqueries, aggkeys, aggfn, years, filters,
-  ounit)
+  ounit, region, agg_region, add_global)
 }
 \description{
 Produce building floorspace by region.

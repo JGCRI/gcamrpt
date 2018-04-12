@@ -5,7 +5,7 @@
 \title{Resource Production Per Capita Data Module}
 \usage{
 module.resource_production_pc(mode, allqueries, aggkeys, aggfn, years, filters,
-  ounit)
+  ounit, region, agg_region, add_global)
 }
 \description{
 Produce resource production per capita by region.

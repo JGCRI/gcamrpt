@@ -5,7 +5,7 @@
 \title{Produce particulate matter emissions from transportation}
 \usage{
 module.transportation_pm_emissions(mode, allqueries, aggkeys, aggfn, years,
-  filters, ounit)
+  filters, ounit, region, agg_region, add_global)
 }
 \description{
 Convert service output in passenger-km or tonne-km to vehicle-km using the

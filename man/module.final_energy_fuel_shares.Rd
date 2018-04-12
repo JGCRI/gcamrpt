@@ -5,7 +5,7 @@
 \title{Final Energy Fuel Shares by Sector Data Module}
 \usage{
 module.final_energy_fuel_shares(mode, allqueries, aggkeys, aggfn, years,
-  filters, ounit)
+  filters, ounit, region, agg_region, add_global)
 }
 \description{
 Produce final energy fuel shares by sector.

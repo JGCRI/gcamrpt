@@ -4,7 +4,8 @@
 \alias{module.gdp_ppp_growth}
 \title{GDP PPP Growth Data Module}
 \usage{
-module.gdp_ppp_growth(mode, allqueries, aggkeys, aggfn, years, filters, ounit)
+module.gdp_ppp_growth(mode, allqueries, aggkeys, aggfn, years, filters, ounit,
+  region, agg_region, add_global)
 }
 \description{
 Produce gdp ppp growth by region.

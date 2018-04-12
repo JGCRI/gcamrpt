@@ -4,7 +4,8 @@
 \alias{module.gdp_mer_}
 \title{GDP MER Data Module}
 \usage{
-module.gdp_mer_(mode, allqueries, aggkeys, aggfn, years, filters, ounit)
+module.gdp_mer_(mode, allqueries, aggkeys, aggfn, years, filters, ounit, region,
+  agg_region, add_global)
 }
 \description{
 Produce GDP MER by region.

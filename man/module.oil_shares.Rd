@@ -4,7 +4,8 @@
 \alias{module.oil_shares}
 \title{Oil Production Type Share Data Module}
 \usage{
-module.oil_shares(mode, allqueries, aggkeys, aggfn, years, filters, ounit)
+module.oil_shares(mode, allqueries, aggkeys, aggfn, years, filters, ounit,
+  region, agg_region, add_global)
 }
 \description{
 Produce oil production share by type by region.

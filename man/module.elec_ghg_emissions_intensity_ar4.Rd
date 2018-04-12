@@ -5,7 +5,7 @@
 \title{GHG Emissions Intensity of Electricity Data Module}
 \usage{
 module.elec_ghg_emissions_intensity_ar4(mode, allqueries, aggkeys, aggfn, years,
-  filters, ounit)
+  filters, ounit, region, agg_region, add_global)
 }
 \description{
 Produces GHG emissions intensity for electricity, including CO2 emissions from biomass, converted to MTCO2e with AR4 GWPs

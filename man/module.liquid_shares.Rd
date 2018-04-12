@@ -4,7 +4,8 @@
 \alias{module.liquid_shares}
 \title{Refined Liquids Shares Module}
 \usage{
-module.liquid_shares(mode, allqueries, aggkeys, aggfn, years, filters, ounit)
+module.liquid_shares(mode, allqueries, aggkeys, aggfn, years, filters, ounit,
+  region, agg_region, add_global)
 }
 \description{
 Produce shares of refined liquids by fuel type by region.

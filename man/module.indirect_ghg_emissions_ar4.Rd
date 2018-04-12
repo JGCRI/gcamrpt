@@ -5,7 +5,7 @@
 \title{Indirect GHG Emissions Data Module}
 \usage{
 module.indirect_ghg_emissions_ar4(mode, allqueries, aggkeys, aggfn, years,
-  filters, ounit)
+  filters, ounit, region, agg_region, add_global)
 }
 \description{
 Produce indirect sector ghg emissions by sector - emissions from electricity consumption.

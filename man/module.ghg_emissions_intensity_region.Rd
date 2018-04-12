@@ -5,7 +5,7 @@
 \title{GHG Emissions Intensity By Region Data Module}
 \usage{
 module.ghg_emissions_intensity_region(mode, allqueries, aggkeys, aggfn, years,
-  filters, ounit)
+  filters, ounit, region, agg_region, add_global)
 }
 \description{
 Produce ghg emissions intensity (of final energy) by region, converted to MTCO2e/EJ with AR4 GWPs

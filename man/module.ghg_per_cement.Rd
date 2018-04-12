@@ -4,7 +4,8 @@
 \alias{module.ghg_per_cement}
 \title{GHG Emissions Per Cement production Data Module}
 \usage{
-module.ghg_per_cement(mode, allqueries, aggkeys, aggfn, years, filters, ounit)
+module.ghg_per_cement(mode, allqueries, aggkeys, aggfn, years, filters, ounit,
+  region, agg_region, add_global)
 }
 \description{
 Produce ghg emissions per cement production - includes indirect emissions from electricity and biomass CO2 accounting.

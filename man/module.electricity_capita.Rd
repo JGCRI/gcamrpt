@@ -5,7 +5,7 @@
 \title{Electricity Per Capita Data Module}
 \usage{
 module.electricity_capita(mode, allqueries, aggkeys, aggfn, years, filters,
-  ounit)
+  ounit, region, agg_region, add_global)
 }
 \description{
 Produce electricity per capita by region.

@@ -5,7 +5,7 @@
 \title{Primary Energy (Direct Equivalent) Per Capita Data Module}
 \usage{
 module.primary_energy_direct_pc(mode, allqueries, aggkeys, aggfn, years,
-  filters, ounit)
+  filters, ounit, region, agg_region, add_global)
 }
 \description{
 Produce primary energy per capita by fuel

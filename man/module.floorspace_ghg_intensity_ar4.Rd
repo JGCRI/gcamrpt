@@ -5,7 +5,7 @@
 \title{GHG Emissions Per Floorspace Data Module}
 \usage{
 module.floorspace_ghg_intensity_ar4(mode, allqueries, aggkeys, aggfn, years,
-  filters, ounit)
+  filters, ounit, region, agg_region, add_global)
 }
 \description{
 Produce floorspace ghg emissions intensity - includes indirect emissions from electricity and biomass CO2 accounting.

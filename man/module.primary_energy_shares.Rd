@@ -5,7 +5,7 @@
 \title{Primary Energy (Direct Equivalent) Data Module}
 \usage{
 module.primary_energy_shares(mode, allqueries, aggkeys, aggfn, years, filters,
-  ounit)
+  ounit, region, agg_region, add_global)
 }
 \description{
 Produce primary energy by fuel

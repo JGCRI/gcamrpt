@@ -5,7 +5,7 @@
 \title{GHG Emissions Per Capita by sector Data Module}
 \usage{
 module.ghg_per_capita_ar4(mode, allqueries, aggkeys, aggfn, years, filters,
-  ounit)
+  ounit, region, agg_region, add_global)
 }
 \description{
 Produce ghg emissions per capita by sector - includes indirect emissions from electricity and biomass CO2 accounting.

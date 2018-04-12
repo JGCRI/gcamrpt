@@ -5,7 +5,7 @@
 \title{Final Energy by Sector and Fuel Data Module}
 \usage{
 module.final_energy_sector_fuel(mode, allqueries, aggkeys, aggfn, years,
-  filters, ounit)
+  filters, ounit, region, agg_region, add_global)
 }
 \description{
 Produce total final by sector and fuel by region.

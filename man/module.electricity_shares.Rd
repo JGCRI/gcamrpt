@@ -5,7 +5,7 @@
 \title{Electricity Shares Data Module}
 \usage{
 module.electricity_shares(mode, allqueries, aggkeys, aggfn, years, filters,
-  ounit)
+  ounit, region, agg_region, add_global)
 }
 \description{
 Produce electricity shares by region.

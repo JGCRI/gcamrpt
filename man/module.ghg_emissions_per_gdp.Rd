@@ -5,7 +5,7 @@
 \title{GHG Emissions Per GDP Data Module}
 \usage{
 module.ghg_emissions_per_gdp(mode, allqueries, aggkeys, aggfn, years, filters,
-  ounit)
+  ounit, region, agg_region, add_global)
 }
 \description{
 Produce ghg emissions per GDP by region, converted to MTCO2e/$ with AR4 GWPs

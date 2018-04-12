@@ -26,28 +26,28 @@
 \title{Transportation data modules}
 \usage{
 module.pass_trans_service_output(mode, allqueries, aggkeys, aggfn, years,
-  filters, ounit)
+  filters, ounit, region, agg_region, add_global)
 
 module.frgt_trans_service_output(mode, allqueries, aggkeys, aggfn, years,
-  filters, ounit)
+  filters, ounit, region, agg_region, add_global)
 
 module.pass_trans_final_energy(mode, allqueries, aggkeys, aggfn, years, filters,
-  ounit)
+  ounit, region, agg_region, add_global)
 
 module.frgt_trans_final_energy(mode, allqueries, aggkeys, aggfn, years, filters,
-  ounit)
+  ounit, region, agg_region, add_global)
 
 module.pass_trans_service_intensity(mode, allqueries, aggkeys, aggfn, years,
-  filters, ounit)
+  filters, ounit, region, agg_region, add_global)
 
 module.frgt_trans_service_intensity(mode, allqueries, aggkeys, aggfn, years,
-  filters, ounit)
+  filters, ounit, region, agg_region, add_global)
 
 module.pass_trans_load_factor(mode, allqueries, aggkeys, aggfn, years, filters,
-  ounit)
+  ounit, region, agg_region, add_global)
 
 module.frgt_trans_load_factor(mode, allqueries, aggkeys, aggfn, years, filters,
-  ounit)
+  ounit, region, agg_region, add_global)
 
 process.tr_svc_output(allqueries, aggkeys, aggfn, years, filters, ounit)
 
@@ -58,29 +58,32 @@ process.trans_load_factors(allqueries, aggkeys, aggfn, years, filters, ounit)
 process.tr_svc_intensity(allqueries, aggkeys, aggfn, years, filters, ounit,
   nativeunit)
 
-module.ldv_sales(mode, allqueries, aggkeys, aggfn, years, filters, ounit)
+module.ldv_sales(mode, allqueries, aggkeys, aggfn, years, filters, ounit,
+  region, agg_region, add_global)
 
 module.pass_trans_service_output_capita(mode, allqueries, aggkeys, aggfn, years,
-  filters, ounit)
+  filters, ounit, region, agg_region, add_global)
 
-module.pass_trans_fleet(mode, allqueries, aggkeys, aggfn, years, filters, ounit)
+module.pass_trans_fleet(mode, allqueries, aggkeys, aggfn, years, filters, ounit,
+  region, agg_region, add_global)
 
 module.pass_trans_fleet_per_capita(mode, allqueries, aggkeys, aggfn, years,
-  filters, ounit)
+  filters, ounit, region, agg_region, add_global)
 
 module.ldv_sales_fuel_prop(mode, allqueries, aggkeys, aggfn, years, filters,
-  ounit)
+  ounit, region, agg_region, add_global)
 
-module.pass_vkm(mode, allqueries, aggkeys, aggfn, years, filters, ounit)
+module.pass_vkm(mode, allqueries, aggkeys, aggfn, years, filters, ounit, region,
+  agg_region, add_global)
 
 module.frgt_trans_shares(mode, allqueries, aggkeys, aggfn, years, filters,
-  ounit)
+  ounit, region, agg_region, add_global)
 
 module.pass_trans_public_share(mode, allqueries, aggkeys, aggfn, years, filters,
-  ounit)
+  ounit, region, agg_region, add_global)
 
 module.pass_trans_fleet_shares(mode, allqueries, aggkeys, aggfn, years, filters,
-  ounit)
+  ounit, region, agg_region, add_global)
 }
 \arguments{
 \item{mode}{Either \code{GETQ} or \code{RUN}.  The former returns
@@ -117,7 +120,7 @@ designations of "sector", "subsector", and "technology" aren't really
 meaningful for transportation.  A quantity represented as a sector could be
 spliced in underneath another sector, for example.
 
-Each transporttion data module starts with a call to the
+Each transportation data module starts with a call to the
 \code{trans_standardize} function, which translates all of the GCAM output
 variables to the standard taxonomy.  Each module also comes in a passenger
 and a freight variant.  This is necessary because although the procedure for

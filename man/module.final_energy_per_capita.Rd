@@ -5,7 +5,7 @@
 \title{Final Energy per Capita Module}
 \usage{
 module.final_energy_per_capita(mode, allqueries, aggkeys, aggfn, years, filters,
-  ounit)
+  ounit, region, agg_region, add_global)
 }
 \description{
 Produce total final per capita by region.

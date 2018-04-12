@@ -5,7 +5,7 @@
 \title{Final Energy Per GDP Data Module}
 \usage{
 module.final_energy_per_gdp(mode, allqueries, aggkeys, aggfn, years, filters,
-  ounit)
+  ounit, region, agg_region, add_global)
 }
 \description{
 Produce final energy per GDP by region, converted to EJ/$ with AR4 GWPs

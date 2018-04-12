@@ -5,7 +5,7 @@
 \title{Total Cement GHG Emissions Data Module}
 \usage{
 module.cement_ghg_emissions_ar4(mode, allqueries, aggkeys, aggfn, years,
-  filters, ounit)
+  filters, ounit, region, agg_region, add_global)
 }
 \description{
 Produce total cement ghg emissions - includes indirect emissions from electricity and biomass CO2 accounting.

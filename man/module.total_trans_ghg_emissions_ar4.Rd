@@ -5,7 +5,7 @@
 \title{Total Transport GHG Emissions Data Module}
 \usage{
 module.total_trans_ghg_emissions_ar4(mode, allqueries, aggkeys, aggfn, years,
-  filters, ounit)
+  filters, ounit, region, agg_region, add_global)
 }
 \description{
 Produce total transport ghg emissions - includes indirect emissions from electricity and biomass CO2 accounting.

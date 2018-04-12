@@ -5,7 +5,7 @@
 \title{Building Floorspace Per Capita Module}
 \usage{
 module.building_flrsp_cap(mode, allqueries, aggkeys, aggfn, years, filters,
-  ounit)
+  ounit, region, agg_region, add_global)
 }
 \description{
 Produce building floorspace per capita by region.

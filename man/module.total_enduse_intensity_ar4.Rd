@@ -5,7 +5,7 @@
 \title{End-Use Sector GHG Emissions Intensity Data Module}
 \usage{
 module.total_enduse_intensity_ar4(mode, allqueries, aggkeys, aggfn, years,
-  filters, ounit)
+  filters, ounit, region, agg_region, add_global)
 }
 \description{
 Produce total sector ghg emissions intensity - includes indirect emissions from electricity and biomass CO2 accounting.

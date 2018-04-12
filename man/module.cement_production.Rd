@@ -5,7 +5,7 @@
 \title{Cement Production Module}
 \usage{
 module.cement_production(mode, allqueries, aggkeys, aggfn, years, filters,
-  ounit)
+  ounit, region, agg_region, add_global)
 }
 \description{
 Produce cement production by region.

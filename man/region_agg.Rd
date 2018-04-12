@@ -4,7 +4,7 @@
 \alias{region_agg}
 \title{Convert a table to aggregate regions}
 \usage{
-region_agg(tbl, region, agg_region)
+region_agg(tbl, region, agg_region, add_global)
 }
 \arguments{
 \item{tbl}{Table to aggregate}

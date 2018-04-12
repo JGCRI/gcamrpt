@@ -5,7 +5,7 @@
 \title{Electricity Capacity Data Module}
 \usage{
 module.electricity_capacity(mode, allqueries, aggkeys, aggfn, years, filters,
-  ounit)
+  ounit, region, agg_region, add_global)
 }
 \description{
 Produce electricity capacity by region.

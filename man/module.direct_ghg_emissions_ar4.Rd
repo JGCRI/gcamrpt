@@ -5,7 +5,7 @@
 \title{Direct GHG Emissions Data Module}
 \usage{
 module.direct_ghg_emissions_ar4(mode, allqueries, aggkeys, aggfn, years,
-  filters, ounit)
+  filters, ounit, region, agg_region, add_global)
 }
 \description{
 Produce direct sector ghg emissions, including CO2 emissions from biomass, converted to MTCO2e with AR4 GWPs

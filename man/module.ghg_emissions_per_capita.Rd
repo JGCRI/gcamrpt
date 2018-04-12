@@ -5,7 +5,7 @@
 \title{GHG Emissions Per Capita Data Module}
 \usage{
 module.ghg_emissions_per_capita(mode, allqueries, aggkeys, aggfn, years,
-  filters, ounit)
+  filters, ounit, region, agg_region, add_global)
 }
 \description{
 Produce ghg emissions per capita by region, converted to MTCO2e/EJ with AR4 GWPs
