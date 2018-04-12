@@ -2292,3 +2292,67 @@ module.ghg_trans_en_intensity <- function(mode, allqueries, aggkeys, aggfn, year
         }
     }
 }
+
+#' GHG Emissions Data Module
+#'
+#' Produce ghg emissions by subsector, converted to MTCO2e with AR4 GWPs
+#'
+#' The raw table used by this module has columns:
+#' \itemize{
+#'   \item{scenario}
+#'   \item{region}
+#'   \item{year}
+#'   \item{value}
+#'   \item{Units}
+#' }
+#'
+#' @keywords internal
+module.ghg_emissions_fix_ar4 <- function(mode, allqueries, aggkeys, aggfn, years,
+                                     filters, ounit, region, agg_region, add_global)
+{
+  if(mode == GETQ) {
+    # Return titles of necessary queries
+    # For more complex variables, will return multiple query titles in vector
+    c('Subsector GHG emissions', 'Land Use Change Emission (future)', 'Resource GHG emissions')
+  }
+  else {
+    message('Function for processing variable: GHG emissions by subsector')
+
+    luc <- allqueries$'Land Use Change Emission (future)' %>%
+      dplyr::group_by(Units, scenario, region, year) %>%
+      dplyr::summarise(value = sum(value)) %>%
+      dplyr::ungroup() %>%
+      dplyr::mutate(Units = "MTC",
+                    ghg = "LUC CO2",
+                    sector = "LUC",
+                    subsector = "LUC")
+
+    rsrc <- allqueries$'Resource GHG emissions' %>%
+        dplyr::rename(sector = resource) %>%
+        dplyr::mutate(subsector = sector)
+
+    ghg <- allqueries$'Subsector GHG emissions' %>%
+      dplyr::bind_rows(luc, rsrc) %>%
+      # Add in GWP, and remove gases without GWP
+      dplyr::inner_join(gwp_ar4, by = c('ghg', 'Units')) %>%
+      # Convert to MTCO2e
+      dplyr::mutate(value = value * GWP,
+                    Units = 'MTCO2e') %>%
+      dplyr::select(-GWP) %>%
+      # Add in gas type
+      dplyr::left_join(ghg_gas_type, by = 'ghg')
+
+    ghg <- filter(ghg, years, filters)
+    ghg <- aggregate(ghg, aggfn, aggkeys)
+    ghg <- region_agg(ghg, region, agg_region, add_global)
+
+    if(!is.na(ounit)) {
+      cfac <- unitconv_counts(ghg$Units[1], ounit)
+      if(!is.na(cfac)) {
+        ghg$value <- ghg$value *cfac
+        ghg$Units <- ounit
+      }
+    }
+    ghg
+  }
+}

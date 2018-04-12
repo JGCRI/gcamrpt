@@ -737,4 +737,44 @@ local:generate-sector-output-coefs(remove($inputNameQueue, 1), $currTree, $coefs
       	</query>
   </aQuery>
 
+<aQuery>
+      	<all-regions/>
+		<emissionsQueryBuilder title="Resource GHG emissions">
+         <axis1 name="GHG">GHG</axis1>
+         <axis2 name="Year">emissions</axis2>
+         <xPath buildList="true" dataName="emissions" group="false" sumAll="false">*[@type = 'resource']//*[@type = 'GHG']/emissions/node()</xPath>
+         <comments/>
+      </emissionsQueryBuilder>
+  </aQuery>
+
+  <aQuery>
+      	<all-regions/>
+		<emissionsQueryBuilder title="Sector GHG emissions">
+         <axis1 name="GHG">GHG</axis1>
+         <axis2 name="Year">emissions</axis2>
+         <xPath buildList="true" dataName="emissions" group="false" sumAll="false">*[@type = 'sector']//*[@type = 'GHG']/emissions/node()</xPath>
+         <comments/>
+      </emissionsQueryBuilder>
+  </aQuery>
+
+  <aQuery>
+      	<all-regions/>
+		<emissionsQueryBuilder title="Subsector GHG emissions">
+         <axis1 name="GHG">GHG</axis1>
+         <axis2 name="Year">emissions</axis2>
+         <xPath buildList="true" dataName="emissions" group="false" sumAll="false">*[@type = 'sector']/*[@type='subsector']//*[@type = 'GHG']/emissions/node()</xPath>
+         <comments/>
+         </emissionsQueryBuilder>
+  </aQuery>
+
+  <aQuery>
+      	<all-regions/>
+		<emissionsQueryBuilder title="Technology GHG emissions">
+         <axis1 name="GHG">GHG</axis1>
+         <axis2 name="Year">emissions</axis2>
+         <xPath buildList="true" dataName="emissions" group="false" sumAll="false">*[@type = 'sector']/*[@type='subsector']/*[@type='technology']//*[@type = 'GHG']/emissions/node()</xPath>
+         <comments/>
+      </emissionsQueryBuilder>
+  </aQuery>
+
 </queries>
