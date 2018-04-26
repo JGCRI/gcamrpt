@@ -534,8 +534,12 @@ module.direct_ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, aggfn, ye
             dplyr::filter(ghg != 'CO2')
 
         co2 <- allqueries$'Net Zero Bio CO2 Emissions by Sector' %>%
-            dplyr::mutate(ghg = 'CO2') %>%
-            dplyr::rename(sector = `primary fuel`)
+            dplyr::mutate(ghg = 'CO2')
+
+        rename_col <- setdiff(names(co2), c('Units', 'scenario', 'region', 'year',
+                                'value', 'rundate', 'ghg'))
+
+        names(co2)[names(co2) == rename_col] <- 'sector'
 
         all_ghg <- ghg %>%
             dplyr::bind_rows(co2) %>%
