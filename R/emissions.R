@@ -534,12 +534,8 @@ module.direct_ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, aggfn, ye
             dplyr::filter(ghg != 'CO2')
 
         co2 <- allqueries$'Net Zero Bio CO2 Emissions by Sector' %>%
-            dplyr::mutate(ghg = 'CO2')
-
-        rename_col <- setdiff(names(co2), c('Units', 'scenario', 'region', 'year',
-                                'value', 'rundate', 'ghg'))
-
-        names(co2)[names(co2) == rename_col] <- 'sector'
+            dplyr::mutate(ghg = 'CO2') %>%
+            dplyr::select(sector = dplyr::matches("primary fuel"), dplyr::everything())
 
         all_ghg <- ghg %>%
             dplyr::bind_rows(co2) %>%
@@ -611,7 +607,7 @@ module.indirect_ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, aggfn, 
 
         co2 <- allqueries$'Net Zero Bio CO2 Emissions by Sector' %>%
             dplyr::mutate(ghg = 'CO2') %>%
-            dplyr::rename(sector = `primary fuel`)
+            dplyr::select(sector = dplyr::matches("primary fuel"), dplyr::everything())
 
         elec_split <- allqueries$'Central electricity demand by demand sector' %>%
             dplyr::select(-rundate) %>%
@@ -707,7 +703,7 @@ module.total_enduse_ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, agg
 
         co2 <- allqueries$'Net Zero Bio CO2 Emissions by Sector' %>%
             dplyr::mutate(ghg = 'CO2') %>%
-            dplyr::rename(sector = `primary fuel`)
+            dplyr::select(sector = dplyr::matches("primary fuel"), dplyr::everything())
 
         elec_split <- allqueries$'Central electricity demand by demand sector' %>%
             dplyr::select(-rundate) %>%
@@ -815,7 +811,7 @@ module.total_enduse_intensity_ar4 <- function(mode, allqueries, aggkeys, aggfn, 
 
         co2 <- allqueries$'Net Zero Bio CO2 Emissions by Sector' %>%
             dplyr::mutate(ghg = 'CO2') %>%
-            dplyr::rename(sector = `primary fuel`)
+            dplyr::select(sector = dplyr::matches("primary fuel"), dplyr::everything())
 
         elec_split <- allqueries$'Central electricity demand by demand sector' %>%
             dplyr::select(-rundate) %>%
@@ -937,7 +933,7 @@ module.elec_ghg_emissions_intensity_ar4 <- function(mode, allqueries, aggkeys, a
 
         co2 <- allqueries$'Net Zero Bio CO2 Emissions by Sector' %>%
             dplyr::mutate(ghg = 'CO2') %>%
-            dplyr::rename(sector = `primary fuel`)
+            dplyr::select(sector = dplyr::matches("primary fuel"), dplyr::everything())
 
         electricity <- allqueries$'Electricity' %>%
             dplyr::group_by(Units, scenario, region, year) %>%
@@ -1033,7 +1029,7 @@ module.floorspace_ghg_intensity_ar4 <- function(mode, allqueries, aggkeys, aggfn
         # CO2 emissions by enduse sector
         co2 <- allqueries$'Net Zero Bio CO2 Emissions by Sector' %>%
             dplyr::mutate(ghg = 'CO2') %>%
-            dplyr::rename(sector = `primary fuel`)
+            dplyr::select(sector = dplyr::matches("primary fuel"), dplyr::everything())
 
         # Electricity splits
         elec_split <- allqueries$'Energy consumption by sector' %>%
@@ -1183,7 +1179,7 @@ module.ghg_per_capita_ar4 <- function(mode, allqueries, aggkeys, aggfn, years,
         # CO2 emissions by enduse sector
         co2 <- allqueries$'Net Zero Bio CO2 Emissions by Sector' %>%
             dplyr::mutate(ghg = 'CO2') %>%
-            dplyr::rename(sector = `primary fuel`)
+            dplyr::select(sector = dplyr::matches("primary fuel"), dplyr::everything())
 
         # Electricity splits
         elec_split <- allqueries$'Energy consumption by sector' %>%
@@ -1306,7 +1302,7 @@ module.ghg_per_veh_km <- function(mode, allqueries, aggkeys, aggfn, years,
 
         co2 <- allqueries$'Net Zero Bio CO2 Emissions by Sector' %>%
             dplyr::mutate(ghg = 'CO2') %>%
-            dplyr::rename(sector = `primary fuel`)
+            dplyr::select(sector = dplyr::matches("primary fuel"), dplyr::everything())
 
         elec_split <- allqueries$'Energy consumption by subsector' %>%
             dplyr::select(-rundate) %>%
@@ -1463,7 +1459,7 @@ module.ghg_per_cement <- function(mode, allqueries, aggkeys, aggfn, years,
 
         co2 <- allqueries$'Net Zero Bio CO2 Emissions by Sector' %>%
             dplyr::mutate(ghg = 'CO2') %>%
-            dplyr::rename(sector = `primary fuel`)
+            dplyr::select(sector = dplyr::matches("primary fuel"), dplyr::everything())
 
         elec_split <- allqueries$'Energy consumption by sector' %>%
             dplyr::select(-rundate) %>%
@@ -1584,7 +1580,7 @@ module.cement_ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, aggfn, ye
 
         co2 <- allqueries$'Net Zero Bio CO2 Emissions by Sector' %>%
             dplyr::mutate(ghg = 'CO2') %>%
-            dplyr::rename(sector = `primary fuel`)
+            dplyr::select(sector = dplyr::matches("primary fuel"), dplyr::everything())
 
         elec_split <- allqueries$'Energy consumption by sector' %>%
             dplyr::select(-rundate) %>%
@@ -1693,7 +1689,7 @@ module.total_trans_ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, aggf
 
         co2 <- allqueries$'Net Zero Bio CO2 Emissions by Sector' %>%
             dplyr::mutate(ghg = 'CO2') %>%
-            dplyr::rename(sector = `primary fuel`)
+            dplyr::select(sector = dplyr::matches("primary fuel"), dplyr::everything())
 
         elec_split <- allqueries$'Energy consumption by subsector' %>%
             dplyr::select(-rundate) %>%
@@ -1826,7 +1822,7 @@ module.direct_trans_ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, agg
 
         co2 <- allqueries$'Net Zero Bio CO2 Emissions by Sector' %>%
             dplyr::mutate(ghg = 'CO2') %>%
-            dplyr::rename(sector = `primary fuel`) %>%
+            dplyr::select(sector = dplyr::matches("primary fuel"), dplyr::everything()) %>%
             dplyr::filter(grepl("trn_", sector))
 
         # Transportation co2 split
@@ -1920,7 +1916,7 @@ module.indirect_trans_ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, a
 
         co2 <- allqueries$'Net Zero Bio CO2 Emissions by Sector' %>%
             dplyr::mutate(ghg = 'CO2') %>%
-            dplyr::rename(sector = `primary fuel`)
+            dplyr::select(sector = dplyr::matches("primary fuel"), dplyr::everything())
 
         elec_split <- allqueries$'Energy consumption by subsector' %>%
             dplyr::select(-rundate) %>%
@@ -2074,7 +2070,7 @@ module.ghg_per_ton_km <- function(mode, allqueries, aggkeys, aggfn, years,
 
         co2 <- allqueries$'Net Zero Bio CO2 Emissions by Sector' %>%
             dplyr::mutate(ghg = 'CO2') %>%
-            dplyr::rename(sector = `primary fuel`)
+            dplyr::select(sector = dplyr::matches("primary fuel"), dplyr::everything())
 
         elec_split <- allqueries$'Energy consumption by subsector' %>%
             dplyr::select(-rundate) %>%
@@ -2226,7 +2222,7 @@ module.ghg_trans_en_intensity <- function(mode, allqueries, aggkeys, aggfn, year
 
         co2 <- allqueries$'Net Zero Bio CO2 Emissions by Sector' %>%
             dplyr::mutate(ghg = 'CO2') %>%
-            dplyr::rename(sector = `primary fuel`)
+            dplyr::select(sector = dplyr::matches("primary fuel"), dplyr::everything())
 
         elec_split <- allqueries$'Energy consumption by subsector' %>%
             dplyr::select(-rundate) %>%
