@@ -518,7 +518,7 @@ process.direct_bio_emissions <- function(input, output, sequestration){
             dplyr::summarise(Ccoef = weighted.mean(Ccoef, value.y)) %>%
             dplyr::ungroup() %>%
             dplyr::select(region, fuel = sector, Ccoef, year) %>%
-            tidyr::complete(nesting(region, Ccoef, year), fuel = fuel_list)
+            tidyr::complete(tidyr::nesting(region, Ccoef, year), fuel = fuel_list)
 
         return(Ccoef.fuel)
     }
@@ -597,7 +597,7 @@ module.direct_ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, aggfn, ye
         # Return titles of necessary queries
         # For more complex variables, will return multiple query titles in vector
         c('GHG emissions by sector', 'Consumption by technology',
-          'Service output by technology', 'CO2 sequestration by sector', 'Net Zero Bio CO2 Emissions by Sector')
+          'Service output by technology', 'CO2 sequestration by sector')
     }
     else {
         message('Function for processing variable: Direct GHG emissions by sector')
@@ -670,7 +670,8 @@ module.indirect_ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, aggfn, 
     if(mode == GETQ) {
         # Return titles of necessary queries
         # For more complex variables, will return multiple query titles in vector
-        c('GHG emissions by sector', 'Net Zero Bio CO2 Emissions by Sector', 'Central electricity demand by demand sector')
+        c('GHG emissions by sector', 'Consumption by technology',
+          'Service output by technology', 'CO2 sequestration by sector', 'Central electricity demand by demand sector')
     }
     else {
         message('Function for processing variable: Indirect GHG emissions by sector')
@@ -679,9 +680,10 @@ module.indirect_ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, aggfn, 
         ghg <- allqueries$'GHG emissions by sector' %>%
             dplyr::filter(ghg != 'CO2')
 
-        co2 <- allqueries$'Net Zero Bio CO2 Emissions by Sector' %>%
-            dplyr::mutate(ghg = 'CO2') %>%
-            dplyr::select(sector = dplyr::matches("primary fuel"), dplyr::everything())
+        co2 <- process.direct_bio_emissions(allqueries$`Consumption by technology`,
+                                            allqueries$`Service output by technology`,
+                                            allqueries$`CO2 sequestration by sector`) %>%
+            dplyr::mutate(ghg = 'CO2')
 
         elec_split <- allqueries$'Central electricity demand by demand sector' %>%
             dplyr::select(-rundate) %>%
@@ -766,7 +768,8 @@ module.total_enduse_ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, agg
     if(mode == GETQ) {
         # Return titles of necessary queries
         # For more complex variables, will return multiple query titles in vector
-        c('GHG emissions by sector', 'Net Zero Bio CO2 Emissions by Sector', 'Central electricity demand by demand sector')
+        c('GHG emissions by sector', 'Consumption by technology',
+          'Service output by technology', 'CO2 sequestration by sector', 'Central electricity demand by demand sector')
     }
     else {
         message('Function for processing variable: Enduse GHG emissions by sector')
@@ -775,9 +778,10 @@ module.total_enduse_ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, agg
         ghg <- allqueries$'GHG emissions by sector' %>%
             dplyr::filter(ghg != 'CO2')
 
-        co2 <- allqueries$'Net Zero Bio CO2 Emissions by Sector' %>%
-            dplyr::mutate(ghg = 'CO2') %>%
-            dplyr::select(sector = dplyr::matches("primary fuel"), dplyr::everything())
+        co2 <- process.direct_bio_emissions(allqueries$`Consumption by technology`,
+                                            allqueries$`Service output by technology`,
+                                            allqueries$`CO2 sequestration by sector`) %>%
+            dplyr::mutate(ghg = 'CO2')
 
         elec_split <- allqueries$'Central electricity demand by demand sector' %>%
             dplyr::select(-rundate) %>%
@@ -873,7 +877,8 @@ module.total_enduse_intensity_ar4 <- function(mode, allqueries, aggkeys, aggfn, 
     if(mode == GETQ) {
         # Return titles of necessary queries
         # For more complex variables, will return multiple query titles in vector
-        c('GHG emissions by sector', 'Net Zero Bio CO2 Emissions by Sector',
+        c('GHG emissions by sector', 'Consumption by technology',
+          'Service output by technology', 'CO2 sequestration by sector',
           'Central electricity demand by demand sector', 'Final energy by detailed end-use sector and fuel')
     }
     else {
@@ -883,9 +888,10 @@ module.total_enduse_intensity_ar4 <- function(mode, allqueries, aggkeys, aggfn, 
         ghg <- allqueries$'GHG emissions by sector' %>%
             dplyr::filter(ghg != 'CO2')
 
-        co2 <- allqueries$'Net Zero Bio CO2 Emissions by Sector' %>%
-            dplyr::mutate(ghg = 'CO2') %>%
-            dplyr::select(sector = dplyr::matches("primary fuel"), dplyr::everything())
+        co2 <- process.direct_bio_emissions(allqueries$`Consumption by technology`,
+                                            allqueries$`Service output by technology`,
+                                            allqueries$`CO2 sequestration by sector`) %>%
+            dplyr::mutate(ghg = 'CO2')
 
         elec_split <- allqueries$'Central electricity demand by demand sector' %>%
             dplyr::select(-rundate) %>%
@@ -996,7 +1002,8 @@ module.elec_ghg_emissions_intensity_ar4 <- function(mode, allqueries, aggkeys, a
     if(mode == GETQ) {
         # Return titles of necessary queries
         # For more complex variables, will return multiple query titles in vector
-        c('GHG emissions by sector', 'Net Zero Bio CO2 Emissions by Sector', 'Electricity')
+        c('GHG emissions by sector', 'Consumption by technology',
+          'Service output by technology', 'CO2 sequestration by sector', 'Electricity')
     }
     else {
         message('Function for processing variable: Electricity GHG emissions intensity by sector')
@@ -1005,9 +1012,10 @@ module.elec_ghg_emissions_intensity_ar4 <- function(mode, allqueries, aggkeys, a
         ghg <- allqueries$'GHG emissions by sector' %>%
             dplyr::filter(ghg != 'CO2')
 
-        co2 <- allqueries$'Net Zero Bio CO2 Emissions by Sector' %>%
-            dplyr::mutate(ghg = 'CO2') %>%
-            dplyr::select(sector = dplyr::matches("primary fuel"), dplyr::everything())
+        co2 <- process.direct_bio_emissions(allqueries$`Consumption by technology`,
+                                            allqueries$`Service output by technology`,
+                                            allqueries$`CO2 sequestration by sector`) %>%
+            dplyr::mutate(ghg = 'CO2')
 
         electricity <- allqueries$'Electricity' %>%
             dplyr::group_by(Units, scenario, region, year) %>%
@@ -1090,7 +1098,8 @@ module.floorspace_ghg_intensity_ar4 <- function(mode, allqueries, aggkeys, aggfn
     if(mode == GETQ) {
         # Return titles of necessary queries
         # For more complex variables, will return multiple query titles in vector
-        c('GHG emissions by sector', 'Net Zero Bio CO2 Emissions by Sector',
+        c('GHG emissions by sector', 'Consumption by technology',
+          'Service output by technology', 'CO2 sequestration by sector',
           'Energy consumption by sector', 'Building floorspace')
     }
     else {
@@ -1101,9 +1110,10 @@ module.floorspace_ghg_intensity_ar4 <- function(mode, allqueries, aggkeys, aggfn
             dplyr::filter(ghg != 'CO2')
 
         # CO2 emissions by enduse sector
-        co2 <- allqueries$'Net Zero Bio CO2 Emissions by Sector' %>%
-            dplyr::mutate(ghg = 'CO2') %>%
-            dplyr::select(sector = dplyr::matches("primary fuel"), dplyr::everything())
+        co2 <- process.direct_bio_emissions(allqueries$`Consumption by technology`,
+                                            allqueries$`Service output by technology`,
+                                            allqueries$`CO2 sequestration by sector`) %>%
+            dplyr::mutate(ghg = 'CO2')
 
         # Electricity splits
         elec_split <- allqueries$'Energy consumption by sector' %>%
@@ -1240,7 +1250,8 @@ module.ghg_per_capita_ar4 <- function(mode, allqueries, aggkeys, aggfn, years,
     if(mode == GETQ) {
         # Return titles of necessary queries
         # For more complex variables, will return multiple query titles in vector
-        c('GHG emissions by sector', 'Net Zero Bio CO2 Emissions by Sector',
+        c('GHG emissions by sector', 'Consumption by technology',
+          'Service output by technology', 'CO2 sequestration by sector',
           'Energy consumption by sector', 'Population')
     }
     else {
@@ -1251,9 +1262,10 @@ module.ghg_per_capita_ar4 <- function(mode, allqueries, aggkeys, aggfn, years,
             dplyr::filter(ghg != 'CO2')
 
         # CO2 emissions by enduse sector
-        co2 <- allqueries$'Net Zero Bio CO2 Emissions by Sector' %>%
-            dplyr::mutate(ghg = 'CO2') %>%
-            dplyr::select(sector = dplyr::matches("primary fuel"), dplyr::everything())
+        co2 <- process.direct_bio_emissions(allqueries$`Consumption by technology`,
+                                            allqueries$`Service output by technology`,
+                                            allqueries$`CO2 sequestration by sector`) %>%
+            dplyr::mutate(ghg = 'CO2')
 
         # Electricity splits
         elec_split <- allqueries$'Energy consumption by sector' %>%
@@ -1364,7 +1376,8 @@ module.ghg_per_veh_km <- function(mode, allqueries, aggkeys, aggfn, years,
     if(mode == GETQ) {
         # Return titles of necessary queries
         # For more complex variables, will return multiple query titles in vector
-        c('GHG emissions by subsector', 'Net Zero Bio CO2 Emissions by Sector',
+        c('GHG emissions by subsector', 'Consumption by technology',
+          'Service output by technology', 'CO2 sequestration by sector',
           'Energy consumption by subsector', 'Transportation Service Output')
     }
     else {
@@ -1374,9 +1387,10 @@ module.ghg_per_veh_km <- function(mode, allqueries, aggkeys, aggfn, years,
         ghg <- allqueries$'GHG emissions by subsector' %>%
             dplyr::filter(ghg != 'CO2')
 
-        co2 <- allqueries$'Net Zero Bio CO2 Emissions by Sector' %>%
-            dplyr::mutate(ghg = 'CO2') %>%
-            dplyr::select(sector = dplyr::matches("primary fuel"), dplyr::everything())
+        co2 <- process.direct_bio_emissions(allqueries$`Consumption by technology`,
+                                            allqueries$`Service output by technology`,
+                                            allqueries$`CO2 sequestration by sector`) %>%
+            dplyr::mutate(ghg = 'CO2')
 
         elec_split <- allqueries$'Energy consumption by subsector' %>%
             dplyr::select(-rundate) %>%
@@ -1521,7 +1535,8 @@ module.ghg_per_cement <- function(mode, allqueries, aggkeys, aggfn, years,
     if(mode == GETQ) {
         # Return titles of necessary queries
         # For more complex variables, will return multiple query titles in vector
-        c('GHG emissions by sector', 'Net Zero Bio CO2 Emissions by Sector',
+        c('GHG emissions by sector', 'Consumption by technology',
+          'Service output by technology', 'CO2 sequestration by sector',
           'Energy consumption by sector', 'Cement production by region')
     }
     else {
@@ -1531,9 +1546,10 @@ module.ghg_per_cement <- function(mode, allqueries, aggkeys, aggfn, years,
         ghg <- allqueries$'GHG emissions by sector' %>%
             dplyr::filter(ghg != 'CO2')
 
-        co2 <- allqueries$'Net Zero Bio CO2 Emissions by Sector' %>%
-            dplyr::mutate(ghg = 'CO2') %>%
-            dplyr::select(sector = dplyr::matches("primary fuel"), dplyr::everything())
+        co2 <- process.direct_bio_emissions(allqueries$`Consumption by technology`,
+                                            allqueries$`Service output by technology`,
+                                            allqueries$`CO2 sequestration by sector`) %>%
+            dplyr::mutate(ghg = 'CO2')
 
         elec_split <- allqueries$'Energy consumption by sector' %>%
             dplyr::select(-rundate) %>%
@@ -1643,7 +1659,8 @@ module.cement_ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, aggfn, ye
     if(mode == GETQ) {
         # Return titles of necessary queries
         # For more complex variables, will return multiple query titles in vector
-        c('GHG emissions by sector', 'Net Zero Bio CO2 Emissions by Sector', 'Energy consumption by sector')
+        c('GHG emissions by sector', 'Consumption by technology',
+          'Service output by technology', 'CO2 sequestration by sector', 'Energy consumption by sector')
     }
     else {
         message('Function for processing variable: Cement GHG emissions')
@@ -1652,9 +1669,10 @@ module.cement_ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, aggfn, ye
         ghg <- allqueries$'GHG emissions by sector' %>%
             dplyr::filter(ghg != 'CO2')
 
-        co2 <- allqueries$'Net Zero Bio CO2 Emissions by Sector' %>%
-            dplyr::mutate(ghg = 'CO2') %>%
-            dplyr::select(sector = dplyr::matches("primary fuel"), dplyr::everything())
+        co2 <- process.direct_bio_emissions(allqueries$`Consumption by technology`,
+                                            allqueries$`Service output by technology`,
+                                            allqueries$`CO2 sequestration by sector`) %>%
+            dplyr::mutate(ghg = 'CO2')
 
         elec_split <- allqueries$'Energy consumption by sector' %>%
             dplyr::select(-rundate) %>%
@@ -1752,7 +1770,8 @@ module.total_trans_ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, aggf
     if(mode == GETQ) {
         # Return titles of necessary queries
         # For more complex variables, will return multiple query titles in vector
-        c('GHG emissions by subsector', 'Net Zero Bio CO2 Emissions by Sector', 'Energy consumption by subsector')
+        c('GHG emissions by subsector', 'Consumption by technology',
+          'Service output by technology', 'CO2 sequestration by sector', 'Energy consumption by subsector')
     }
     else {
         message('Function for processing variable: Total Transport GHG emissions')
@@ -1761,9 +1780,10 @@ module.total_trans_ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, aggf
         ghg <- allqueries$'GHG emissions by subsector' %>%
             dplyr::filter(ghg != 'CO2')
 
-        co2 <- allqueries$'Net Zero Bio CO2 Emissions by Sector' %>%
-            dplyr::mutate(ghg = 'CO2') %>%
-            dplyr::select(sector = dplyr::matches("primary fuel"), dplyr::everything())
+        co2 <- process.direct_bio_emissions(allqueries$`Consumption by technology`,
+                                            allqueries$`Service output by technology`,
+                                            allqueries$`CO2 sequestration by sector`) %>%
+            dplyr::mutate(ghg = 'CO2')
 
         elec_split <- allqueries$'Energy consumption by subsector' %>%
             dplyr::select(-rundate) %>%
@@ -1884,7 +1904,8 @@ module.direct_trans_ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, agg
     if(mode == GETQ) {
         # Return titles of necessary queries
         # For more complex variables, will return multiple query titles in vector
-        c('GHG emissions by subsector', 'Net Zero Bio CO2 Emissions by Sector', 'Energy consumption by subsector')
+        c('GHG emissions by subsector', 'Consumption by technology',
+          'Service output by technology', 'CO2 sequestration by sector', 'Energy consumption by subsector')
     }
     else {
         message('Function for processing variable: Direct Transport GHG emissions')
@@ -1894,9 +1915,10 @@ module.direct_trans_ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, agg
             dplyr::filter(ghg != 'CO2',
                           grepl("trn_", sector))
 
-        co2 <- allqueries$'Net Zero Bio CO2 Emissions by Sector' %>%
+        co2 <- process.direct_bio_emissions(allqueries$`Consumption by technology`,
+                                            allqueries$`Service output by technology`,
+                                            allqueries$`CO2 sequestration by sector`) %>%
             dplyr::mutate(ghg = 'CO2') %>%
-            dplyr::select(sector = dplyr::matches("primary fuel"), dplyr::everything()) %>%
             dplyr::filter(grepl("trn_", sector))
 
         # Transportation co2 split
@@ -1979,7 +2001,8 @@ module.indirect_trans_ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, a
     if(mode == GETQ) {
         # Return titles of necessary queries
         # For more complex variables, will return multiple query titles in vector
-        c('GHG emissions by subsector', 'Net Zero Bio CO2 Emissions by Sector', 'Energy consumption by subsector')
+        c('GHG emissions by subsector', 'Consumption by technology',
+          'Service output by technology', 'CO2 sequestration by sector', 'Energy consumption by subsector')
     }
     else {
         message('Function for processing variable: Indirect Transport GHG emissions')
@@ -1988,9 +2011,10 @@ module.indirect_trans_ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, a
         ghg <- allqueries$'GHG emissions by subsector' %>%
             dplyr::filter(ghg != 'CO2')
 
-        co2 <- allqueries$'Net Zero Bio CO2 Emissions by Sector' %>%
-            dplyr::mutate(ghg = 'CO2') %>%
-            dplyr::select(sector = dplyr::matches("primary fuel"), dplyr::everything())
+        co2 <- process.direct_bio_emissions(allqueries$`Consumption by technology`,
+                                            allqueries$`Service output by technology`,
+                                            allqueries$`CO2 sequestration by sector`) %>%
+            dplyr::mutate(ghg = 'CO2')
 
         elec_split <- allqueries$'Energy consumption by subsector' %>%
             dplyr::select(-rundate) %>%
@@ -2132,7 +2156,8 @@ module.ghg_per_ton_km <- function(mode, allqueries, aggkeys, aggfn, years,
     if(mode == GETQ) {
         # Return titles of necessary queries
         # For more complex variables, will return multiple query titles in vector
-        c('GHG emissions by subsector', 'Net Zero Bio CO2 Emissions by Sector',
+        c('GHG emissions by subsector', 'Consumption by technology',
+          'Service output by technology', 'CO2 sequestration by sector',
           'Energy consumption by subsector', 'Transportation Service Output')
     }
     else {
@@ -2142,9 +2167,10 @@ module.ghg_per_ton_km <- function(mode, allqueries, aggkeys, aggfn, years,
         ghg <- allqueries$'GHG emissions by subsector' %>%
             dplyr::filter(ghg != 'CO2')
 
-        co2 <- allqueries$'Net Zero Bio CO2 Emissions by Sector' %>%
-            dplyr::mutate(ghg = 'CO2') %>%
-            dplyr::select(sector = dplyr::matches("primary fuel"), dplyr::everything())
+        co2 <- process.direct_bio_emissions(allqueries$`Consumption by technology`,
+                                            allqueries$`Service output by technology`,
+                                            allqueries$`CO2 sequestration by sector`) %>%
+            dplyr::mutate(ghg = 'CO2')
 
         elec_split <- allqueries$'Energy consumption by subsector' %>%
             dplyr::select(-rundate) %>%
@@ -2284,7 +2310,8 @@ module.ghg_trans_en_intensity <- function(mode, allqueries, aggkeys, aggfn, year
     if(mode == GETQ) {
         # Return titles of necessary queries
         # For more complex variables, will return multiple query titles in vector
-        c('GHG emissions by subsector', 'Net Zero Bio CO2 Emissions by Sector',
+        c('GHG emissions by subsector', 'Consumption by technology',
+          'Service output by technology', 'CO2 sequestration by sector',
           'Energy consumption by subsector')
     }
     else {
@@ -2294,9 +2321,10 @@ module.ghg_trans_en_intensity <- function(mode, allqueries, aggkeys, aggfn, year
         ghg <- allqueries$'GHG emissions by subsector' %>%
             dplyr::filter(ghg != 'CO2')
 
-        co2 <- allqueries$'Net Zero Bio CO2 Emissions by Sector' %>%
-            dplyr::mutate(ghg = 'CO2') %>%
-            dplyr::select(sector = dplyr::matches("primary fuel"), dplyr::everything())
+        co2 <- process.direct_bio_emissions(allqueries$`Consumption by technology`,
+                                            allqueries$`Service output by technology`,
+                                            allqueries$`CO2 sequestration by sector`) %>%
+            dplyr::mutate(ghg = 'CO2')
 
         elec_split <- allqueries$'Energy consumption by subsector' %>%
             dplyr::select(-rundate) %>%
