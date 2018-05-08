@@ -503,6 +503,78 @@ module.ghg_emissions_per_gdp <- function(mode, allqueries, aggkeys, aggfn, years
     }
 }
 
+#' @describeIn Direct emissions worker function for distributing bio emissions
+process.direct_bio_emissions <- function(input, output, sequestration){
+    gas_sectors <- c('gas processing', 'gas pipeline', 'wholesale gas', 'delivered gas')
+    liquids_sectors <- c('refined liquids enduse', 'refined liquids industrial', 'refining')
+
+    Ccoef_calculator <- function(processing_sector, fuel_list, coefficients){
+        Ccoef.fuel <- input %>%
+            dplyr::left_join(output, by = c("Units", "scenario", "region", "sector", "subsector", "technology", "year")) %>%
+            dplyr::filter(sector == processing_sector) %>%
+            dplyr::left_join(coefficients, c("region", "input" = "fuel", "year")) %>%
+            na.omit() %>%
+            dplyr::group_by(Units, scenario, region, sector, year) %>%
+            dplyr::summarise(Ccoef = weighted.mean(Ccoef, value.y)) %>%
+            dplyr::ungroup() %>%
+            dplyr::select(region, fuel = sector, Ccoef, year) %>%
+            tidyr::complete(nesting(region, Ccoef, year), fuel = fuel_list)
+
+        return(Ccoef.fuel)
+    }
+
+    # First, calculate carbon coefficient of gas processing
+    Ccoef.gas <- Ccoef_calculator("gas processing", gas_sectors, primary_ccoef)
+
+    # Then, calculate carbon coefficient of refining
+    Ccoef.refining <- Ccoef_calculator("refining", liquids_sectors, primary_ccoef)
+
+    # Add to the rest of coefficients
+    Ccoef <- dplyr::bind_rows(Ccoef, Ccoef.gas, Ccoef.refining)
+
+    # Calculate carbon from inputs
+    input.d <- input %>%
+        dplyr::filter(Units == "EJ"|input == "limestone") %>%
+        dplyr::left_join(Ccoef, c("region", "input" = "fuel", "year")) %>%
+        dplyr:: mutate(C.in = value * Ccoef) %>%
+        # Aggregate to techology level
+        dplyr::group_by(scenario, region, sector, year) %>%
+        dplyr::summarise(C.in = sum(C.in)) %>%
+        dplyr::ungroup()
+
+    # Calculate carbon from outputs
+    output.d <- output %>%
+        # Filter out agriculture
+        dplyr::filter(sector == output) %>%
+        dplyr::left_join(Ccoef, c("region", "sector" = "fuel", "year")) %>%
+        tidyr::replace_na(list(Ccoef = 0)) %>%
+        dplyr::mutate(C.out = value * Ccoef) %>%
+        # Aggregate to techology level
+        dplyr::group_by(scenario, region, sector, year) %>%
+        dplyr::summarise(C.out = sum(C.out)) %>%
+        dplyr::ungroup()
+
+    # Combine and remove co2 sequestration
+    total <- input.d %>%
+        dplyr::left_join(output.d, by = c("scenario", "region", "sector", "year")) %>%
+        tidyr::replace_na(list(C.out = 0)) %>%
+        dplyr::mutate(emissions = C.in - C.out,
+               Units = "MTC") %>%
+        # join in sequestration and subtract
+        dplyr::left_join(sequestration, by = c("Units", "scenario", "region", "sector", "year")) %>%
+        tidyr::replace_na(list(value = 0)) %>%
+        dplyr::mutate(emissions = round(emissions - value, 1)) %>%
+        dplyr::select(scenario, region, sector, year, emissions, Units) %>%
+        dplyr::rename(value = emissions)
+
+    remove_sectors <- setdiff(unique(total$sector), unique(ghg_sector$sector))
+
+    total <- dplyr::filter(total, !(sector %in% remove_sectors))
+
+    return(total)
+
+}
+
 #' Direct GHG Emissions Data Module
 #'
 #' Produce direct sector ghg emissions, including CO2 emissions from biomass, converted to MTCO2e with AR4 GWPs
@@ -524,7 +596,8 @@ module.direct_ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, aggfn, ye
     if(mode == GETQ) {
         # Return titles of necessary queries
         # For more complex variables, will return multiple query titles in vector
-        c('GHG emissions by sector', 'Net Zero Bio CO2 Emissions by Sector')
+        c('GHG emissions by sector', 'Consumption by technology',
+          'Service output by technology', 'CO2 sequestration by sector', 'Net Zero Bio CO2 Emissions by Sector')
     }
     else {
         message('Function for processing variable: Direct GHG emissions by sector')
@@ -533,9 +606,10 @@ module.direct_ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, aggfn, ye
         ghg <- allqueries$'GHG emissions by sector' %>%
             dplyr::filter(ghg != 'CO2')
 
-        co2 <- allqueries$'Net Zero Bio CO2 Emissions by Sector' %>%
-            dplyr::mutate(ghg = 'CO2') %>%
-            dplyr::select(sector = dplyr::matches("primary fuel"), dplyr::everything())
+        co2 <- process.direct_bio_emissions(allqueries$`Consumption by technology`,
+                                            allqueries$`Service output by technology`,
+                                            allqueries$`CO2 sequestration by sector`) %>%
+            dplyr::mutate(ghg = 'CO2')
 
         all_ghg <- ghg %>%
             dplyr::bind_rows(co2) %>%
