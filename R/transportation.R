@@ -460,7 +460,7 @@ module.ldv_sales <- function(mode, allqueries, aggkeys, aggfn, years,
                           Units = 'million vehicles') %>%
             dplyr::select(Units, scenario, region, sector, subsector, technology, year, value = sales) %>%
             dplyr::mutate(sector = substr(sector, nchar(sector)-1, nchar(sector)),
-                          sector = if_else(sector == 'DV', '3W', sector))
+                          sector = dplyr::if_else(sector == 'DV', '3W', sector))
 
         sales <- filter(sales, years, filters)
         sales <- aggregate(sales, aggfn, aggkeys)

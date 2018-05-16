@@ -428,7 +428,7 @@ module.ghg_emissions_per_gdp <- function(mode, allqueries, aggkeys, aggfn, years
     if(mode == GETQ) {
         # Return titles of necessary queries
         # For more complex variables, will return multiple query titles in vector
-        c('GHG emissions by subsector', 'pcGDP(PPP)', 'Population',
+        c('GHG emissions by subsector', 'GDP(MER)',
           'Land Use Change Emission (future)')
     }
     else {
@@ -455,22 +455,24 @@ module.ghg_emissions_per_gdp <- function(mode, allqueries, aggkeys, aggfn, years
             aggregate(aggfn, aggkeys)
         ghg <- region_agg(ghg, region, agg_region, add_global)
 
-        gdp <- allqueries$'pcGDP(PPP)' %>%
-            dplyr::left_join(allqueries$'Population', by = c('scenario', 'region', 'year')) %>%
-            dplyr::mutate(value = value.x * value.y,
-                          Units = "Million 1990US$") %>%
-            dplyr::select(-Units.x, -Units.y, -value.x, -value.y, -rundate.x, -rundate.y) %>%
+        gdp <- allqueries$'GDP(MER)' %>%
+            dplyr::mutate(Units = dplyr::if_else(Units == "Million1990US$", "Million 1990US$", Units))
+
+        gdp <- gdp %>%
+            dplyr::filter(year %in% unique(ghg$year)) %>%
             aggregate(aggfn, aggkeys)
         gdp <- region_agg(gdp, region, agg_region, add_global)
 
         if ('region' %in% names(gdp) & 'region' %in% names(ghg)){
             ghg_gdp <- ghg %>%
+                dplyr::filter(year %in% unique(gdp$year)) %>%
                 dplyr::left_join(gdp, by = c('scenario', 'region', 'year')) %>%
                 dplyr::mutate(Units = paste0(Units.x, "/", Units.y)) %>%
                 dplyr::mutate(value = value.x / value.y) %>%
                 dplyr::select(Units, scenario, region, year, value)
         } else {
             ghg_gdp <- ghg %>%
+                dplyr::filter(year %in% unique(gdp$year)) %>%
                 dplyr::left_join(gdp, by = c('scenario', 'year')) %>%
                 dplyr::mutate(Units = paste0(Units.x, "/", Units.y)) %>%
                 dplyr::mutate(value = value.x / value.y) %>%
@@ -2445,4 +2447,3 @@ module.ghg_trans_en_intensity <- function(mode, allqueries, aggkeys, aggfn, year
         }
     }
 }
-
