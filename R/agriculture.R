@@ -29,7 +29,8 @@ module.crop_production <- function(mode, allqueries, aggkeys, aggfn, years,
     else {
         message('Function for processing variable: Crop Production')
 
-        noncrops <- c('biomass', 'NonFoodDemand_Forest', 'Forest', 'UnmanagedLand', 'ag_trade')
+        noncrops <- c('biomass', 'NonFoodDemand_Forest', 'Forest',
+                      'UnmanagedLand', 'ag_trade')
 
         agproduction <- allqueries$'Ag Production' %>%
                         dplyr::filter(!output %in% noncrops) %>%
@@ -76,6 +77,9 @@ module.food_consumption <- function(mode, allqueries, aggkeys, aggfn, years,
         'Food Consumption'
     }
     else {
+        ## silence notes on package checks
+        sector <- technology <- NULL
+
         message('Function for processing variable: Food Consumption')
 
         foodConsumption <- allqueries$'Food Consumption' %>%

@@ -27,6 +27,9 @@ module.electricity <- function(mode, allqueries, aggkeys, aggfn, years,
         'Electricity'
     }
     else {
+        ## silence notes on package checks
+        subsector <- technology <- NULL
+
         message('Function for processing variable: Electricity')
 
         # Add CCS to subsector

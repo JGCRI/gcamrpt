@@ -31,6 +31,10 @@ module.water_withdrawals <- function(mode, allqueries, aggkeys, aggfn, years,
         'Water Withdrawals'
     }
     else {
+        ## silence notes on package checks
+        Units <- scenario <- region <- year <- technology <- sector <-
+            `aggregate sector` <- subsector <- value <- NULL
+
         message('Function for processing variable: Water Withdrawals')
 
         waterWdrwls <- allqueries$'Water Withdrawals' %>%
@@ -82,6 +86,10 @@ module.water_consumption <- function(mode, allqueries, aggkeys, aggfn, years,
         'Water Consumption'
     }
     else {
+        ## silence notes on package checks
+        Units <- scenario <- region <- year <- `aggregate sector` <- sector <-
+            subsector <- technology <- value <- NULL
+
         message('Function for processing variable: Water Consumption')
 
         waterCnsmptn <- allqueries$'Water Consumption' %>%
@@ -136,6 +144,9 @@ module.water_irrigation <- function(mode, allqueries, aggkeys, aggfn, years,
         'Water Withdrawals'
     }
     else {
+        ## silence notes on package checks
+        sector <- subsector <- NULL
+
         message('Function for processing variable: Water Withdrawals for Irrigation')
 
         crops <- c('Corn', 'FiberCrop', 'FodderGrass', 'FodderHerb', 'MiscCrop',
@@ -183,6 +194,9 @@ module.water_electricity <- function(mode, allqueries, aggkeys, aggfn, years,
         'Water Withdrawals'
     }
     else {
+        ## silence notes on package checks
+        sector <- NULL
+
         message('Function for processing variable: Water Withdrawals for Electricity')
 
         waterElct <- allqueries$'Water Withdrawals' %>%

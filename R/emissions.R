@@ -73,7 +73,7 @@ module.co2_emissions_end_use <- function(mode, allqueries, aggkeys, aggfn, years
         if(!is.na(ounit)) {
             cfac <- unitconv_co2(co2$Units[1], ounit)
             if(!is.na(cfac)) {
-                co2$value <- co2$value *cfac
+                co2$value <- co2$value * cfac
                 co2$Units <- ounit
             }
         }
@@ -105,6 +105,9 @@ module.ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, aggfn, years,
         'GHG emissions by subsector'
     }
     else {
+        ## silence notes on package checks
+        GWP <- value <- NULL
+
         message('Function for processing variable: GHG emissions by subsector')
 
         ghg <- allqueries$'GHG emissions by subsector' %>%
@@ -122,7 +125,7 @@ module.ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, aggfn, years,
         if(!is.na(ounit)) {
             cfac <- unitconv_counts(ghg$Units[1], ounit)
             if(!is.na(cfac)) {
-                ghg$value <- ghg$value *cfac
+                ghg$value <- ghg$value * cfac
                 ghg$Units <- ounit
             }
         }
@@ -154,6 +157,9 @@ module.ghg_emissions_ar5 <- function(mode, allqueries, aggkeys, aggfn, years,
         'GHG emissions by subsector'
     }
     else {
+        ## silence notes on package checks
+        GWP <- value <- NULL
+
         message('Function for processing variable: GHG emissions by subsector')
 
         ghg <- allqueries$'GHG emissions by subsector' %>%

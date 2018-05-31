@@ -24,6 +24,9 @@ module.final_energy_sector_fuel <- function(mode, allqueries, aggkeys, aggfn, ye
         'Final energy by detailed end-use sector and fuel'
     }
     else {
+        ## silence notes on package checks
+        sector <- input <- NULL
+
         message('Function for processing variable: Final Energy by detailed end-use sector and fuel')
 
         final_energy <- allqueries$'Final energy by detailed end-use sector and fuel' %>%

@@ -25,7 +25,8 @@ module.land_cover <- function(mode, allqueries, aggkeys, aggfn, years,
     }
     else {
         ## silence notes on package check
-        value <- NULL
+        Units <- scenario <- region <- year <- value <- land_allocation <-
+            `land type` <- `land allocation` <- `aez land allocation` <- NULL
 
         message('Function for processing variable: Land Use')
 
