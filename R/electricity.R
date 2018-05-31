@@ -32,8 +32,8 @@ module.electricity <- function(mode, allqueries, aggkeys, aggfn, years,
         # Add CCS to subsector
         elct <- allqueries$Electricity %>%
                 dplyr::mutate(subsector = sub('rooftop_pv', 'solar', subsector),
-                              subsector = paste(subsector,
-                                                dplyr::if_else(grepl('CCS', technology), 'CCS', '')))
+                              subsector = paste0(subsector,
+                                                 dplyr::if_else(grepl('CCS', technology), ' CCS', '')))
         elct <- filter(elct, years, filters)
         elct <- aggregate(elct, aggfn, aggkeys)
 

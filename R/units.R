@@ -334,6 +334,13 @@ unitconv_mass <- function(iunit, ounit, inverse=FALSE)
 {
     unitasserts(iunit, ounit)
 
+    # Check for common mistake (kT instead of kt)
+    if(any(grepl('kT', c(iunit, ounit)))) {
+        warning('kT is not a standard unit of mass, changing to kt')
+        sub('kT', 'kt', iunit)
+        sub('kT', 'kt', ounit)
+    }
+
     iunit <- extractunit(rownames(massconv), iunit, 'mass')
     ounit <- extractunit(colnames(massconv), ounit, 'mass')
 
