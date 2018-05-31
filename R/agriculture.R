@@ -29,7 +29,7 @@ module.crop_production <- function(mode, allqueries, aggkeys, aggfn, years,
     else {
         message('Function for processing variable: Crop Production')
 
-        noncrops <- c('biomass', 'NonFoodDemand_Forest', 'Forest', 'UnmanagedLand')
+        noncrops <- c('biomass', 'NonFoodDemand_Forest', 'Forest', 'UnmanagedLand', 'ag_trade')
 
         agproduction <- allqueries$'Ag Production' %>%
                         dplyr::filter(!output %in% noncrops) %>%

@@ -329,6 +329,13 @@ process_scenario <- function(scen, dbloc, dbname, q2run, varctl)
     ## Run the required queries
     queries <- runQueries(q2run, dbloc, dbname, scen)
 
+    ## Remove queries that returned empty results
+    okqs <- queries[sapply(queries, nrow) != 0]
+    qmap <- sapply(varctl[['GCAM variable']], runModule, GETQ)
+    okqmap <- names(qmap[qmap %in% names(okqs)])
+    varctl <- varctl[varctl[['GCAM variable']] %in% okqmap, ]
+    queries <- okqs
+
     ## Process each requested variable
     rslts <-
         Map(function(var, aggkeys, aggfn, years, filters, ounit) {
