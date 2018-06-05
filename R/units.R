@@ -334,6 +334,13 @@ unitconv_mass <- function(iunit, ounit, inverse=FALSE)
 {
     unitasserts(iunit, ounit)
 
+    # Check for common mistake (kT instead of kt)
+    if(any(grepl('kT', c(iunit, ounit)))) {
+        warning('kT is not a standard unit of mass, changing to kt')
+        sub('kT', 'kt', iunit)
+        sub('kT', 'kt', ounit)
+    }
+
     iunit <- extractunit(rownames(massconv), iunit, 'mass')
     ounit <- extractunit(colnames(massconv), ounit, 'mass')
 
@@ -342,6 +349,61 @@ unitconv_mass <- function(iunit, ounit, inverse=FALSE)
     else
         massconv[iunit, ounit]
 
+}
+
+#' area conversion
+#'
+#' This function converts area
+#'
+#' @param ounit Desired output unit.  If omitted, results will be returned with
+#' no unit conversion.
+#' @keywords internal
+unitconv_area <- function(iunit, ounit, inverse=FALSE)
+{
+    unitasserts(iunit, ounit)
+
+    # Remove ^ symbol. Ex. m^2 becomes m2
+    iunit <- gsub('\\^', '', iunit)
+    ounit <- gsub('\\^', '', ounit)
+
+    # Replace m2 with meter2 (because of how extractunit works)
+    iunit <- gsub(' m2|^m2', ' meter2', iunit)
+    ounit <- gsub(' m2|^m2', ' meter2', ounit)
+
+    # Conversion based on count. Gets count unit from first word.
+    iunit_count <- if(stringr::str_count(iunit, '\\S+') == 1) '' else iunit
+    ounit_count <- if(stringr::str_count(ounit, '\\S+') == 1) '' else ounit
+
+    count_conv <- unitconv_counts(iunit_count, ounit_count)
+
+    iunit <- extractunit(rownames(areaconv), iunit, 'area')
+    ounit <- extractunit(colnames(areaconv), ounit, 'area')
+
+    if(inverse)
+        areaconv[ounit, iunit] * count_conv
+    else
+        areaconv[iunit, ounit] * count_conv
+
+}
+
+#' volume conversion
+#'
+#' This function converts volume
+#'
+#' @param ounit Desired output unit.  If omitted, results will be returned with
+#' no unit conversion.
+#' @keywords internal
+unitconv_vol <- function(iunit, ounit, inverse=FALSE)
+{
+
+    # TODO: Make this a real function
+    unitasserts(iunit, ounit)
+
+    if(!(iunit %in% 'km^3' || iunit %in% 'billion m^3' ||
+         ounit %in% 'km^3' || ounit %in% 'billion m^3' ))
+        warning("Unsupported units for volume, out units will not be converted.")
+
+    1
 }
 
 #' Common assertions on unit string inputs

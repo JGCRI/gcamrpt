@@ -27,20 +27,27 @@ module.electricity <- function(mode, allqueries, aggkeys, aggfn, years,
         'Electricity'
     }
     else {
+        ## silence notes on package checks
+        subsector <- technology <- NULL
+
         message('Function for processing variable: Electricity')
 
-        electricity <- allqueries$'Electricity'
-        electricity <- filter(electricity, years, filters)
-        electricity <- aggregate(electricity, aggfn, aggkeys)
+        # Add CCS to subsector
+        elct <- allqueries$Electricity %>%
+                dplyr::mutate(subsector = sub('rooftop_pv', 'solar', subsector),
+                              subsector = paste0(subsector,
+                                                 dplyr::if_else(grepl('CCS', technology), ' CCS', '')))
+        elct <- filter(elct, years, filters)
+        elct <- aggregate(elct, aggfn, aggkeys)
 
         if(!is.na(ounit)) {
             ## skip unit conversion if output unit not specified.
-            cfac <- unitconv_energy(electricity$Units[1], ounit)
+            cfac <- unitconv_energy(elct$Units[1], ounit)
             if(!is.na(cfac)) {
-                electricity$value <- electricity$value * cfac
-                electricity$Units <- ounit
+                elct$value <- elct$value * cfac
+                elct$Units <- ounit
             }
         }
-        electricity
+        elct
     }
 }

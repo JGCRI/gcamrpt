@@ -170,7 +170,7 @@ The filter functions currently recognized by the system are
   \item{\code{==}}{String equality}
   \item{\code{!=}}{String inequality}
   \item{\code{<}}{Numeric less-than}
-  \item{\code{>}}{Numeric greather-than}
+  \item{\code{>}}{Numeric greater-than}
   \item{\code{<=}}{Numeric less-than-or-equals}
   \item{\code{>=}}{Numeric greater-than-or-equals}
   \item{\code{matches}}{Regular expression match.  Note that because of the
