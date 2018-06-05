@@ -10,7 +10,7 @@ Description: Provide functions for converting GCAM output into the format used b
     desired outputs, along with options (such as filtering and aggregation), and the 
     package runs the necessary GCAM queries (no more than once per query) and passes
     the results to the functions that produce the output.
-Depends: R (>= 3.3.0)
+Depends: R (>= 3.4.0)
 License: GPL-2 | file LICENSE
 Encoding: UTF-8
 LazyData: true

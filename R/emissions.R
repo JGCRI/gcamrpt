@@ -105,31 +105,8 @@ module.ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, aggfn, years,
         'GHG emissions by subsector'
     }
     else {
-        ## silence notes on package checks
-        GWP <- value <- NULL
-
-        message('Function for processing variable: GHG emissions by subsector')
-
-        ghg <- allqueries$'GHG emissions by subsector' %>%
-            # Add in GWP, and remove gases without GWP
-            dplyr::right_join(gwp_ar4, by = c('ghg', 'Units')) %>%
-            # Convert to MTCO2e
-            dplyr::mutate(value = value * GWP,
-                          Units = 'MTCO2e') %>%
-            dplyr::select(-GWP) %>%
-            # Add in gas type
-            dplyr::left_join(ghg_gas_type, by = 'ghg')
-
-        ghg <- filter(ghg, years, filters)
-        ghg <- aggregate(ghg, aggfn, aggkeys)
-        if(!is.na(ounit)) {
-            cfac <- unitconv_counts(ghg$Units[1], ounit)
-            if(!is.na(cfac)) {
-                ghg$value <- ghg$value * cfac
-                ghg$Units <- ounit
-            }
-        }
-        ghg
+        ghg_emissions_by_gwp(gwp_ar4, allqueries, aggkeys, aggfn, years,
+                             filters, ounit)
     }
 }
 
@@ -157,30 +134,43 @@ module.ghg_emissions_ar5 <- function(mode, allqueries, aggkeys, aggfn, years,
         'GHG emissions by subsector'
     }
     else {
-        ## silence notes on package checks
-        GWP <- value <- NULL
-
-        message('Function for processing variable: GHG emissions by subsector')
-
-        ghg <- allqueries$'GHG emissions by subsector' %>%
-            # Add in GWP, and remove gases without GWP
-            dplyr::right_join(gwp_ar5, by = c('ghg', 'Units')) %>%
-            # Convert to MTCO2e
-            dplyr::mutate(value = value * GWP,
-                          Units = 'MTCO2e') %>%
-            dplyr::select(-GWP) %>%
-            # Add in gas type
-            dplyr::left_join(ghg_gas_type, by = 'ghg')
-
-        ghg <- filter(ghg, years, filters)
-        ghg <- aggregate(ghg, aggfn, aggkeys)
-        if(!is.na(ounit)) {
-            cfac <- unitconv_counts(ghg$Units[1], ounit)
-            if(!is.na(cfac)) {
-                ghg$value <- ghg$value *cfac
-                ghg$Units <- ounit
-            }
-        }
-        ghg
+        ghg_emissions_by_gwp(gwp_ar5, allqueries, aggkeys, aggfn, years,
+                             filters, ounit)
     }
+}
+
+
+#' Helper for GHG Emissions Data Module
+#'
+#' Produce ghg emissions by technology, converted to MTCO2e with given gwp
+#'
+#' @param gwp Lookup table of ghg to GWP (with units)
+#' @keywords internal
+ghg_emissions_by_gwp <- function(gwp, allqueries, aggkeys, aggfn, years,
+                                 filters, ounit) {
+    ## silence notes on package checks
+    GWP <- value <- NULL
+
+    message('Function for processing variable: GHG emissions by subsector')
+
+    # 1. Add in GWP, and remove gases without GWP
+    # 2. Convert to MTCO2e
+    # 3. Add in gas type
+    ghg <- allqueries$'GHG emissions by subsector' %>%
+        dplyr::right_join(gwp, by = c('ghg', 'Units')) %>%
+        dplyr::mutate(value = value * GWP, Units = 'MTCO2e') %>%
+        dplyr::select(-GWP) %>%
+        dplyr::left_join(ghg_gas_type, by = 'ghg')
+
+    ghg <- filter(ghg, years, filters)
+    ghg <- aggregate(ghg, aggfn, aggkeys)
+
+    if(!is.na(ounit)) {
+        cfac <- unitconv_counts(ghg$Units[1], ounit)
+        if(!is.na(cfac)) {
+            ghg$value <- ghg$value * cfac
+            ghg$Units <- ounit
+        }
+    }
+    ghg
 }

@@ -401,7 +401,7 @@ unitconv_vol <- function(iunit, ounit, inverse=FALSE)
 
     if(!(iunit %in% 'km^3' || iunit %in% 'billion m^3' ||
          ounit %in% 'km^3' || ounit %in% 'billion m^3' ))
-        stop("Unsupported units for volume.")
+        warning("Unsupported units for volume, out units will not be converted.")
 
     1
 }
