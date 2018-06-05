@@ -16,7 +16,7 @@
 #' @keywords internal
 
 module.co2_emissions <- function(mode, allqueries, aggkeys, aggfn, years,
-                                  filters, ounit)
+                                  filters, filter_operator, ounit)
 {
     if(mode == GETQ) {
         # Return titles of necessary queries
@@ -34,7 +34,7 @@ module.co2_emissions <- function(mode, allqueries, aggkeys, aggfn, years,
             dplyr::group_by(Units, scenario, region, year, service, mode, submode) %>%
             dplyr::summarise(value=sum(value)) %>%
             dplyr::ungroup()
-        co2 <- filter(co2, years, filters)
+        co2 <- filter(co2, years, filters, filter_operator)
         co2 <- aggregate(co2, aggfn, aggkeys)
         co2 <- unitconv_co2(co2, ounit)
         co2

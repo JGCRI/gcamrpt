@@ -19,7 +19,7 @@
 #' @keywords internal
 
 module.electricity <- function(mode, allqueries, aggkeys, aggfn, years,
-                              filters, ounit)
+                              filters, filter_operator, ounit)
 {
     if(mode == GETQ) {
         # Return titles of necessary queries
@@ -30,7 +30,7 @@ module.electricity <- function(mode, allqueries, aggkeys, aggfn, years,
         message('Function for processing variable: Electricity')
 
         electricity <- allqueries$'Electricity'
-        electricity <- filter(electricity, years, filters)
+        electricity <- filter(electricity, years, filters, filter_operator)
         electricity <- aggregate(electricity, aggfn, aggkeys)
 
         if(!is.na(ounit)) {

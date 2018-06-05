@@ -331,15 +331,16 @@ process_scenario <- function(scen, dbloc, dbname, q2run, varctl)
 
     ## Process each requested variable
     rslts <-
-        Map(function(var, aggkeys, aggfn, years, filters, ounit) {
+        Map(function(var, aggkeys, aggfn, years, filters, filter_operator, ounit) {
                 runModule(var, RUN, queries, aggkeys, aggfn, years,
-                          filters, ounit)
+                          filters, filter_operator, ounit)
             },
             varctl[['GCAM variable']],
             varctl[['aggregation keys']],
             varctl[['aggregation function']],
             varctl[['years']],
             varctl[['filters']],
+            varctl[['filter_operator']],
             varctl[['output units']])
 
     ## Rename variables to their output values
@@ -406,7 +407,7 @@ validatectl <- function(scenctl, varctl)
     scenrqd <- scencols
 
     varcols <- c('GCAM variable', 'output variable', 'aggregation keys',
-                 'aggregation function', 'years', 'filters',
+                 'aggregation function', 'years', 'filters','filter_operator',
                  'output units')
     varrqd <- varcols[1:2]
 

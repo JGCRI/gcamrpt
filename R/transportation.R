@@ -29,7 +29,7 @@ NULL
 
 #' @describeIn trans_modules Passenger transportation service output data module
 module.pass_trans_service_output <- function(mode, allqueries, aggkeys, aggfn, years,
-                                             filters, ounit)
+                                             filters, filter_operator, ounit)
 {
     queries <- 'Transportation Service Output'
     if(mode == GETQ) {
@@ -38,13 +38,13 @@ module.pass_trans_service_output <- function(mode, allqueries, aggkeys, aggfn, y
     else {
         allqueries <- trans_filter_svc(allqueries[queries], TRUE)
         process.tr_svc_output(allqueries, aggkeys, aggfn, years,
-                              filters, ounit)
+                              filters, filter_operator, ounit)
     }
 }
 
 #' @describeIn trans_modules Freight transportation service output data module
 module.frgt_trans_service_output <- function(mode, allqueries, aggkeys, aggfn, years,
-                                             filters, ounit)
+                                             filters, filter_operator, ounit)
 {
     queries <- 'Transportation Service Output'
     if(mode == GETQ) {
@@ -59,7 +59,7 @@ module.frgt_trans_service_output <- function(mode, allqueries, aggkeys, aggfn, y
 
 #' @describeIn trans_modules Passenger transportation final energy module
 module.pass_trans_final_energy <- function(mode, allqueries, aggkeys, aggfn, years,
-                                           filters, ounit)
+                                           filters, filter_operator, ounit)
 {
     queries <- c('Transportation Final Energy', 'Refined Liquids')
     if(mode == GETQ) {
@@ -70,13 +70,13 @@ module.pass_trans_final_energy <- function(mode, allqueries, aggkeys, aggfn, yea
         transqueries <-
             trans_filter_svc(allqueries['Transportation Final Energy'], TRUE)
         allqueries <- c(transqueries, allqueries['Refined Liquids'])
-        process.tr_fe_output(allqueries, aggkeys, aggfn, years, filters, ounit)
+        process.tr_fe_output(allqueries, aggkeys, aggfn, years, filters, filter_operator, ounit)
     }
 }
 
 #' @describeIn trans_modules Freight transportation final energy module
 module.frgt_trans_final_energy <- function(mode, allqueries, aggkeys, aggfn, years,
-                                           filters, ounit)
+                                           filters, filter_operator, ounit)
 {
     queries <- c('Transportation Final Energy', 'Refined Liquids')
     if(mode == GETQ) {
@@ -87,14 +87,14 @@ module.frgt_trans_final_energy <- function(mode, allqueries, aggkeys, aggfn, yea
         transqueries <-
             trans_filter_svc(allqueries['Transportation Final Energy'], FALSE)
         allqueries <- c(transqueries, allqueries['Refined Liquids'])
-        process.tr_fe_output(allqueries, aggkeys, aggfn, years, filters, ounit)
+        process.tr_fe_output(allqueries, aggkeys, aggfn, years, filters, filter_operator, ounit)
     }
 }
 
 
 #' @describeIn trans_modules Passenger transportation service intensity module
 module.pass_trans_service_intensity <- function(mode, allqueries, aggkeys, aggfn, years,
-                                                filters, ounit)
+                                                filters, filter_operator, ounit)
 {
     queries <- c('Transportation Final Energy', 'Transportation Service Output',
                  'Refined Liquids')
@@ -109,7 +109,7 @@ module.pass_trans_service_intensity <- function(mode, allqueries, aggkeys, aggfn
         ## be filtered by service
         transqueries <- trans_filter_svc(allqueries[queries[1:2]], TRUE)
         allqueries <- c(transqueries, allqueries['Refined Liquids'])
-        svc_intensity <- process.tr_svc_intensity(allqueries, aggkeys, aggfn, years, filters,
+        svc_intensity <- process.tr_svc_intensity(allqueries, aggkeys, aggfn, years, filters, filter_operator,
                                                   ounit, 'EJ / million pass-km')
 
         if(is.na(ounit))
@@ -175,7 +175,7 @@ module.pass_trans_service_intensity <- function(mode, allqueries, aggkeys, aggfn
 
 #' @describeIn trans_modules Passenger transportation service intensity module
 module.frgt_trans_service_intensity <- function(mode, allqueries, aggkeys, aggfn, years,
-                                                filters, ounit)
+                                                filters, filter_operator, ounit)
 {
     queries <- c('Transportation Final Energy', 'Transportation Service Output',
                  'Refined Liquids')
@@ -190,7 +190,7 @@ module.frgt_trans_service_intensity <- function(mode, allqueries, aggkeys, aggfn
         ## be filtered by service
         transqueries <- trans_filter_svc(allqueries[queries[1:2]], FALSE)
         allqueries <- c(transqueries, allqueries['Refined Liquids'])
-        svc_intensity <- process.tr_svc_intensity(allqueries, aggkeys, aggfn, years, filters,
+        svc_intensity <- process.tr_svc_intensity(allqueries, aggkeys, aggfn, years, filters, filter_operator,
                                                   ounit, 'EJ / million tonne-km')
 
         if(is.na(ounit))
@@ -232,7 +232,7 @@ module.frgt_trans_service_intensity <- function(mode, allqueries, aggkeys, aggfn
 
 #' @describeIn trans_modules Passenger transportation load factor data module
 module.pass_trans_load_factor <- function(mode, allqueries, aggkeys, aggfn, years,
-                                           filters, ounit)
+                                           filters, filter_operator, ounit)
 {
     queries <- 'Transportation Load Factors'
     if(mode == GETQ) {
@@ -244,7 +244,7 @@ module.pass_trans_load_factor <- function(mode, allqueries, aggkeys, aggfn, year
         ## as "load / veh", but "load" actually has some kind of unit, probably
         ## "passengers"
         allqueries[['Transportation Load Factors']]$Units <- 'pass / veh'
-        process.trans_load_factors(allqueries, aggkeys, aggfn, years, filters,
+        process.trans_load_factors(allqueries, aggkeys, aggfn, years, filters, filter_operator,
                                    ounit)
         ## no unit conversions for passenger load factors; passengers / vehicle
         ## is the only sensible unit.
@@ -253,7 +253,7 @@ module.pass_trans_load_factor <- function(mode, allqueries, aggkeys, aggfn, year
 
 #' @describeIn trans_modules Freight transportation load factor data module
 module.frgt_trans_load_factor <- function(mode, allqueries, aggkeys, aggfn, years,
-                                           filters, ounit)
+                                           filters, filter_operator, ounit)
 {
     queries <- 'Transportation Load Factors'
     if(mode == GETQ) {
@@ -268,7 +268,7 @@ module.frgt_trans_load_factor <- function(mode, allqueries, aggkeys, aggfn, year
         ## as "load / veh", but "load" actually has some kind of unit, probably
         ## "tonnes"
         allqueries[['Transportation Load Factors']]$Units <- 'tonnes / veh'
-        lf <- process.trans_load_factors(allqueries, aggkeys, aggfn, years, filters,
+        lf <- process.trans_load_factors(allqueries, aggkeys, aggfn, years, filters, filter_operator,
                                          ounit)
         if(!is.na(ounit)) {
             cf <- unitconv_mass(lf$Units[1], ounit)
@@ -283,7 +283,7 @@ module.frgt_trans_load_factor <- function(mode, allqueries, aggkeys, aggfn, year
 
 #' @describeIn trans_modules Worker function for transportation service output modules
 process.tr_svc_output <- function(allqueries, aggkeys, aggfn, years,
-                                  filters, ounit)
+                                  filters, filter_operator, ounit)
 {
     ## silence notes on package check
     Units <- scenario <- region <- year <- technology <- vintage <- service <-
@@ -295,7 +295,7 @@ process.tr_svc_output <- function(allqueries, aggkeys, aggfn, years,
       dplyr::group_by(Units, scenario, region, year, technology, vintage, service, mode, submode) %>%
       dplyr::summarise(value=sum(value)) %>%
       dplyr::ungroup()
-    serviceOutput <- filter(serviceOutput, years, filters)
+    serviceOutput <- filter(serviceOutput, years, filters, filter_operator)
     serviceOutput <- aggregate(serviceOutput, aggfn, aggkeys)
 
     ## units example: million p-km
@@ -311,7 +311,7 @@ process.tr_svc_output <- function(allqueries, aggkeys, aggfn, years,
 
 #' @describeIn trans_modules Worker function for service output modules
 process.tr_fe_output <- function(allqueries, aggkeys, aggfn, years,
-                                 filters, ounit)
+                                 filters,  filter_operator, ounit)
 {
     ## silence notes on package checks
     Units <- scenario <- region <- year <- technology <- vintage <- fuel <-
@@ -326,7 +326,7 @@ process.tr_fe_output <- function(allqueries, aggkeys, aggfn, years,
       dplyr::group_by(Units, scenario, region, year, technology, vintage, fuel, liquid_type, service, mode, submode) %>%
       dplyr::summarise(value=sum(value)) %>%
       dplyr::ungroup()
-    energy <- filter(energy, years, filters)
+    energy <- filter(energy, years, filters, filter_operator,)
     energy <- aggregate(energy, aggfn, aggkeys)
     ## units example: EJ/yr
     if(!is.na(ounit)) {
@@ -341,7 +341,7 @@ process.tr_fe_output <- function(allqueries, aggkeys, aggfn, years,
 
 #' @describeIn trans_modules Worker function for load factor modules
 process.trans_load_factors <- function(allqueries, aggkeys, aggfn, years,
-                                       filters, ounit)
+                                       filters, filter_operator, ounit)
 {
     ## silence notes on package check
     Units <- scenario <- region <- year <- technology <- service <- submode <-
@@ -354,7 +354,7 @@ process.trans_load_factors <- function(allqueries, aggkeys, aggfn, years,
       dplyr::group_by(Units, scenario, region, year, technology, service, mode, submode) %>% # average over LHDT
       dplyr::summarise(value=mean(value)) %>%
       dplyr::ungroup()
-    ldfctr <- filter(ldfctr, years, filters)
+    ldfctr <- filter(ldfctr, years, filters,  filter_operator)
     ldfctr <- aggregate(ldfctr, aggfn, aggkeys)
     ## We don't do any unit conversion here because the allowable conversions
     ## will differ between passenger and freight services.
@@ -364,7 +364,7 @@ process.trans_load_factors <- function(allqueries, aggkeys, aggfn, years,
 #' @describeIn trans_modules Worker function for transportation service
 #' intensity
 process.tr_svc_intensity <- function(allqueries, aggkeys, aggfn, years,
-                                     filters, ounit, nativeunit)
+                                     filters, filter_operator, ounit, nativeunit)
 {
     ## silence notes on package check
     Units <- scenario <- region <- year <- service <- submode <- value <-
@@ -399,7 +399,7 @@ process.tr_svc_intensity <- function(allqueries, aggkeys, aggfn, years,
       dplyr::inner_join(serviceOutput,
                         by = c('scenario', 'region', 'year', 'service', 'mode',
                         'submode')) %>%
-      filter(years, filters) %>%
+      filter(years, filters, filter_operator) %>%
       aggregate(aggfn, aggkeys, multiple=TRUE) %>%
       ## Calculate service intensity as energy / service output
       dplyr::rename(energy=value.x, svc=value.y) %>%
@@ -413,7 +413,7 @@ process.tr_svc_intensity <- function(allqueries, aggkeys, aggfn, years,
 #'
 #' This module appears to be incomplete.
 module.sales <- function(mode, allqueries, aggkeys, aggfn, years,
-                         filters, ounit)
+                         filters, filter_operator, ounit)
 {
     queries <- c('Transportation Service Output', 'Transportation Load Factors')
     if(mode == GETQ) {
@@ -456,7 +456,7 @@ module.sales <- function(mode, allqueries, aggkeys, aggfn, years,
             dplyr::rename(value=sales) %>%
             dplyr::mutate(Units = 'million vehicles')
 
-        sales <- filter(sales, years, filters)
+        sales <- filter(sales, years, filters,  filter_operator)
         sales <- aggregate(sales, aggfn, aggkeys)
         ## units example: million p-km
         if(!is.na(ounit)) {
@@ -550,7 +550,7 @@ mapfuel <- function(en, ref = NULL) {
 #'
 #' @keywords internal
 module.transportation_pm_emissions <- function(mode, allqueries, aggkeys, aggfn, years,
-                                               filters, ounit)
+                                               filters, filter_operator, ounit)
 {
     if(mode == GETQ) {
         # Return titles of necessary queries
@@ -595,7 +595,7 @@ module.transportation_pm_emissions <- function(mode, allqueries, aggkeys, aggfn,
             dplyr::select(-pmfac, -Units.x, -vkm, -Units.y) %>%
             dplyr::rename(value=pm_emissions)
 
-        pm <- filter(pm, years, filters)
+        pm <- filter(pm, years, filters, filter_operator)
         pm <- aggregate(pm, aggfn, aggkeys)
         if(!is.na(ounit)) {
             cf <- unitconv_mass(pm$Units[1], ounit)
