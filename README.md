@@ -22,8 +22,22 @@ variety of options that determine how the output is formatted.  These options
 and the the control file format are described in more detail in the
 documentation to `generate`.
 
+
 ## Examples
 ```
 generate('my-scenarios.ctl', 'my-vars.ctl', '~/wrk/data/gcam-dbfiles',
          fileformat='CSV')
 ```
+Examples of these files can be found here:
+
+[Example variables file](./inst/extdata/example-variable.ctl/)
+
+[Example scenarios file](./inst/extdata/example-scenario.ctl/)
+
+## Set-up
+To use this package it first must be installed. You can do this using the R ```devtools``` package:
+
+```
+devtools::install_github("JGCRI/iamrpt")
+```
+
