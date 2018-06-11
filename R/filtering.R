@@ -21,9 +21,19 @@ filter <- function(tbl, years, filterstr, filter_operator)
         mask <- mask & (tbl$year %in% years)
     }
 
+    if(!(is.na(filter_operator) || filter_operator == '')) {
+        fsplit_o <-
+            stringr::str_split(filter_operator, ',') %>% unlist
+    }
+    else {
+        fsplit_o <- NA
+    }
+
     if(!(is.na(filterstr) || filterstr == '')) {
         fsplit <-
             stringr::str_split(filterstr, ',') %>% unlist
+
+
 
         ## This produces a matrix of string matches. Each row is the result of
         ## parsing one filter.  Each column is one of the match groups.
@@ -41,16 +51,21 @@ filter <- function(tbl, years, filterstr, filter_operator)
         ## result of applying one filter to the table.
         fmasks <- apply(filters, 1, function(x) {dofilter(x, tbl)})
 
-        if((is.na(filter_operator))&(nrow(filters)==1)) {
+        if((length(fsplit_o)>1)&(fsplit_o[1]=="AND")&(fsplit_o[2]=="OR")) {
+
+            fmasks <- cbind(fmasks[ , 1], (rowSums(fmasks[ ,c(-1)])==1))
             mask <- mask & apply(fmasks, 1, function(x) {all(x)})
         }
-        else if((!is.na(filter_operator))&(filter_operator=="OR")) {
+        else if((length(fsplit_o)==1)&(is.na(filter_operator))&(nrow(filters)==1)) {
+            mask <- mask & apply(fmasks, 1, function(x) {all(x)})
+        }
+        else if((length(fsplit_o)==1)&(!is.na(filter_operator))&(filter_operator=="OR")) {
             mask <- (rowSums(fmasks)==1)
         }
-        else if((!is.na(filter_operator))&(filter_operator=="AND")) {
+        else if((length(fsplit_o)==1)&(!is.na(filter_operator))&(filter_operator=="AND")) {
             mask <- mask & apply(fmasks, 1, function(x) {all(x)})
         }
-        else if((is.na(filter_operator))&(nrow(filters)>1)) {
+        else if((length(fsplit_o)==1)&(is.na(filter_operator))&(nrow(filters)>1)) {
             warning('Filter operator not provided.  Applying "AND".')
             mask <- mask & apply(fmasks, 1, function(x) {all(x)})
         }
