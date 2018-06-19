@@ -53,7 +53,7 @@ filter <- function(tbl, years, filterstr, filter_operator)
 
         if((length(fsplit_o)>1)&(fsplit_o[1]=="AND")&(fsplit_o[2]=="OR")) {
 
-            fmasks <- cbind(fmasks[ , 1], (rowSums(fmasks[ ,c(-1)])==1))
+            fmasks <- cbind(fmasks[ , 1], (rowSums(fmasks[ ,c(-1)])>=1))
             mask <- mask & apply(fmasks, 1, function(x) {all(x)})
         }
         else if((length(fsplit_o)==1)&(is.na(filter_operator))&(nrow(filters)==1)) {
@@ -80,7 +80,9 @@ filter <- function(tbl, years, filterstr, filter_operator)
     }
 
     ## select the rows for which all filters returned TRUE.
-    tbl[mask,]
+        tbl[mask,]
+
+
 }
 
 #' List of available filter functions
