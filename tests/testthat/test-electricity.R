@@ -16,8 +16,9 @@ test_that('Electricity module produces electricity data.', {
     aggfn <- NA
     years <- '2000:2050'
     filters <- NA
+    filter_operator <- NA
     ounit <- NA
     expect_identical(module.electricity(iamrpt:::RUN, queries , aggkeys, aggfn,
-                                        years, filters, ounit),
+                                        years, filters, filter_operator, ounit),
                      dplyr::filter(queries$Electricity, year>=2000, year<=2050))
 })

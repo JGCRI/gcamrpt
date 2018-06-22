@@ -52,7 +52,6 @@ filter <- function(tbl, years, filterstr, filter_operator)
         fmasks <- apply(filters, 1, function(x) {dofilter(x, tbl)})
 
         if((length(fsplit_o)>1)&(fsplit_o[1]=="AND")&(fsplit_o[2]=="OR")) {
-
             fmasks <- cbind(fmasks[ , 1], (rowSums(fmasks[ ,c(-1)])>=1))
             mask <- mask & apply(fmasks, 1, function(x) {all(x)})
         }
@@ -60,7 +59,8 @@ filter <- function(tbl, years, filterstr, filter_operator)
             mask <- mask & apply(fmasks, 1, function(x) {all(x)})
         }
         else if((length(fsplit_o)==1)&(!is.na(filter_operator))&(filter_operator=="OR")) {
-            mask <- (rowSums(fmasks)==1)
+            fmasks <- cbind(mask, (rowSums(fmasks)==1))
+            mask <- mask & apply(fmasks, 1, function(x) {all(x)})
         }
         else if((length(fsplit_o)==1)&(!is.na(filter_operator))&(filter_operator=="AND")) {
             mask <- mask & apply(fmasks, 1, function(x) {all(x)})

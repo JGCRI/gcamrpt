@@ -131,7 +131,7 @@
        <region name="Colombia" />
        <region name="South Asia" />
        <region name="South Korea" />
-       <region name="Taiwan" />  
+       <region name="Taiwan" />	   
       <emissionsQueryBuilder title="GHG emissions by region">
          <axis1 name="GHG">GHG</axis1>
          <axis2 name="Year">emissions</axis2>

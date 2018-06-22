@@ -53,7 +53,7 @@ module.frgt_trans_service_output <- function(mode, allqueries, aggkeys, aggfn, y
     else {
         allqueries <- trans_filter_svc(allqueries[queries], FALSE)
         process.tr_svc_output(allqueries, aggkeys, aggfn, years,
-                              filters, ounit)
+                              filters, filter_operator, ounit)
     }
 }
 
@@ -326,7 +326,7 @@ process.tr_fe_output <- function(allqueries, aggkeys, aggfn, years,
       dplyr::group_by(Units, scenario, region, year, technology, vintage, fuel, liquid_type, service, mode, submode) %>%
       dplyr::summarise(value=sum(value)) %>%
       dplyr::ungroup()
-    energy <- filter(energy, years, filters, filter_operator,)
+    energy <- filter(energy, years, filters, filter_operator)
     energy <- aggregate(energy, aggfn, aggkeys)
     ## units example: EJ/yr
     if(!is.na(ounit)) {
