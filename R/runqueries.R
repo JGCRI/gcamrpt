@@ -43,10 +43,9 @@ runQueries <- function(qlist, dbloc, dbfile, scenario=NULL)
     ## convert the list of query titles into a list of query structures.
     qlist <- pq[unique(qlist)]
 
-    lapply(qlist,
-           function(q) {
-               rgcam::runQuery(con, q$query, scenario)
-           })
+    lapply(qlist, function(q) {
+        rgcam::runQuery(con, q$query, scenario)
+    })
 }
 
 

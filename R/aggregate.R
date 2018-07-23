@@ -48,7 +48,8 @@ aggregate <- function(tbl, aggfn, aggkeys, multiple=FALSE)
         aggkeys <- aggkeys[aggkeys %in% names(tbl)]
     }
 
-    dots <- c('Units', 'scenario', 'year', aggkeys)
+    dots <- c('Units', 'scenario', 'year', aggkeys) %>%
+            lapply(as.name)
 
     if(multiple) {
         dplyr::group_by_(tbl, .dots=dots) %>%

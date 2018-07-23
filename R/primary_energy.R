@@ -24,8 +24,12 @@ module.primary_energy_direct <- function(mode, allqueries, aggkeys, aggfn, years
         'Primary Energy Consumption (Direct Equivalent)'
     }
     else {
+        ## silence notes on package checks
+        fuel <- NULL
+
         message('Function for processing variable: Primary Energy')
-        pe <- allqueries$'Primary Energy Consumption (Direct Equivalent)'
+        pe <- allqueries$'Primary Energy Consumption (Direct Equivalent)' %>%
+              dplyr::mutate(fuel = simplify_fuels(fuel))
         pe <- filter(pe, years, filters, filter_operator)
         pe <- aggregate(pe, aggfn, aggkeys)
         if(!is.na(ounit)) {

@@ -90,7 +90,7 @@ test_that('Transportation models return transportation data', {
                                                    'kT / veh'),
                      dplyr::filter(load_norm, year>=2000, year<=2050,
                                    service=='Freight') %>%
-                       dplyr::mutate(value=1e-3*value, Units='kT / veh'))
+                       dplyr::mutate(value=1e-3*value, Units='kt / veh'))
 
 
     expect_equal(module.pass_trans_final_energy(RUN, queries, aggkeys, aggfn, years,
@@ -136,8 +136,8 @@ test_that('Transportation models return transportation data', {
                                                          'EJ / MT-km'),
                      dplyr::filter(intensity_norm, year>=2000, year<=2050,
                                    service=='Freight') %>%
-                       dplyr::mutate(Units='EJ / MT-km')) # "million tonnes" and
-                                        # "MT" are the same.
+                       dplyr::mutate(Units='EJ / Mt-km')) # "million tonnes" and
+                                        # "Mt" are the same.
 
 
     expect_warning(module.sales(RUN, queries, aggkeys, aggfn, years, filters, filter_operator,
