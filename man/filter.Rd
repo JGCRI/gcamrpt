@@ -4,7 +4,7 @@
 \alias{filter}
 \title{Filter an output variable}
 \usage{
-filter(tbl, years, filterstr)
+filter(tbl, years, filterstr, filter_operator)
 }
 \arguments{
 \item{tbl}{Table to filter}

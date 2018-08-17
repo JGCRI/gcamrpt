@@ -43,3 +43,17 @@ module.primary_energy_direct <- function(mode, allqueries, aggkeys, aggfn, years
         pe
     }
 }
+
+simplify_fuels <- function(fuel) {
+    fuel <- sub('-elect renewable', '', fuel)
+    fuel <- sub('-H2 renewable', '', fuel)
+    fuel <- sub('hydro CCS', 'hydro', fuel)
+    fuel <- sub('solar CCS', 'solar', fuel)
+    fuel <- sub('wind CCS', 'wind', fuel)
+    fuel <- sub('nuclear CCS', 'nuclear', fuel)
+    fuel <- sub('.* oil', 'oil', fuel)
+    fuel <- sub('.*corn.*', 'biomass', fuel)
+    fuel <- sub('.*sugar.*', 'biomass', fuel)
+    fuel <- sub('biomassOil', 'biomass', fuel)
+    fuel <- sub('regional ', '', fuel)
+}

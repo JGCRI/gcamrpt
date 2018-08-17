@@ -87,7 +87,7 @@ test_that('Transportation models return transportation data', {
     ## unit conversion.
     expect_equal(module.frgt_trans_load_factor(RUN, queries , aggkeys,
                                                    aggfn, years, filters, filter_operator,
-                                                   'kT / veh'),
+                                                   'kt / veh'),
                      dplyr::filter(load_norm, year>=2000, year<=2050,
                                    service=='Freight') %>%
                        dplyr::mutate(value=1e-3*value, Units='kt / veh'))
@@ -133,7 +133,7 @@ test_that('Transportation models return transportation data', {
                                      Units='TJ / thous pass-km'))
     expect_equal(module.frgt_trans_service_intensity(RUN, queries, aggkeys, aggfn,
                                                          years, filters, filter_operator,
-                                                         'EJ / MT-km'),
+                                                         'EJ / Mt-km'),
                      dplyr::filter(intensity_norm, year>=2000, year<=2050,
                                    service=='Freight') %>%
                        dplyr::mutate(Units='EJ / Mt-km')) # "million tonnes" and

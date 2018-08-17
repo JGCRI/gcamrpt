@@ -56,7 +56,7 @@ module.bc_emissions_by_subsector <- function(mode, allqueries, aggkeys, aggfn, y
         if(!is.na(ounit)) {
             ## skip unit conversion if output unit not specified.
             if(grepl('Mt', ounit)) {
-                ounit_convert <- 'MT'
+                ounit_convert <- 'Mt'
             }
             else {
                 ounit_convert <- ounit
@@ -89,7 +89,7 @@ module.ch4_emissions_by_subsector <- function(mode, allqueries, aggkeys, aggfn, 
         if(!is.na(ounit)) {
             ## skip unit conversion if output unit not specified.
             if(grepl('Mt', ounit)) {
-                ounit_convert <- 'MT'
+                ounit_convert <- 'Mt'
             }
             else {
                 ounit_convert <- ounit
@@ -122,7 +122,7 @@ module.co_emissions_by_subsector <- function(mode, allqueries, aggkeys, aggfn, y
         if(!is.na(ounit)) {
             ## skip unit conversion if output unit not specified.
             if(grepl('Mt', ounit)) {
-                ounit_convert <- 'MT'
+                ounit_convert <- 'Mt'
             }
             else {
                 ounit_convert <- ounit
@@ -155,7 +155,7 @@ module.co2_emissions_by_subsector <- function(mode, allqueries, aggkeys, aggfn, 
         if(!is.na(ounit)) {
             ## skip unit conversion if output unit not specified.
             if(grepl('Mt', ounit)) {
-                ounit_convert <- 'MT'
+                ounit_convert <- 'Mt'
             }
             else {
                 ounit_convert <- ounit
@@ -188,7 +188,7 @@ module.ghg_emissions_by_region <- function(mode, allqueries, aggkeys, aggfn, yea
         if((!is.na(ounit))&(grepl('CO2', filters))) {
             ## skip unit conversion if output unit not specified.
             if(grepl('Mt', ounit)) {
-                ounit_convert <- 'MT'
+                ounit_convert <- 'Mt'
             }
             else {
                 ounit_convert <- ounit
@@ -203,7 +203,7 @@ module.ghg_emissions_by_region <- function(mode, allqueries, aggkeys, aggfn, yea
         else if(!is.na(ounit)) {
             ## skip unit conversion if output unit not specified.
             if(grepl('Mt', ounit)) {
-                ounit_convert <- 'MT'
+                ounit_convert <- 'Mt'
             }
             else {
                 ounit_convert <- ounit
@@ -238,7 +238,7 @@ module.ghg_emissions_by_technology <- function(mode, allqueries, aggkeys, aggfn,
         if((!is.na(ounit))&(grepl('CO2', filters))) {
             ## skip unit conversion if output unit not specified.
             if(grepl('Mt', ounit)) {
-                ounit_convert <- 'MT'
+                ounit_convert <- 'Mt'
             }
             else {
                 ounit_convert <- ounit
@@ -253,7 +253,7 @@ module.ghg_emissions_by_technology <- function(mode, allqueries, aggkeys, aggfn,
         else if(!is.na(ounit)) {
             ## skip unit conversion if output unit not specified.
             if(grepl('Mt', ounit)) {
-                ounit_convert <- 'MT'
+                ounit_convert <- 'Mt'
             }
             else {
                 ounit_convert <- ounit
@@ -286,7 +286,7 @@ module.nh3_emissions_by_subsector <- function(mode, allqueries, aggkeys, aggfn, 
         if(!is.na(ounit)) {
             ## skip unit conversion if output unit not specified.
             if(grepl('Mt', ounit)) {
-                ounit_convert <- 'MT'
+                ounit_convert <- 'Mt'
             }
             else {
                 ounit_convert <- ounit
@@ -319,7 +319,7 @@ module.nmvoc_emissions_by_subsector <- function(mode, allqueries, aggkeys, aggfn
         if(!is.na(ounit)) {
             ## skip unit conversion if output unit not specified.
             if(grepl('Mt', ounit)) {
-                ounit_convert <- 'MT'
+                ounit_convert <- 'Mt'
             }
             else {
                 ounit_convert <- ounit
@@ -352,7 +352,7 @@ module.nox_emissions_by_subsector <- function(mode, allqueries, aggkeys, aggfn, 
         if(!is.na(ounit)) {
             ## skip unit conversion if output unit not specified.
             if(grepl('Mt', ounit)) {
-                ounit_convert <- 'MT'
+                ounit_convert <- 'Mt'
             }
             else {
                 ounit_convert <- ounit
@@ -385,7 +385,7 @@ module.oc_emissions_by_subsector <- function(mode, allqueries, aggkeys, aggfn, y
         if(!is.na(ounit)) {
             ## skip unit conversion if output unit not specified.
             if(grepl('Mt', ounit)) {
-                ounit_convert <- 'MT'
+                ounit_convert <- 'Mt'
             }
             else {
                 ounit_convert <- ounit
@@ -418,7 +418,7 @@ module.so2_emissions_by_subsector <- function(mode, allqueries, aggkeys, aggfn, 
         if(!is.na(ounit)) {
             ## skip unit conversion if output unit not specified.
             if(grepl('Mt', ounit)) {
-                ounit_convert <- 'MT'
+                ounit_convert <- 'Mt'
             }
             else {
                 ounit_convert <- ounit
