@@ -21,11 +21,28 @@ module.co2_emissions <- function(mode, allqueries, aggkeys, aggfn, years,
     if(mode == GETQ) {
         # Return titles of necessary queries
         # For more complex variables, will return multiple query titles in vector
-        'CO2 emissions'
+        c('Final energy', 'Refined liquids')
     }
     else {
         message('Function for processing variable: CO2 emissions')
-        co2 <- allqueries$'CO2 emissions'
+        # 2018/09/21 GPK modification: model-reported CO2 emissions include bio-derived carbon and as such are not the
+        # correct quantities for reporting purposes. This method replaces the CO2 query aggregation with a bottom-up
+        # calculation of energy consumption by fuel (excluding biofuels) multiplied by exogenous fuel carbon contents.
+        energy <- allqueries$'Final energy'
+        refining <- allqueries$'Refined liquids'
+        energy <- mapfuel(energy, refining) #replaces input/technology with fuel & liquid_type
+
+        # Make a table with the fuel carbon contents used in GCAM
+        fuel_carbon_contents <- data.frame(
+            fuel = c("Coal", "Natural Gas", "Electricity", "Hydrogen", "Liquids"),
+            Ccoef = c(27.3, 14.2, 0, 0, 19.6),                 # These need to be the same as the values assumed in GCAM
+            stringsAsFactors = FALSE )
+
+        co2 <- subset(energy, liquid_type != "biomass") %>%     # Exclude biofuels from calculation of CO2 emissions
+            dplyr::left_join(fuel_carbon_contents, by = "fuel") %>%
+            dplyr::mutate(value = value * Ccoef,
+                          Units = "MTC") %>%                    # Set the unit to what GCAM normally reports
+            dplyr::select(-Ccoef)
         co2 <- normalize(co2) %>% # function stored in transp modules group
             dplyr::group_by(Units, scenario, region, year, service, mode, submode) %>%
             dplyr::summarise(value=sum(value)) %>%
