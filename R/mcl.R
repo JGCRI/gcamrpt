@@ -218,7 +218,7 @@ generate <- function(scenctl,
             vars <- names(rslts)
             for(i in seq(1,length(vars))) {
                 var <- vars[i]
-                vardf <- rslts[var]
+                vardf <- rslts[[var]]
                 if(nrow(vardf) == 0 )
                     rslts[var] <- NULL
             }
