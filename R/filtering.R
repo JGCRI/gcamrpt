@@ -12,7 +12,7 @@
 #' be parsed and applied to the input table.
 #' @return Filtered variable table.
 #' @keywords internal
-filter <- function(tbl, years, filterstr)
+filter <- function(tbl, years, filterstr, filter_operator)
 {
     mask <- rep(TRUE, nrow(tbl))
 
@@ -21,9 +21,19 @@ filter <- function(tbl, years, filterstr)
         mask <- mask & (tbl$year %in% years)
     }
 
+    if(!(is.na(filter_operator) || filter_operator == '')) {
+        fsplit_o <-
+            stringr::str_split(filter_operator, ',') %>% unlist
+    }
+    else {
+        fsplit_o <- NA
+    }
+
     if(!(is.na(filterstr) || filterstr == '')) {
         fsplit <-
             stringr::str_split(filterstr, ',') %>% unlist
+
+
 
         ## This produces a matrix of string matches. Each row is the result of
         ## parsing one filter.  Each column is one of the match groups.
@@ -41,13 +51,38 @@ filter <- function(tbl, years, filterstr)
         ## result of applying one filter to the table.
         fmasks <- apply(filters, 1, function(x) {dofilter(x, tbl)})
 
+        if((length(fsplit_o)>1)&(fsplit_o[1]=="AND")&(fsplit_o[2]=="OR")) {
+            fmasks <- cbind(fmasks[ , 1], (rowSums(fmasks[ ,c(-1)])>=1))
+            mask <- mask & apply(fmasks, 1, function(x) {all(x)})
+        }
+        else if((length(fsplit_o)==1)&(is.na(filter_operator))&(nrow(filters)==1)) {
+            mask <- mask & apply(fmasks, 1, function(x) {all(x)})
+        }
+        else if((length(fsplit_o)==1)&(!is.na(filter_operator))&(filter_operator=="OR")) {
+            fmasks <- cbind(mask, (rowSums(fmasks)==1))
+            mask <- mask & apply(fmasks, 1, function(x) {all(x)})
+        }
+        else if((length(fsplit_o)==1)&(!is.na(filter_operator))&(filter_operator=="AND")) {
+            mask <- mask & apply(fmasks, 1, function(x) {all(x)})
+        }
+        else if((length(fsplit_o)==1)&(is.na(filter_operator))&(nrow(filters)>1)) {
+            warning('Filter operator not provided.  Applying "AND".')
+            mask <- mask & apply(fmasks, 1, function(x) {all(x)})
+        }
+        else {
+            warning('Unrecognized filter operator, "', filter_operator, '".  Applying "AND".')
+            mask <- mask & apply(fmasks, 1, function(x) {all(x)})
+        }
+
         ## This applies & across every row; the result is true for rows that
         ## passed all the filters, false for those that failed any of them.
-        mask <- mask & apply(fmasks, 1, function(x) {all(x)})
+        #mask <- mask & apply(fmasks, 1, function(x) {all(x)})
     }
 
     ## select the rows for which all filters returned TRUE.
-    tbl[mask,]
+        tbl[mask,]
+
+
 }
 
 #' List of available filter functions
@@ -70,7 +105,7 @@ filterfns <- list(
 
 #' Regexp for matching '(arg1; arg2; arg3)'
 #' @keywords internal
-filterpattern <- '\\(([^;]+);([^;]+);([^)]+)\\)'
+filterpattern <- '\\(([^();]+);([^;]+);([^)]+)\\)'
 
 #' Apply a filter string to a table
 #'

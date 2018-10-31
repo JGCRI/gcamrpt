@@ -4,7 +4,8 @@
 \alias{module.pcgdp_ppp_}
 \title{Per capita GDP PPP Data Module}
 \usage{
-module.pcgdp_ppp_(mode, allqueries, aggkeys, aggfn, years, filters, ounit)
+module.pcgdp_ppp_(mode, allqueries, aggkeys, aggfn, years, filters,
+  filter_operator, ounit)
 }
 \description{
 Produce GDP PPP by region.

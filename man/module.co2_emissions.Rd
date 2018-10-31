@@ -2,14 +2,12 @@
 % Please edit documentation in R/emissions.R
 \name{module.co2_emissions}
 \alias{module.co2_emissions}
-\title{CO2 emissions Data Module}
+\title{Emissions Data Module}
 \usage{
-module.co2_emissions(mode, allqueries, aggkeys, aggfn, years, filters, ounit)
+module.co2_emissions(mode, allqueries, aggkeys, aggfn, years, filters,
+  filter_operator, ounit)
 }
 \description{
-Produce CO2 emissions
-}
-\details{
 The raw table used by this module has columns:
 \itemize{
   \item{scenario}

@@ -4,7 +4,8 @@
 \alias{module.electricity}
 \title{Electricity Data Module}
 \usage{
-module.electricity(mode, allqueries, aggkeys, aggfn, years, filters, ounit)
+module.electricity(mode, allqueries, aggkeys, aggfn, years, filters,
+  filter_operator, ounit)
 }
 \description{
 Produce electricity by region.

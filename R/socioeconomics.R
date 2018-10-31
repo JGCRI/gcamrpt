@@ -16,7 +16,7 @@
 #' @keywords internal
 
 module.population <- function(mode, allqueries, aggkeys, aggfn, years,
-                              filters, ounit)
+                              filters, filter_operator, ounit)
 {
     if(mode == GETQ) {
         # Return titles of necessary queries
@@ -27,7 +27,7 @@ module.population <- function(mode, allqueries, aggkeys, aggfn, years,
         message('Function for processing variable: Population')
 
         population <- allqueries$'Population'
-        population <- filter(population, years, filters)
+        population <- filter(population, years, filters, filter_operator)
         population <- aggregate(population, aggfn, aggkeys)
 
         if(!is.na(ounit)) {
@@ -56,7 +56,7 @@ module.population <- function(mode, allqueries, aggkeys, aggfn, years,
 #'
 #' @keywords internal
 module.gdp_mer_ <- function(mode, allqueries, aggkeys, aggfn, years,
-                              filters, ounit)
+                              filters, filter_operator, ounit)
 {
     if(mode == GETQ) {
         # Return titles of necessary queries
@@ -70,7 +70,7 @@ module.gdp_mer_ <- function(mode, allqueries, aggkeys, aggfn, years,
         message('Function for processing variable: GDP MER')
 
         gdp_mer <- allqueries$'GDP(MER)'
-        gdp_mer <- filter(gdp_mer, years, filters)
+        gdp_mer <- filter(gdp_mer, years, filters, filter_operator)
         gdp_mer <- aggregate(gdp_mer, aggfn, aggkeys)
         if(grepl('US', ounit)) {
             cf1 <- unitconv_counts(gdp_mer$Units[1], ounit)
@@ -101,7 +101,7 @@ module.gdp_mer_ <- function(mode, allqueries, aggkeys, aggfn, years,
 #'
 #' @keywords internal
 module.pcgdp_ppp_ <- function(mode, allqueries, aggkeys, aggfn, years,
-                           filters, ounit)
+                           filters, filter_operator, ounit)
 {
     if(mode == GETQ) {
         # Return titles of necessary queries
@@ -115,7 +115,7 @@ module.pcgdp_ppp_ <- function(mode, allqueries, aggkeys, aggfn, years,
         message('Function for processing variable: Per capita GDP PPP')
 
         gdp_ppp <- allqueries$'pcGDP(PPP)'
-        gdp_ppp <- filter(gdp_ppp, years, filters)
+        gdp_ppp <- filter(gdp_ppp, years, filters, filter_operator)
         gdp_ppp <- aggregate(gdp_ppp, aggfn, aggkeys)
         if(!is.na(ounit)) {
             cf <- unitconv_usdollar(gdp_ppp$Units, ounit)

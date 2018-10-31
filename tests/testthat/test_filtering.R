@@ -1,12 +1,13 @@
 context('Filtering output variables')
 
-load('test-data/popq.rda')     # loads the popq data frame
+load('test-data/popq.rda')             # loads the popq data frame
+load('test-data/electricityq.rda')     # loads the electricityq data frame
 
 test_that('Filtering with no filters is a no-op', {
-    popf <- filter(popq, NA, NA)
+    popf <- filter(popq, NA, NA, NA)
     expect_identical(popq, popf)
 
-    popf <- filter(popq, '', '')
+    popf <- filter(popq, '', '', '')
     expect_identical(popq, popf)
 })
 
@@ -20,25 +21,25 @@ test_that('Year specifications parse correctly.', {
 })
 
 test_that('Start and end years are applied correctly', {
-    popf <- filter(popq, '2000:2100', NA)
+    popf <- filter(popq, '2000:2100', NA, NA)
     expect_identical(popf, dplyr::filter(popq, year >= 2000))
 
-    popf <- filter(popq, '1975:2050', NA)
+    popf <- filter(popq, '1975:2050', NA, NA)
     expect_identical(popf, dplyr::filter(popq, year <= 2050))
 
-    popf <- filter(popq, '2000:2050:5', NA)
+    popf <- filter(popq, '2000:2050:5', NA, NA)
     expect_identical(popf, dplyr::filter(popq, year >= 2000, year <= 2050,
                                          year %% 5 == 0))
 
 })
 
 test_that('The == filter works', {
-    popf <- filter(popq, NA, '(==; region; USA)')
+    popf <- filter(popq, NA, '(==; region; USA)', NA)
     expect_identical(popf, dplyr::filter(popq, region == 'USA'))
 })
 
 test_that('The != filter works', {
-    popf <- filter(popq, NA, '(!=; region; USA)')
+    popf <- filter(popq, NA, '(!=; region; USA)', NA)
     expect_identical(popf, dplyr::filter(popq, region != 'USA'))
 })
 
@@ -47,7 +48,7 @@ test_that('Numeric filters work', {
     for(op in c('<', '>', '<=', '>=')) {
         testval <- 117670     # close to median but actually exists in the table
         filterstr <- paste0('( ', op, '; value; ', testval, ' )')
-        popf <- filter(popq, NA, filterstr)
+        popf <- filter(popq, NA, filterstr, NA)
         dpfilt <- lazyeval::interp(~ oper(value, testval), oper = as.name(op))
         expect_identical(popf, dplyr::filter_(popq, dpfilt),
                          info=paste('filter is not equivalent to dplyr::filter for op= ',
@@ -57,33 +58,33 @@ test_that('Numeric filters work', {
 
 test_that('Regex filters work', {
     popqf <- dplyr::filter(popq, grepl('Africa', region))
-    popf <- filter(popq, NA, '(matches; region; Africa)')
+    popf <- filter(popq, NA, '(matches; region; Africa)', NA)
     expect_identical(popf, popqf)
 
-    popf <- filter(popq, NA, '(matches; region; africa)')
+    popf <- filter(popq, NA, '(matches; region; africa)', NA)
     expect_equal(nrow(popf), 0)         # No regions with lower case "africa"
 
-    popf <- filter(popq, NA, '(matchesi; region; africa)')
+    popf <- filter(popq, NA, '(matchesi; region; africa)', NA)
     expect_identical(popf, popqf)       # case-insensitive match should work
 
     popqf <- dplyr::filter(popq, !grepl('Africa', region))
-    popf <- filter(popq, NA, '(notmatches; region; Africa)')
+    popf <- filter(popq, NA, '(notmatches; region; Africa)', NA)
     expect_identical(popf, popqf)
 
-    popf <- filter(popq, NA, '(notmatches; region; africa)')
+    popf <- filter(popq, NA, '(notmatches; region; africa)', NA)
     expect_identical(popf, popq)        # all regions fail to match lower case
 
-    popf <- filter(popq, NA, '(notmatchesi; region; africa)')
+    popf <- filter(popq, NA, '(notmatchesi; region; africa)', NA)
     expect_identical(popf, popqf)
 })
 
-test_that('Multiple filters work', {
-    popf <- filter(popq, NA, '(matches; region; Africa), (<=; value; 227757), (>=; value; 152801)')
+test_that('Multiple filters work with "AND" filter operator', {
+    popf <- filter(popq, NA, '(matches; region; Africa), (<=; value; 227757), (>=; value; 152801)', 'AND')
     expect_identical(popf, dplyr::filter(popq, grepl('Africa', region), value <= 227757, value >= 152801))
 })
 
-test_that('Filter options work when all used together', {
-    popf <- filter(popq, '2000:2050:5', '(matches; region; Africa), (<=; value; 227757), (>=; value; 152801)')
+test_that('Filter options work when all used together with "AND" filter operator', {
+    popf <- filter(popq, '2000:2050:5', '(matches; region; Africa), (<=; value; 227757), (>=; value; 152801)', 'AND')
     expect_identical(popf,
                      dplyr::filter(popq,
                                    grepl('Africa', region),
@@ -95,14 +96,41 @@ test_that('Filter options work when all used together', {
 })
 
 test_that('Malformed filter string gives a warning and gets skipped', {
-    expect_warning({popf <- filter(popq, '2000:2050', 'matches region Africa')},
+    expect_warning({popf <- filter(popq, '2000:2050', 'matches region Africa', NA)},
                    'matches region Africa')
     expect_identical(popf, dplyr::filter(popq, year >= 2000, year <= 2050))
 })
 
-
-test_that("One malformed filter doesn't affect good filters.", {
-    expect_warning({popf <- filter(popq, NA, '(matches; region; Africa, (<; value; 227757)')},
+test_that("One malformed filter doesn't affect good filters with AND filter operator.", {
+    expect_warning({popf <- filter(popq, NA, '(matches; region; Africa, (<; value; 227757)', 'AND')},
                    '\\(matches; region; Africa')
     expect_identical(popf, dplyr::filter(popq, value < 227757))
 })
+
+test_that('Multiple filters work with "OR" filter operator', {
+    popf <- filter(popq, NA, '(matches; region; Africa_Eastern), (matches; region; Brazil)', 'OR')
+    expect_identical(popf, rbind(dplyr::filter(popq, region=='Africa_Eastern'), dplyr::filter(popq, region=='Brazil')))
+})
+
+test_that('Malformed filter operator string gives a warning and is set to "AND"', {
+    expect_warning({popf <- filter(popq, NA,
+                                   '(matches; region; Africa), (<=; value; 227757), (>=; value; 152801)', 'Goop')},
+                   'Goop')
+    expect_identical(popf, dplyr::filter(popq, grepl('Africa', region), value <= 227757, value >= 152801))
+})
+
+test_that('Missing filter operator string gives a warning and is set to "AND"', {
+    expect_warning({popf <- filter(popq, NA,
+                                   '(matches; region; Africa), (<=; value; 227757), (>=; value; 152801)', NA)},
+                   'not provided')
+    expect_identical(popf, dplyr::filter(popq, grepl('Africa', region), value <= 227757, value >= 152801))
+})
+
+test_that('Multiple filters work with "AND,OR" filter operator', {
+    electricityf <- filter(electricityq, NA,
+                   '(matches; sector; electricity), (matches; subsector; biomass), (matches; subsector; coal)', 'AND,OR')
+    expect_equal(electricityf,
+                     rbind(dplyr::filter(electricityq, sector=='electricity', subsector=='biomass'),
+                           dplyr::filter(electricityq, sector=='electricity', subsector=='coal')))
+})
+

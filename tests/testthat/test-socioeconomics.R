@@ -20,18 +20,20 @@ test_that('Socioeconomics models produce data', {
               aggfn <- NA
               years <- '2000:2050'
               filters <- NA
+              filter_operator <- NA
 
               ## All of these should be passing in the original unit, just to
               ## make sure that unit conversion runs
               expect_identical(module.population(iamrpt:::RUN, queries, aggkeys,
-                                                 aggfn, years, filters,
+                                                 aggfn, years, filters, filter_operator,
                                                  'thous'),
                                dplyr::filter(queries$Population, year>=2000, year<=2050))
               expect_identical(module.gdp_mer_(iamrpt:::RUN, queries , aggkeys,
-                                               aggfn, years, filters, 'Million1990US$'),
+                                               aggfn, years, filters, filter_operator,
+                                               'Million1990US$'),
                                dplyr::filter(queries$`GDP(MER)`, year>=2000, year<=2050))
               expect_identical(module.pcgdp_ppp_(iamrpt:::RUN, queries ,
-                                                 aggkeys, aggfn, years, filters,
+                                                 aggkeys, aggfn, years, filters, filter_operator,
                                                  'Thous80US$/per'),
                                dplyr::filter(queries$`pcGDP(PPP)`, year>=2000, year<=2050))
 
@@ -40,7 +42,7 @@ test_that('Socioeconomics models produce data', {
               ## TODO: we should test at least one unit converison on each
               ## module.
               popmil <- module.population(iamrpt:::RUN, queries , aggkeys,
-                                          aggfn, years, filters, 'millions')
+                                          aggfn, years, filters, filter_operator, 'millions')
               popqmil <- dplyr::filter(queries$Population, year>=2000,
                                        year<=2050)
               popqmil <- dplyr::mutate(popqmil, value = 1e-3*value)

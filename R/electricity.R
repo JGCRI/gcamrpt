@@ -19,7 +19,7 @@
 #' @keywords internal
 
 module.electricity <- function(mode, allqueries, aggkeys, aggfn, years,
-                              filters, ounit)
+                              filters, filter_operator, ounit)
 {
     if(mode == GETQ) {
         # Return titles of necessary queries
@@ -37,7 +37,7 @@ module.electricity <- function(mode, allqueries, aggkeys, aggfn, years,
                 dplyr::mutate(subsector = sub('rooftop_pv', 'solar', subsector),
                               subsector = paste0(subsector,
                                                  dplyr::if_else(grepl('CCS', technology), ' CCS', '')))
-        elct <- filter(elct, years, filters)
+        elct <- filter(elct, years, filters, filter_operator)
         elct <- aggregate(elct, aggfn, aggkeys)
 
         if(!is.na(ounit)) {

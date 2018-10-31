@@ -15,8 +15,8 @@
 #'
 #' @keywords internal
 
-module.primary_energy_direct <- function(mode, allqueries, aggkeys, aggfn,
-                                         years, filters, ounit)
+module.primary_energy_direct <- function(mode, allqueries, aggkeys, aggfn, years,
+                                         filters, filter_operator, ounit)
 {
     if(mode == GETQ) {
         # Return titles of necessary queries
@@ -30,7 +30,7 @@ module.primary_energy_direct <- function(mode, allqueries, aggkeys, aggfn,
         message('Function for processing variable: Primary Energy')
         pe <- allqueries$'Primary Energy Consumption (Direct Equivalent)' %>%
               dplyr::mutate(fuel = simplify_fuels(fuel))
-        pe <- filter(pe, years, filters)
+        pe <- filter(pe, years, filters, filter_operator)
         pe <- aggregate(pe, aggfn, aggkeys)
         if(!is.na(ounit)) {
             ## skip unit conversion if output unit not specified.

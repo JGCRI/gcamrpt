@@ -29,7 +29,7 @@
 #' no unit conversion.
 #' @keywords internal
 runModule <- function(var, mode, allqueries=NULL, aggkeys=NULL, aggfn=NULL,
-                      years=NULL, filters=NULL, ounit=NULL)
+                      years=NULL, filters=NULL, filter_operator=NULL, ounit=NULL)
 {
     fun <- tryCatch(
         ## Find the corresponding function, limited to the package environment
@@ -41,7 +41,7 @@ runModule <- function(var, mode, allqueries=NULL, aggkeys=NULL, aggfn=NULL,
         },
         finally = NULL
         )
-    fun(mode, allqueries, aggkeys, aggfn, years, filters, ounit)
+    fun(mode, allqueries, aggkeys, aggfn, years, filters, filter_operator, ounit)
 }
 
 
@@ -68,7 +68,7 @@ canonicalForm <- function(var)
 #'
 #' @keywords internal
 module.test_fun <- function(mode, allqueries, aggkeys, aggfn, years,
-                            filters, ounit)
+                            filters, filter_operator, ounit)
 {
     if(mode == GETQ) {
         "Test Query"

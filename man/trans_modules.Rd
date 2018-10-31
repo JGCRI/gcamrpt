@@ -18,39 +18,43 @@
 \title{Transportation data modules}
 \usage{
 module.pass_trans_service_output(mode, allqueries, aggkeys, aggfn, years,
-  filters, ounit)
+  filters, filter_operator, ounit)
 
 module.frgt_trans_service_output(mode, allqueries, aggkeys, aggfn, years,
-  filters, ounit)
+  filters, filter_operator, ounit)
 
 module.pass_trans_final_energy(mode, allqueries, aggkeys, aggfn, years, filters,
-  ounit)
+  filter_operator, ounit)
 
 module.frgt_trans_final_energy(mode, allqueries, aggkeys, aggfn, years, filters,
-  ounit)
+  filter_operator, ounit)
 
 module.pass_trans_service_intensity(mode, allqueries, aggkeys, aggfn, years,
-  filters, ounit)
+  filters, filter_operator, ounit)
 
 module.frgt_trans_service_intensity(mode, allqueries, aggkeys, aggfn, years,
-  filters, ounit)
+  filters, filter_operator, ounit)
 
 module.pass_trans_load_factor(mode, allqueries, aggkeys, aggfn, years, filters,
-  ounit)
+  filter_operator, ounit)
 
 module.frgt_trans_load_factor(mode, allqueries, aggkeys, aggfn, years, filters,
+  filter_operator, ounit)
+
+process.tr_svc_output(allqueries, aggkeys, aggfn, years, filters,
+  filter_operator, ounit)
+
+process.tr_fe_output(allqueries, aggkeys, aggfn, years, filters,
+  filter_operator, ounit)
+
+process.trans_load_factors(allqueries, aggkeys, aggfn, years, filters,
+  filter_operator, ounit)
+
+process.tr_svc_intensity(allqueries, aggkeys, aggfn, years, filters,
+  filter_operator, ounit, nativeunit)
+
+module.sales(mode, allqueries, aggkeys, aggfn, years, filters, filter_operator,
   ounit)
-
-process.tr_svc_output(allqueries, aggkeys, aggfn, years, filters, ounit)
-
-process.tr_fe_output(allqueries, aggkeys, aggfn, years, filters, ounit)
-
-process.trans_load_factors(allqueries, aggkeys, aggfn, years, filters, ounit)
-
-process.tr_svc_intensity(allqueries, aggkeys, aggfn, years, filters, ounit,
-  nativeunit)
-
-module.sales(mode, allqueries, aggkeys, aggfn, years, filters, ounit)
 }
 \arguments{
 \item{mode}{Either \code{GETQ} or \code{RUN}.  The former returns

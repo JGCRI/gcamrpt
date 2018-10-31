@@ -1,0 +1,40 @@
+Processing scenario: Reference-No-policy-med
+Database scenarios:  Reference-No-policy-med
+Function for processing variable: Population
+Function for processing variable: Per capita GDP PPP
+Function for processing variable: Electricity
+Function for processing variable: Electricity
+Function for processing variable: Electricity
+Function for processing variable: Electricity
+Function for processing variable: Air pollution precursor emissions
+Error in `$<-.data.frame`(`*tmp*`, scenario, value = "reference") : 
+  replacement has 1 row, data has 0
+In addition: Warning messages:
+1: In miquery_post(results, query, scenarios, regions, warn.empty) :
+  Query returned empty table:
+query: GHG emissions by technology
+scenarios: Reference-No-policy-med
+regions: 
+ Hide Traceback
+ 
+ Rerun with Debug
+ Error in `$<-.data.frame`(`*tmp*`, scenario, value = "reference") : 
+  replacement has 1 row, data has 0 
+6.
+stop(sprintf(ngettext(N, "replacement has %d row, data has %d", 
+    "replacement has %d rows, data has %d"), N, nrows), domain = NA) 
+5.
+`$<-.data.frame`(`*tmp*`, scenario, value = "reference") at mcl.R#216
+4.
+`$<-`(`*tmp*`, scenario, value = "reference") at mcl.R#216
+3.
+FUN(X[[i]], ...) 
+2.
+lapply(rslts[[scen]], function(vardf) {
+    vardf$scenario <- scen
+    vardf
+}) at mcl.R#215
+1.
+generate("example-scenario.ctl", "example-iiasa-variable.ctl", 
+    "C:/Users/katmm/Research/GCAM_User_Package_fawcett_science/fawcett_science_workspace/output", 
+    fileformat = "CSV") 
