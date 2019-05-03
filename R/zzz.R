@@ -2,6 +2,6 @@
 
 .onLoad <- function(libname, pkgname)
 {
-    qfile <- system.file('extdata/default-queries.xml', package=pkgname)
-    parseQueries(qfile)
+    ## Load the default set of GCAM queries.
+    parseQueries(system.file('extdata/default-queries.xml', package=pkgname))
 }
