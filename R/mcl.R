@@ -393,7 +393,7 @@ process_scenario <- function(scen, dbloc, dbname, q2run, varctl, regionctl, add_
         rslts <-
             Map(function(var, aggkeys, aggfn, years, filters, ounit, add_global) {
                 runModule(var, RUN, queries, aggkeys, aggfn, years,
-                          filters, ounit, add_global)
+                          filters, ounit, add_global = add_global)
             },
             varctl[['GCAM variable']],
             varctl[['aggregation keys']],
