@@ -124,7 +124,13 @@ test_that('csv output works for separate tabs mode.', {
         splt <- unlist(strsplit(var,'.', fixed=TRUE))
         s <- splt[1]
         v <- splt[2]
-        expect_equal(df, rslt[[s]][[v]])
+        ## Correct for read_csv mangling of integers
+        orig_df <- rslt[[s]][[v]]
+        intcols <- which(sapply(orig_df, class) == 'integer')
+        for(col in intcols) {
+            df[[col]] <- as.integer(df[[col]])
+        }
+        expect_equal(df, rslt[[s]][[v]], info=paste('s= ', s, 'v= ', v))
     }
 
     ## merged version
@@ -139,7 +145,12 @@ test_that('csv output works for separate tabs mode.', {
         expect_true(file.exists(file),
                     info=paste('Output file ', file, ' does not exist.'))
         df <- readr::read_csv(file)
-        expect_equal(df, rsltmrg[[var]])
+        orig_df <- rsltmrg[[var]]
+        intcols <- which(sapply(orig_df, class) == 'integer')
+        for(col in intcols) {
+            df[[col]] <- as.integer(df[[col]])
+        }
+        expect_equal(df, orig_df, info=paste('var=', var))
     }
 })
 
