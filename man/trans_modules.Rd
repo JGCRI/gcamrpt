@@ -23,29 +23,30 @@ module.pass_trans_service_output(mode, allqueries, aggkeys, aggfn, years,
 module.frgt_trans_service_output(mode, allqueries, aggkeys, aggfn, years,
   filters, ounit)
 
-module.pass_trans_final_energy(mode, allqueries, aggkeys, aggfn, years, filters,
-  ounit)
-
-module.frgt_trans_final_energy(mode, allqueries, aggkeys, aggfn, years, filters,
-  ounit)
-
-module.pass_trans_service_intensity(mode, allqueries, aggkeys, aggfn, years,
+module.pass_trans_final_energy(mode, allqueries, aggkeys, aggfn, years,
   filters, ounit)
 
-module.frgt_trans_service_intensity(mode, allqueries, aggkeys, aggfn, years,
+module.frgt_trans_final_energy(mode, allqueries, aggkeys, aggfn, years,
   filters, ounit)
 
-module.pass_trans_load_factor(mode, allqueries, aggkeys, aggfn, years, filters,
-  ounit)
+module.pass_trans_service_intensity(mode, allqueries, aggkeys, aggfn,
+  years, filters, ounit)
 
-module.frgt_trans_load_factor(mode, allqueries, aggkeys, aggfn, years, filters,
-  ounit)
+module.frgt_trans_service_intensity(mode, allqueries, aggkeys, aggfn,
+  years, filters, ounit)
+
+module.pass_trans_load_factor(mode, allqueries, aggkeys, aggfn, years,
+  filters, ounit)
+
+module.frgt_trans_load_factor(mode, allqueries, aggkeys, aggfn, years,
+  filters, ounit)
 
 process.tr_svc_output(allqueries, aggkeys, aggfn, years, filters, ounit)
 
 process.tr_fe_output(allqueries, aggkeys, aggfn, years, filters, ounit)
 
-process.trans_load_factors(allqueries, aggkeys, aggfn, years, filters, ounit)
+process.trans_load_factors(allqueries, aggkeys, aggfn, years, filters,
+  ounit)
 
 process.tr_svc_intensity(allqueries, aggkeys, aggfn, years, filters, ounit,
   nativeunit)

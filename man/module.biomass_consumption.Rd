@@ -4,8 +4,8 @@
 \alias{module.biomass_consumption}
 \title{Biomass Consumption Data Module}
 \usage{
-module.biomass_consumption(mode, allqueries, aggkeys, aggfn, years, filters,
-  ounit)
+module.biomass_consumption(mode, allqueries, aggkeys, aggfn, years,
+  filters, ounit)
 }
 \description{
 Produce biomass consumption by crop type

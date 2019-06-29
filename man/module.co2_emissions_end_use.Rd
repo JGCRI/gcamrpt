@@ -4,8 +4,8 @@
 \alias{module.co2_emissions_end_use}
 \title{CO2 emissions by end-use sector Data Module}
 \usage{
-module.co2_emissions_end_use(mode, allqueries, aggkeys, aggfn, years, filters,
-  ounit)
+module.co2_emissions_end_use(mode, allqueries, aggkeys, aggfn, years,
+  filters, ounit)
 }
 \description{
 Produce service output by technology and vintage

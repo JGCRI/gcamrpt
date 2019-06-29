@@ -4,7 +4,8 @@
 \alias{module.water_irrigation}
 \title{Water Irrigation Module}
 \usage{
-module.water_irrigation(mode, allqueries, aggkeys, aggfn, years, filters, ounit)
+module.water_irrigation(mode, allqueries, aggkeys, aggfn, years, filters,
+  ounit)
 }
 \description{
 Take all water withdrawals used for crops. Because the subsector column for

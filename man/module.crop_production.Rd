@@ -4,7 +4,8 @@
 \alias{module.crop_production}
 \title{Crop Production Data Module}
 \usage{
-module.crop_production(mode, allqueries, aggkeys, aggfn, years, filters, ounit)
+module.crop_production(mode, allqueries, aggkeys, aggfn, years, filters,
+  ounit)
 }
 \description{
 Produce agricultural production (in mass) by crop type. Exclude forest and

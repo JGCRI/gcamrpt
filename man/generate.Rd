@@ -5,10 +5,10 @@
 \title{Generate a report for a GCAM experiment}
 \usage{
 generate(scenctl, varctl, dbloc, outputdir = getwd(), model = "GCAM",
-  template = NULL, fileformat = getOption("iamrpt.fileformat", "CSV"),
-  scenmerge = getOption("iamrpt.scenmerge", TRUE),
-  dataformat = getOption("iamrpt.dataformat", "tabs"),
-  wideformat = getOption("iamrpt.wideformat", TRUE))
+  template = NULL, fileformat = getOption("gcamrpt.fileformat", "CSV"),
+  scenmerge = getOption("gcamrpt.scenmerge", TRUE),
+  dataformat = getOption("gcamrpt.dataformat", "tabs"),
+  wideformat = getOption("gcamrpt.wideformat", TRUE))
 }
 \arguments{
 \item{scenctl}{Name of the scenario control file.}
@@ -100,17 +100,17 @@ The system has several options for formatting output.  These can be passed as
 arugments to the system, or set as R options.  The names of the options and
 their functions are:
 \describe{
-    \item{\code{iamrpt.fileformat}}{File format for output.  Options are
+    \item{\code{gcamrpt.fileformat}}{File format for output.  Options are
 \code{"R"}, \code{"rgcam"}, \code{"CSV"} and \code{"XLSX"}. If \code{"R"}, do
 not output a file at all.  In all cases the tables produced are returned as a
 (possibly nested) list.  If file output was produced, then the results are
 returned invisibly, so they won't print to the terminal unless you
 explicitly call \code{print} on them.}
-    \item{\code{iamrpt.scenmerge}}{If \code{TRUE}, for each variable merge the
+    \item{\code{gcamrpt.scenmerge}}{If \code{TRUE}, for each variable merge the
 results for all scenarios into a single table (distinguished by the value of
 the scenario column).  Otherwise, create a separate table for each
 combination of scenario and variable.}
-    \item{\code{iamrpt.dataformat}}{Specify the data format; that is, how
+    \item{\code{gcamrpt.dataformat}}{Specify the data format; that is, how
 the data is organized in the output files.  Three options are available:
       \describe{
         \item{\code{"tabs"}}{Each table generated goes into a separate tab (if
@@ -124,7 +124,7 @@ format each table is spread into a row in a merged table, with a column to
 identify the variable that each row comes from.}
    }
  }
-   \item{\code{iamrpt.wideformat}}{If \code{TRUE}, reshape the tables into
+   \item{\code{gcamrpt.wideformat}}{If \code{TRUE}, reshape the tables into
 wide format (years as columns) before output.  Otherwise, leave them in long
 format.  If the IIASA data format is selected, then this option is ignored,
 since the IIASA format requires wide data.}
@@ -132,14 +132,14 @@ since the IIASA format requires wide data.}
 
 
 Output filenames will be chosen automatically.  For an XLSX file the filename
-will be 'iamrpt.xlsx'.  For CSV output with \code{tabs == FALSE} the result
-will be 'iamrpt.csv'.  For CSV output with \code{tabs == TRUE} the output
+will be 'gcamrpt.xlsx'.  For CSV output with \code{tabs == FALSE} the result
+will be 'gcamrpt.csv'.  For CSV output with \code{tabs == TRUE} the output
 files will be named with the scenario (if scenario tables are not merged) and
 variable output names, for example 'Reference-GDP.csv'.  If the specified
 output is \code{"rgcam"}, the output will be an \code{\link{rgcam}}
-project data file named 'iamrpt.dat'.  In any of these cases, if a file
+project data file named 'gcamrpt.dat'.  In any of these cases, if a file
 already exists with the automatically chosen filename, the first unused
-number will be appended, e.g., iamrpt001.xlsx, iamrpt002.xlsx, etc.
+number will be appended, e.g., gcamrpt001.xlsx, gcamrpt002.xlsx, etc.
 
 The system produces a variety of diagnostic messages as it runs.  These can
 be suppressed with \code{\link[base]{suppressMessages}}.  More serious

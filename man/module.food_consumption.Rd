@@ -4,7 +4,8 @@
 \alias{module.food_consumption}
 \title{Crop Consumption Data Module}
 \usage{
-module.food_consumption(mode, allqueries, aggkeys, aggfn, years, filters, ounit)
+module.food_consumption(mode, allqueries, aggkeys, aggfn, years, filters,
+  ounit)
 }
 \description{
 Produce crop (food) consumption by food type. Unlike Crop Production, this

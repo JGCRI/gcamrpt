@@ -23,8 +23,8 @@ test_that('We can parse a new query.', {
 
 
 test_that('We can run a query.', {
-    qr <- runQueries('Population', dirname(rgcam:::SAMPLE.GCAMDB),
-                     basename(rgcam:::SAMPLE.GCAMDB))
+    qr <- runQueries('Population', dirname(rgcam:::SAMPLE.GCAMDB()),
+                     basename(rgcam:::SAMPLE.GCAMDB()))
     expect_identical(names(qr), 'Population')
     popdf <- qr[['Population']]
     expect_true(is.data.frame(popdf))

@@ -4,8 +4,8 @@
 \alias{module.primary_energy_direct}
 \title{Primary Energy (Direct Equivalent) Data Module}
 \usage{
-module.primary_energy_direct(mode, allqueries, aggkeys, aggfn, years, filters,
-  ounit)
+module.primary_energy_direct(mode, allqueries, aggkeys, aggfn, years,
+  filters, ounit)
 }
 \description{
 Produce primary energy by fuel

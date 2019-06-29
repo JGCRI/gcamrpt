@@ -148,7 +148,7 @@ test_that('csv output works for single tab mode.',
     dir <- tempdir()
 
     ## unmerged
-    filename <- file.path(dir, 'iamrpt.csv')
+    filename <- file.path(dir, 'gcamrpt.csv')
     on.exit(unlink(file.path(dir, '*.csv')))
     output(rslt, 'merged', 'CSV', dir)
     expect_true(file.exists(filename))
@@ -168,7 +168,7 @@ test_that('csv output works for single tab mode.',
     expect_identical(data[2119], 'Experiment 1.population')
 
     ## merged version
-    filename <- file.path(dir, 'iamrpt001.csv')
+    filename <- file.path(dir, 'gcamrpt001.csv')
     output(rsltmrg, 'merged', 'CSV', dir)
     expect_true(file.exists(filename))
 
@@ -283,7 +283,7 @@ test_that('xlsx output works for separate tabs mode.', {
                                           })
                           })
     vlist <- as.vector(varmat)
-    filename <- file.path(dir, 'iamrpt.xlsx')
+    filename <- file.path(dir, 'gcamrpt.xlsx')
     on.exit(unlink(file.path(dir, '*.xlsx')))
 
     output(rslt, 'tabs', 'XLSX', dir)
@@ -302,7 +302,7 @@ test_that('xlsx output works for separate tabs mode.', {
 
     ## merged scenarios version
     vlist <- names(rsltmrg)
-    filename <- file.path(dir, 'iamrpt001.xlsx')
+    filename <- file.path(dir, 'gcamrpt001.xlsx')
 
     output(rsltmrg, 'tabs', 'XLSX', dir)
 
@@ -327,7 +327,7 @@ test_that('xlsx output works in merged output mode.',
                                           })
                           })
     vlist <- as.vector(varmat)
-    filename <- file.path(dir, 'iamrpt.xlsx')
+    filename <- file.path(dir, 'gcamrpt.xlsx')
     on.exit(unlink(file.path(dir,'*.xlsx')))
 
     ## convert to wide format, which will make doing these tests so much
@@ -364,7 +364,7 @@ test_that('xlsx output works in merged output mode.',
 
     ## merged scenarios version
     vlist <- names(rsltmrg)
-    filename <- file.path(dir, 'iamrpt001.xlsx')
+    filename <- file.path(dir, 'gcamrpt001.xlsx')
 
     rsltmw <- lapply(rsltmrg, function(df) {tidyr::spread(df, year, value)})
     output(rsltmw, 'merged', 'XLSX', dir)

@@ -8,7 +8,7 @@
 #'
 #' @section Usage:
 #'
-#' There are two main user-visible functions in the \code{iamrpt} package.  The
+#' There are two main user-visible functions in the \code{gcamrpt} package.  The
 #' first is the \code{\link{listVariables}} function.  This function returns a
 #' list of the variables the system knows how to produce, which can be helpful
 #' in putting together your control files.

@@ -4,7 +4,8 @@
 \alias{module.co2_emissions}
 \title{CO2 emissions Data Module}
 \usage{
-module.co2_emissions(mode, allqueries, aggkeys, aggfn, years, filters, ounit)
+module.co2_emissions(mode, allqueries, aggkeys, aggfn, years, filters,
+  ounit)
 }
 \description{
 Produce CO2 emissions

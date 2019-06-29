@@ -4,7 +4,8 @@
 \alias{ghg_emissions_by_gwp}
 \title{Helper for GHG Emissions Data Module}
 \usage{
-ghg_emissions_by_gwp(gwp, allqueries, aggkeys, aggfn, years, filters, ounit)
+ghg_emissions_by_gwp(gwp, allqueries, aggkeys, aggfn, years, filters,
+  ounit)
 }
 \arguments{
 \item{gwp}{Lookup table of ghg to GWP (with units)}

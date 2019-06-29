@@ -36,7 +36,7 @@ output <- function(rslts, dataformat, fileformat, dirname)
     }
     else if(fileformat == 'rgcam') {
         # Create project and add results to it
-        projname <- alternate_filename(file.path(dirname, 'iamrpt.dat'))
+        projname <- alternate_filename(file.path(dirname, 'gcamrpt.dat'))
         p <- rgcam::loadProject(projname)
         for(name in names(rslts)) {
             p <- rgcam::addQueryTable(p, rslts[[name]], name)
@@ -71,7 +71,7 @@ output <- function(rslts, dataformat, fileformat, dirname)
         }
 
         if(fileformat == 'XLSX') {
-            filename <- alternate_filename(file.path(dirname, 'iamrpt.xlsx'))
+            filename <- alternate_filename(file.path(dirname, 'gcamrpt.xlsx'))
             message('Writing file ', filename)
             openxlsx::saveWorkbook(wb, filename)
         }
@@ -79,13 +79,13 @@ output <- function(rslts, dataformat, fileformat, dirname)
     else {
         ## Single file in PITA format.
         if(fileformat == 'CSV') {
-            filename <- alternate_filename(file.path(dirname, 'iamrpt.csv'))
+            filename <- alternate_filename(file.path(dirname, 'gcamrpt.csv'))
             fcon <- file(filename, 'w')
         }
         else {
-            filename <- alternate_filename(file.path(dirname, 'iamrpt.xlsx'))
+            filename <- alternate_filename(file.path(dirname, 'gcamrpt.xlsx'))
             wb <- openxlsx::createWorkbook()
-            openxlsx::addWorksheet(wb, 'iamrpt')
+            openxlsx::addWorksheet(wb, 'gcamrpt')
             row <- 1                    # current write row
         }
         message('Writing file ', filename)
@@ -100,7 +100,7 @@ output <- function(rslts, dataformat, fileformat, dirname)
                     cat('\n', file=fcon)
                 }
                 else {
-                    openxlsx::writeData(wb, 'iamrpt' , '', startRow=row)
+                    openxlsx::writeData(wb, 'gcamrpt' , '', startRow=row)
                     row <- row + 1
                 }
             }
@@ -110,7 +110,7 @@ output <- function(rslts, dataformat, fileformat, dirname)
                     cat(tblname, '\n', file=fcon, sep='')
                 }
                 else {
-                    openxlsx::writeData(wb, 'iamrpt', tblname, startRow=row)
+                    openxlsx::writeData(wb, 'gcamrpt', tblname, startRow=row)
                     row <- row + 1
                 }
             }
@@ -119,7 +119,7 @@ output <- function(rslts, dataformat, fileformat, dirname)
                 readr::write_csv(rslts[[tblname]], fcon)
             }
             else {
-                openxlsx::writeData(wb, 'iamrpt', rslts[[tblname]],
+                openxlsx::writeData(wb, 'gcamrpt', rslts[[tblname]],
                                     startRow=row)
                 row <- row + nrow(rslts[[tblname]]) + 1
             }

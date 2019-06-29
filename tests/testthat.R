@@ -1,4 +1,4 @@
 library(testthat)
-library(iamrpt)
+library(gcamrpt)
 
-test_check("iamrpt")
+test_check("gcamrpt")

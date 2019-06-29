@@ -28,3 +28,7 @@ vignettes/*.pdf
 # Emacs files
 *~
 .#*
+
+## Mac cruft
+.DS_Store
+

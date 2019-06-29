@@ -1,6 +1,6 @@
-# iamrpt: Convert GCAM output to the format used by public IAM databases
-[![Travis-CI Build Status](https://travis-ci.org/JGCRI/iamrpt.svg?branch=master)](https://travis-ci.org/JGCRI/iamrpt)
-[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/JGCRI/iamrpt?branch=master&svg=true)](https://ci.appveyor.com/project/JGCRI/iamrpt)
+# gcamrpt: Convert GCAM output to the format used by public IAM databases
+[![Travis-CI Build Status](https://travis-ci.org/JGCRI/gcamrpt.svg?branch=master)](https://travis-ci.org/JGCRI/gcamrpt)
+[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/JGCRI/gcamrpt?branch=master&svg=true)](https://ci.appveyor.com/project/JGCRI/gcamrpt)
 
 Provide functions for converting GCAM output into the format used by
 most IAM experiments to enter results into their databases.  Users
@@ -10,7 +10,7 @@ queries (no more than once per query) and passes the results to the
 functions that produce the output.
 
 ## Usage
-There are two main user-visible functions in the `iamrpt` package.  The
+There are two main user-visible functions in the `gcamrpt` package.  The
 first is the `listVariables` function.  This function returns a
 list of the variables the system knows how to produce, which can be helpful
 in putting together your control files.
@@ -38,6 +38,6 @@ Examples of these files can be found here:
 To use this package it first must be installed. You can do this using the R ```devtools``` package:
 
 ```
-devtools::install_github("JGCRI/iamrpt")
+devtools::install_github("JGCRI/gcamrpt")
 ```
 

@@ -1,6 +1,6 @@
-Package: iamrpt
+Package: gcamrpt
 Title: Convert GCAM results to the format required by various IAM experiment databases
-Version: 0.4
+Version: 0.5
 Authors@R: c(
     person("Robert", "Link", email = "robert.link@pnnl.gov", role = c("aut", "cre")),
     person("Xavier", "Gutierrez", email = "xavier.gutierrez@pnnl.gov", role = c("aut"))
@@ -15,7 +15,7 @@ License: GPL-2 | file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports:
-    rgcam (>= 0.4.2),
+    rgcam (>= 0.5.0),
     readr (>= 1.1.1),
     dplyr (>= 0.7.4),
     tidyr (>= 0.6),
@@ -26,7 +26,7 @@ Imports:
     openxlsx (>= 4.0.17)
 Remotes:
     JGCRI/rgcam
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1
 Suggests:
     testthat,
     lazyeval,
