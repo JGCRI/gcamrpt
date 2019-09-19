@@ -436,8 +436,7 @@ merge_scenarios <- function(rawrslts)
                vtbls <- lapply(scenarios,
                                function(scen) {
                                    tbl <- rawrslts[[scen]][[var]]
-                                   if(!('scenario' %in% names(tbl)))
-                                       tbl$scenario <- scen
+                                   tbl$scenario <- scen
                                    tbl
                                })
                dplyr::bind_rows(vtbls)

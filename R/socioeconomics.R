@@ -281,3 +281,64 @@ module.gdp_ppp_growth <- function(mode, allqueries, aggkeys, aggfn, years,
         gdp_ppp_growth
     }
 }
+
+module.agprod_capita <- function(mode, allqueries, aggkeys, aggfn, years,
+                                      filters, ounit, region, agg_region, add_global)
+{
+    if(mode == GETQ) {
+        # Return titles of necessary queries
+        # For more complex variables, will return multiple query titles.
+        c('ag production by crop type', 'Population')
+    }
+    else {
+        message('Function for processing variable: Ag production per capita')
+
+        agprod <- allqueries$'ag production by crop type' %>%
+            dplyr::select(-rundate)
+        # Aggregating here allows us to aggregate by region, sector, subsector, technology
+        # Need to be careful about adding in population if we aggregate globally though
+        agprod <- aggregate(agprod, aggfn, aggkeys)
+        agprod <- region_agg(agprod, region, agg_region, add_global)
+
+        pop <- allqueries$'Population' %>%
+            dplyr::select(-rundate)
+
+        # If aggkeys are provided and are being summed globally, then we need to get the global population here
+        if (!is.na(aggkeys) & !grepl('region', aggkeys)){
+            pop <- aggregate(pop, aggfn, 'scenario')
+        }
+        pop <- region_agg(pop, region, agg_region, add_global)
+
+        agprod_capita <- agprod %>%
+            dplyr::left_join(pop, by = c('scenario', 'region', 'year')) %>%
+            dplyr::mutate(value = value.x / value.y,
+                          Units = paste0(Units.x, '/', Units.y)) %>%
+            dplyr::select(-Units.x, -Units.y, -value.x, -value.y)
+
+        agprod_capita <- filter(agprod_capita, years, filters)
+
+
+        if(is.na(ounit))
+            return(agprod_capita)
+
+        iunit <- agprod_capita$Units[1]
+        ## See notes above for unit conversion.  This is largely repeated from
+        ## the passenger version, but there are a couple of wrinkles, so it
+        ## would take more time than I have right now to refactor it.
+        pat <- '(\\w+) */ *(\\w+) *(\\w+)? *'
+        mmat <- stringr::str_match(c(iunit, ounit), pat)
+        mmat[is.na(mmat[,3]), 3] <- ''
+        cfac <-
+            unitconv_mass(mmat[1,2], mmat[2,2]) *
+            unitconv_counts(mmat[1,3], mmat[2,3], inverse=TRUE)
+
+        if(!is.na(cfac)) {
+            dplyr::mutate(agprod_capita, value=cfac*value, Units=ounit)
+        }
+        else {
+            ## If any conversions failed, the warning will already have been
+            ## issued, so just return the result unconverted.
+            agprod_capita
+        }
+    }
+}

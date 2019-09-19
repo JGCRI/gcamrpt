@@ -124,9 +124,9 @@ module.ghg_emissions_ar4 <- function(mode, allqueries, aggkeys, aggfn, years,
             # Convert to MTCO2e
             dplyr::mutate(value = value * GWP,
                           Units = 'MT CO2e') %>%
-            dplyr::select(-GWP) %>%
-            # Add in gas type
-            dplyr::left_join(ghg_gas_type, by = 'ghg')
+            dplyr::select(-GWP) #%>%
+            # # Add in gas type
+            # dplyr::left_join(ghg_gas_type, by = 'ghg')
 
         ghg <- filter(ghg, years, filters)
         ghg <- aggregate(ghg, aggfn, aggkeys)
@@ -541,7 +541,7 @@ process.direct_bio_emissions <- function(input, output, sequestration){
         dplyr:: mutate(C.in = value * Ccoef) %>%
         # Aggregate to techology level
         dplyr::group_by(scenario, region, sector, year) %>%
-        dplyr::summarise(C.in = sum(C.in)) %>%
+        dplyr::summarise(C.in = sum(C.in, na.rm = TRUE)) %>%
         dplyr::ungroup()
 
     # Calculate carbon from outputs

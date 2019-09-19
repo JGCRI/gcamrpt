@@ -55,3 +55,11 @@ SheepGoat,Agriculture
 SugarCrop,Agriculture
 UnmanagedLand,Agriculture
 Wheat,Agriculture
+elec_biomass (IGCC),Electricity
+elec_biomass (conv),Electricity
+elec_coal (IGCC),Electricity
+elec_coal (conv pul),Electricity
+elec_gas (CC),Electricity
+elec_gas (steam/CT),Electricity
+elec_refined liquids (CC),Electricity
+elec_refined liquids (steam/CT),Electricity
