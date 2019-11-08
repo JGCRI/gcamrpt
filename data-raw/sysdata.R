@@ -1,7 +1,7 @@
 ## Generate the internal data for the package
 ## This must be sourced as a script because of the way devtools::use_data works.
 ## Source it from the top level of a development copy of the package.
-
+library(magrittr)
 
 source('data-raw/gdpdef.R')
 gdpdef <- calc.gdpdef('data-raw/GDPDEF.csv')
@@ -42,6 +42,8 @@ elec_capacity_factors <- readr::read_csv('data-raw/elec_capacity_factors.csv')
 trn_subsector_map <- readr::read_csv('data-raw/trn_subsector_map.csv')
 trn_sector_map <- readr::read_csv('data-raw/trn_sector_map.csv')
 
+land_aggregation <- readr::read_csv("data-raw/aggregated_land.csv")
+
 primary_ccoef <- readr::read_csv('data-raw/primary_ccoef.csv', col_types = readr::cols(
     fuel = readr::col_character(),
     Ccoef = readr::col_double(),
@@ -59,7 +61,7 @@ devtools::use_data(gdpdef, pm_emissions_factors, annual_mileage,
                    gwp_ar4, gwp_ar5, ghg_gas_type, final_energy_fuel,
                    final_energy_end_use_sector, elec_fuel_type, primary_fuel_type,
                    elec_capacity_factors, load_factor, ghg_sector, trn_subsector_map,
-                   trn_sector_map, primary_ccoef, Ccoef,
+                   trn_sector_map, primary_ccoef, Ccoef, land_aggregation,
                    internal=TRUE, overwrite=TRUE,
                    compress='xz')
 
