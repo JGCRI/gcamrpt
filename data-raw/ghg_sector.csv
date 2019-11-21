@@ -63,3 +63,13 @@ elec_gas (CC),Power,Power
 elec_gas (steam/CT),Power,Power
 elec_refined liquids (CC),Power,Power
 elec_refined liquids (steam/CT),Power,Power
+elec_biomass (conv CCS),Power,Power
+elec_biomass (IGCC CCS),Power,Power
+elec_coal (conv pul CCS),Power,Power
+elec_coal (IGCC CCS),Power,Power
+elec_CSP,Power,Power
+elec_CSP_storage,Power,Power
+elec_gas (CC CCS),Power,Power
+elec_Gen_III,Power,Power
+elec_geothermal,Power,Power
+elec_refined liquids (CC CCS),Power,Power

@@ -520,6 +520,7 @@ module.liquid_shares <- function(mode, allqueries, aggkeys, aggfn, years,
         liquids <- allqueries$'Refined Liquids'
         liquids <- filter(liquids, years, filters)
         liquids <- aggregate(liquids, aggfn, aggkeys)
+        liquids <- region_agg(liquids, region, agg_region, add_global)
 
         grp_cats <- names(liquids)[!(names(liquids) %in% c('subsector', 'value'))]
 
