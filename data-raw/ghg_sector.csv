@@ -1,65 +1,65 @@
-sector,end_use
-comm cooling,Buildings
-industrial processes,Industry
-resid cooling,Buildings
-urban processes,Waste
-electricity_net_ownuse,Electricity
-backup_electricity,Electricity
-cement,Industry
-comm heating,Buildings
-comm others,Buildings
-csp_backup,Electricity
-electricity,Electricity
-gas processing,Oil & Gas
-H2 central production,H2 Production
-H2 forecourt production,H2 Production
-industrial energy use,Industry
-N fertilizer,Industry
-process heat cement,Industry
-refining,Oil & Gas
-resid others,Buildings
-trn_aviation_intl,Transportation
-trn_freight,Transportation
-trn_freight_road,Transportation
-trn_pass,Transportation
-trn_pass_road,Transportation
-trn_pass_road_LDV,Transportation
-trn_pass_road_LDV_2W,Transportation
-trn_pass_road_LDV_4W,Transportation
-trn_shipping_intl,Transportation
-unconventional oil production,Oil & Gas
-gas pipeline,Oil & Gas
-industrial feedstocks,Industry
-resid heating,Buildings
-trn_pass_road_bus,Transportation
-district heat,District Heat
-Beef,Agriculture
-biomass,Agriculture
-coal,Coal
-Corn,Agriculture
-crude oil,Oil & Gas
-Dairy,Agriculture
-FiberCrop,Agriculture
-FodderGrass,Agriculture
-FodderHerb,Agriculture
-MiscCrop,Agriculture
-natural gas,Oil & Gas
-OilCrop,Agriculture
-OtherGrain,Agriculture
-PalmFruit,Agriculture
-Pork,Agriculture
-Poultry,Agriculture
-Rice,Agriculture
-Root_Tuber,Agriculture
-SheepGoat,Agriculture
-SugarCrop,Agriculture
-UnmanagedLand,Agriculture
-Wheat,Agriculture
-elec_biomass (IGCC),Electricity
-elec_biomass (conv),Electricity
-elec_coal (IGCC),Electricity
-elec_coal (conv pul),Electricity
-elec_gas (CC),Electricity
-elec_gas (steam/CT),Electricity
-elec_refined liquids (CC),Electricity
-elec_refined liquids (steam/CT),Electricity
+sector,end_use,end_use2
+comm cooling,Buildings,Cooling
+industrial processes,Waste,Waste
+resid cooling,Buildings,Cooling
+urban processes,Waste,Waste
+electricity_net_ownuse,Power,Power
+backup_electricity,Power,Power
+cement,Industry,Industry
+comm heating,Buildings,Buildings
+comm others,Buildings,Buildings
+csp_backup,Power,Power
+electricity,Power,Power
+gas processing,Oil and Gas,Oil and Gas
+H2 central production,Industry,Industry
+H2 forecourt production,Industry,Industry
+industrial energy use,Industry,Industry
+N fertilizer,Industry,Industry
+process heat cement,Industry,Industry
+refining,Oil and Gas,Oil and Gas
+resid others,Buildings,Buildings
+trn_aviation_intl,Transport Aviation and Marine,International Aviation
+trn_freight,Transport,Transport
+trn_freight_road,Transport,Transport
+trn_pass,Transport,Transport
+trn_pass_road,Transport,Transport
+trn_pass_road_LDV,Transport,Transport
+trn_pass_road_LDV_2W,Transport,Transport
+trn_pass_road_LDV_4W,Transport,Transport
+trn_shipping_intl,Transport Aviation and Marine,International Marine
+unconventional oil production,Oil and Gas,Oil and Gas
+gas pipeline,Oil and Gas,Oil and Gas
+industrial feedstocks,Industry,Industry
+resid heating,Buildings,Buildings
+trn_pass_road_bus,Transport,Transport
+district heat,Buildings,Buildings
+Beef,Agriculture,Agriculture
+biomass,Agriculture,Agriculture
+coal,Industry,Industry
+Corn,Agriculture,Agriculture
+crude oil,Oil and Gas,Oil and Gas
+Dairy,Agriculture,Agriculture
+FiberCrop,Agriculture,Agriculture
+FodderGrass,Agriculture,Agriculture
+FodderHerb,Agriculture,Agriculture
+MiscCrop,Agriculture,Agriculture
+natural gas,Oil and Gas,Oil and Gas
+OilCrop,Agriculture,Agriculture
+OtherGrain,Agriculture,Agriculture
+PalmFruit,Agriculture,Agriculture
+Pork,Agriculture,Agriculture
+Poultry,Agriculture,Agriculture
+Rice,Agriculture,Agriculture
+Root_Tuber,Agriculture,Agriculture
+SheepGoat,Agriculture,Agriculture
+SugarCrop,Agriculture,Agriculture
+UnmanagedLand,Agriculture,Agriculture
+Wheat,Agriculture,Agriculture
+elec_biomass (IGCC),Power,Power
+elec_biomass (conv),Power,Power
+elec_coal (IGCC),Power,Power
+elec_coal (conv pul),Power,Power
+elec_gas (CC),Power,Power
+elec_gas (steam/CT),Power,Power
+elec_refined liquids (CC),Power,Power
+elec_refined liquids (steam/CT),Power,Power
